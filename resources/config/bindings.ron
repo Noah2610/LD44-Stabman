@@ -1,0 +1,11 @@
+(
+  axes:    {
+    "player_x": Emulated(pos: Key(D), neg: Key(A)),
+  },
+  actions: {
+    "quit":        [ [Key(Escape)], [Key(Q)], ],
+    "pause":       [ [Key(P)], ],
+    "player_jump": [ [Key(Space)], [Key(W)], [Key(K)], ],
+    "player_run":  [ [Key(LShift),], [Key(RShift)], ],
+  },
+)

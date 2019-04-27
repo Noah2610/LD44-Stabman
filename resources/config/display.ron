@@ -1,0 +1,10 @@
+(
+  title:          "hello-amethyst-platformer",
+  dimensions:     Some((1200, 800)),
+  max_dimensions: Some((1200, 800)),
+  min_dimensions: Some((1200, 800)),
+  fullscreen:     false,
+  multisampling:  0,
+  visibility:     true,
+  vsync:          true,
+)
