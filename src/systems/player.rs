@@ -13,6 +13,7 @@ impl<'a> System<'a> for PlayerSystem {
         WriteStorage<'a, Player>,
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, DecreaseVelocity>,
+        WriteStorage<'a, Gravity>,
     );
 
     fn run(
@@ -27,43 +28,86 @@ impl<'a> System<'a> for PlayerSystem {
             mut players,
             mut velocities,
             mut decr_velocities,
+            mut gravities,
         ): Self::SystemData,
     ) {
         let dt = time.delta_seconds();
 
-        for (mut player, mut velocity, decr_velocity_opt, player_collision) in (
+        for (player, velocity, decr_velocity, gravity, player_collision) in (
             &mut players,
             &mut velocities,
-            (&mut decr_velocities).maybe(),
+            &mut decr_velocities,
+            &mut gravities,
             &collisions,
         )
             .join()
         {
             let sides_touching = SidesTouching::new(
                 &entities,
-                &player_collision,
+                player_collision,
                 &collisions,
                 &solids,
             );
 
+            handle_wall_cling(
+                &input_manager,
+                player,
+                velocity,
+                &sides_touching,
+            );
+
+            handle_on_ground(player, velocity, &sides_touching);
+
             handle_move(
                 dt,
                 &input_handler,
-                &player,
-                &mut velocity,
-                decr_velocity_opt,
+                player,
+                velocity,
+                decr_velocity,
                 &sides_touching,
-            )
+            );
+
+            handle_jump(
+                &input_manager,
+                player,
+                velocity,
+                gravity,
+                &sides_touching,
+            );
+        }
+    }
+}
+
+fn handle_wall_cling(
+    input_manager: &InputManager,
+    player: &mut Player,
+    velocity: &mut Velocity,
+    sides_touching: &SidesTouching,
+) {
+    if sides_touching.is_touching_horizontally() {
+        // Reset x velocity to 0 when colliding with a solid, horizontally.
+        if (sides_touching.is_touching_left && velocity.x < 0.0)
+            || (sides_touching.is_touching_right && velocity.x > 0.0)
+        {
+            velocity.x = 0.0;
+        }
+        // Clinging to wall, when not touching a solid vertically.
+        if !sides_touching.is_touching_vertically() {
+            // Keep y velocity at a constant velocity; slide down solid.
+            let slide_strength = -player.slide_strength;
+            if velocity.y < slide_strength {
+                velocity.y = slide_strength;
+            }
         }
     }
 }
 
 fn handle_move(
     dt: f32,
-    input_handler: &Read<InputHandler<String, String>>,
+    input_handler: &InputHandler<String, String>,
     player: &Player,
     velocity: &mut Velocity,
-    mut decr_velocity_opt: Option<&mut DecreaseVelocity>,
+    decr_velocity: &mut DecreaseVelocity,
     sides_touching: &SidesTouching,
 ) {
     if let Some(x) = input_handler.axis_value("player_x") {
@@ -100,14 +144,53 @@ fn handle_move(
                 * x_sign; // TODO: Maybe don't use the sign? Might work well with controller axis inputs.
 
             // Don't decrease velocity when moving
-            decr_velocity_opt.as_mut().map(|decr| {
-                if x > 0.0 {
-                    decr.dont_decrease_x_when_pos();
-                } else if x < 0.0 {
-                    decr.dont_decrease_x_when_neg();
-                }
-            });
+            if x > 0.0 {
+                decr_velocity.dont_decrease_x_when_pos();
+            } else if x < 0.0 {
+                decr_velocity.dont_decrease_x_when_neg();
+            }
         }
+    }
+}
+
+fn handle_jump(
+    input_manager: &InputManager,
+    player: &mut Player,
+    velocity: &mut Velocity,
+    gravity: &mut Gravity,
+    sides_touching: &SidesTouching,
+) {
+    if input_manager.is_down("player_jump") && sides_touching.is_touching_bottom
+    {
+        // Jump
+        velocity.y += player.jump_strength;
+        // Set different gravity when jumping
+        gravity.x = player.jump_gravity.0;
+        gravity.y = player.jump_gravity.1;
+    } else if input_manager.is_up("player_jump") {
+        // Kill some of the upwards momentum, keeping at least a certain minimum velocity
+        if velocity.y > player.decr_jump_strength {
+            velocity.y = (velocity.y - player.decr_jump_strength)
+                .max(player.min_jump_velocity);
+        }
+        // Set default gravity
+        gravity.x = player.gravity.0;
+        gravity.y = player.gravity.1;
+    }
+}
+
+/// Handle some specifics when player is standing on solid ground.
+fn handle_on_ground(
+    player: &mut Player,
+    velocity: &mut Velocity,
+    sides_touching: &SidesTouching,
+) {
+    // Reset y velocity to 0 when standing on solid ground
+    // or when hitting a solid ceiling.
+    if (sides_touching.is_touching_bottom && velocity.y < 0.0)
+        || (sides_touching.is_touching_top && velocity.y > 0.0)
+    {
+        velocity.y = 0.0;
     }
 }
 
@@ -158,5 +241,13 @@ impl<'a> SidesTouching {
             is_touching_left,
             is_touching_right,
         }
+    }
+
+    pub fn is_touching_horizontally(&self) -> bool {
+        self.is_touching_left || self.is_touching_right
+    }
+
+    pub fn is_touching_vertically(&self) -> bool {
+        self.is_touching_top || self.is_touching_bottom
     }
 }
