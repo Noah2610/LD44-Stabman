@@ -1,5 +1,5 @@
 (
-  title:          "hello-amethyst-platformer",
+  title:          "Ludum Dare 44",
   dimensions:     Some((1200, 800)),
   max_dimensions: Some((1200, 800)),
   min_dimensions: Some((1200, 800)),

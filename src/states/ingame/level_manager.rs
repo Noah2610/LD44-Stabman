@@ -1,4 +1,5 @@
 use super::super::state_prelude::*;
+use super::level_loader::LevelLoader;
 
 pub mod prelude {
     pub use super::LevelManager;
@@ -21,6 +22,21 @@ impl LevelManager {
         &mut self,
         data: &mut StateData<CustomGameData<CustomData>>,
     ) {
-        // TODO
+        let current_level_name = self
+            .settings
+            .level_names
+            .get(self.level_index)
+            .expect(&format!(
+                "Level at index {} does not exist",
+                self.level_index
+            ));
+        let level_filepath = resource(format!(
+            "{}/{}",
+            self.settings.levels_dir, current_level_name
+        ));
+
+        let mut level_loader = LevelLoader::new(self.settings.clone());
+        level_loader.load_level(level_filepath);
+        level_loader.build(data);
     }
 }

@@ -2,6 +2,7 @@ extern crate amethyst;
 extern crate deathframe;
 #[macro_use]
 extern crate serde;
+extern crate json;
 
 mod components;
 mod resource_helpers;

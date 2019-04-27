@@ -1,3 +1,4 @@
+mod level_loader;
 mod level_manager;
 
 use super::state_prelude::*;
@@ -24,6 +25,8 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
         &mut self,
         data: StateData<CustomGameData<CustomData>>,
     ) -> Trans<CustomGameData<'a, 'b, CustomData>, StateEvent> {
+        data.data.update(&data.world, "ingame").unwrap();
+
         Trans::None
     }
 }
