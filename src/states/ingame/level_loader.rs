@@ -199,13 +199,7 @@ impl LevelLoader {
             let player = data
                 .world
                 .create_entity()
-                // TODO
-                // .with(
-                //     Player::new()
-                //         .acceleration(settings.player.acceleration)
-                //         .max_velocity(settings.player.max_velocity)
-                //         .build(),
-                // )
+                .with(Player::new(settings.player.clone()))
                 .with(transform)
                 .with(sprite_render)
                 .with(Transparent)

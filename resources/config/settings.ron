@@ -30,6 +30,22 @@ Settings(
         gravity:          (0.0,         -500.0),
         /// Gravitational pull _when jumping_.
         jump_gravity:     (0.0,         -350.0),
+        /// Behavior when turning around. Possible values:
+        /// - `0` (_will hopefully be `No` in the future_)
+        ///   Don't do anything to velocity when turning around. Example:
+        ///   When player is moving _left_ and then turns around to move _right_,
+        ///   the velocity of running _left_ (negative) must first increase and pass 0 (positive),
+        ///   before the player starts running to the _right_.
+        ///   _(left: negative, right: positive)_
+        /// - `1` (_will hopefully be `ResetVelocity` in the future_)
+        ///   When turning around, reset velocity to 0.
+        ///   This means, the previous direction's velocity does _not_ need to drain first.
+        /// - `2` (_will hopefully be `InvertVelocity` in the future_)
+        ///   When turning around, the velocity's sign is instantly inverted (`velocity.x * -1.0`),
+        ///   which means, that no speed is lost when turning around.
+        quick_turnaround: 0,
+        /// Turning around behavior when in mid air.
+        air_quick_turnaround: 0,
     ),
 
     loading_text: (

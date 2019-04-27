@@ -68,6 +68,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Startup {
         data.world.add_resource(SpriteSheetHandles::default());
         data.world.add_resource(TextureHandles::default());
         data.world.add_resource(AudioHandles::default());
+        data.world.add_resource(InputManager::default());
 
         self.initialize_loading_text(&mut data);
     }

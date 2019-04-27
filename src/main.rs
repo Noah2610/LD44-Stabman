@@ -104,16 +104,18 @@ fn build_game_data<'a, 'b>(
         ])?
         .with_core(ScaleSpritesSystem, "scale_sprites_system", &[])?
         .with_core(DebugSystem::default(), "debug_system", &[])?
+        .with("ingame", PlayerSystem, "player_system", &[])?
         .with("ingame", GravitySystem, "gravity_system", &[])?
         .with(
             "ingame",
             LimitVelocitiesSystem,
             "limit_velocities_system",
-            &["gravity_system"],
+            &["gravity_system", "player_system"],
         )?
         .with("ingame", MoveEntitiesSystem, "move_entities_system", &[
             "gravity_system",
             "limit_velocities_system",
+            "player_system",
         ])?
         .with("ingame", CameraSystem, "camera_system", &[
             "move_entities_system",
@@ -133,6 +135,7 @@ fn build_game_data<'a, 'b>(
                 "gravity_system",
                 "limit_velocities_system",
                 "move_entities_system",
+                "player_system",
             ],
         )?
         .with("ingame", AnimationSystem, "animation_system", &[])?;
