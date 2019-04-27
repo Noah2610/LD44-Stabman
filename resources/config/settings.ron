@@ -31,4 +31,16 @@ Settings(
         /// Gravitational pull _when jumping_.
         jump_gravity:     (0.0,         -350.0),
     ),
+
+    loading_text: (
+      text:      "Loading...",
+      font_file: "fonts/square.ttf",
+      font_size: 64.0,
+    ),
+
+    level_manager: (
+      levels_dir:  "levels",
+      level_names: ("one.json"),
+      tile_size:   (32.0, 32.0),
+    )
 )

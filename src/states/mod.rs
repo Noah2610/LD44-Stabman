@@ -1,11 +1,11 @@
+mod ingame;
 mod startup;
-// mod ingame;
 // mod paused;
 // mod main_menu;
 
 pub mod prelude {
+    pub use super::ingame::Ingame;
     pub use super::startup::Startup;
-    // pub use super::ingame::Ingame;
     // pub use super::main_menu::MainMenu;
     // pub use super::paused::Paused;
 }
@@ -42,9 +42,36 @@ mod state_prelude {
     pub use deathframe::handlers::prelude::*;
     pub use deathframe::input_manager::InputManager;
 
+    pub use crate::components::prelude::*;
     pub use crate::resource_helpers::*;
     pub use crate::settings::prelude::*;
     pub use crate::world_helpers::*;
+    pub use crate::CustomData;
+
+    pub use super::helpers::*;
+    pub use super::prelude::*;
 }
 
 pub use prelude::*;
+
+mod helpers {
+    use amethyst::ui::{Anchor as AmethystAnchor, UiTransform};
+
+    /// `UiTransform::new` wrapper
+    pub fn new_ui_transform<T: ToString>(
+        name: T,
+        anchor: AmethystAnchor,
+        pos: (f32, f32, f32, f32, f32, i32),
+    ) -> UiTransform {
+        UiTransform::new(
+            name.to_string(),
+            anchor,
+            pos.0, // x
+            pos.1, // y
+            pos.2, // z
+            pos.3, // width
+            pos.4, // height
+            pos.5, // tab-order (?)
+        )
+    }
+}

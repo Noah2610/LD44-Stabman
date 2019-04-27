@@ -2,12 +2,18 @@ use deathframe::geo::Vector;
 
 pub mod prelude {
     pub use super::Settings;
+    pub use super::SettingsCamera;
+    pub use super::SettingsLevelManager;
+    pub use super::SettingsLoadingText;
+    pub use super::SettingsPlayer;
 }
 
 #[derive(Clone, Deserialize)]
 pub struct Settings {
-    pub player: SettingsPlayer,
-    pub camera: SettingsCamera,
+    pub player:        SettingsPlayer,
+    pub camera:        SettingsCamera,
+    pub loading_text:  SettingsLoadingText,
+    pub level_manager: SettingsLevelManager,
 }
 
 #[derive(Clone, Deserialize)]
@@ -27,4 +33,18 @@ pub struct SettingsPlayer {
     pub decr_velocity: Vector,
     pub gravity:       Vector,
     pub jump_gravity:  Vector,
+}
+
+#[derive(Clone, Deserialize)]
+pub struct SettingsLoadingText {
+    pub text:      String,
+    pub font_file: String,
+    pub font_size: f32,
+}
+
+#[derive(Clone, Deserialize)]
+pub struct SettingsLevelManager {
+    pub levels_dir:  String,
+    pub level_names: Vec<String>,
+    pub tile_size:   Vector,
 }

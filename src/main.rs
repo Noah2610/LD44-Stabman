@@ -37,8 +37,8 @@ fn main() -> amethyst::Result<()> {
 
     let game_data = build_game_data()?;
 
-    let mut game: amethyst::CoreApplication<CustomGameData> =
-        Application::new("./", states::Startup::new(), game_data)?;
+    let mut game: amethyst::CoreApplication<CustomGameData<CustomData>> =
+        Application::new("./", states::Startup::default(), game_data)?;
     game.run();
 
     Ok(())
@@ -51,10 +51,15 @@ fn start_logger() {
     });
 }
 
-fn build_game_data<'a, 'b>() -> amethyst::Result<CustomGameDataBuilder<'a, 'b>>
-{
+fn build_game_data<'a, 'b>(
+) -> amethyst::Result<CustomGameDataBuilder<'a, 'b, CustomData>> {
     // Display config
     let display_config = DisplayConfig::load(&resource("config/display.ron"));
+
+    // CustomGameData CustomData
+    let custom_data = CustomData {
+        display_config: display_config.clone(),
+    };
 
     // Pipeline
     let pipeline = Pipeline::build().with_stage(
@@ -82,7 +87,8 @@ fn build_game_data<'a, 'b>() -> amethyst::Result<CustomGameDataBuilder<'a, 'b>>
     let fps_bundle = FPSCounterBundle;
 
     // Create GameDataBuilder
-    let game_data = CustomGameData::new()
+    let game_data = CustomGameData::<CustomData>::new()
+        .custom(custom_data)
         .dispatcher("startup")?
         .dispatcher("main_menu")?
         .dispatcher("ingame")?
@@ -130,4 +136,9 @@ fn build_game_data<'a, 'b>() -> amethyst::Result<CustomGameDataBuilder<'a, 'b>>
         )?
         .with("ingame", AnimationSystem, "animation_system", &[])?;
     Ok(game_data)
+}
+
+#[derive(Clone)]
+pub struct CustomData {
+    display_config: DisplayConfig,
 }
