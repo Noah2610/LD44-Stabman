@@ -3,15 +3,12 @@ Settings(
         /// Window size
         // size:             (1200.0,      800.0),
         size:             (600.0,      400.0),
-
         /// Rectangle in the center of the window, where the camera smoothly scrolls to player;
         /// Outside of this rectangle, the camera instantly snaps to where player is back inside.
         /// Basically, the player can never be outside of this inner rectangle.
         inner_size:       (300.0,       200.0),
-
         /// Camera's smooth scroll speed multiplier.
         base_speed:       (250.0,       250.0),
-
         /// Pixel padding, in which camera will stop scrolling to player.
         /// The camera will always center within +- these amounts of pixels, (accuracy kinda).
         deadzone:         (16.0,        16.0),
@@ -20,54 +17,18 @@ Settings(
     player: (
         /// This is not used currently. Size is read from map.json, so it is defined with Tiled.
         size:             (16.0,        32.0),
-
         /// Player velocity acceleration when _not running_.
         acceleration:     (1000.0,      0.0),
-
-        /// Player velocity acceleration _when running_.
-        run_acceleration: (1500.0,      0.0),
-
         /// Jump velocity boost.
         jump_strength:    400.0,
-
         /// Max velocity when _not running_.
         max_velocity:     (Some(150.0), None),
-
-        /// Max velocity _when running_.
-        run_max_velocity: (Some(300.0), None),
-
         /// Decrease velocity by this amount, every frame.
         /// x value has no effect when moving, y value has no effect when falling/jumping.
         decr_velocity:    (2000.0,      1000.0),
-
         /// Gravitational pull when _not jumping_.
         gravity:          (0.0,         -500.0),
-
         /// Gravitational pull _when jumping_.
         jump_gravity:     (0.0,         -350.0),
-
-        /// Velocity when sliding on / clinging to a `Solid` & `Collision` entity.
-        slide_strength:   75.0,
-
-        /// Behavior when turning around. Possible values:
-        /// - `0` (_will hopefully be `No` in the future_)
-        ///   Don't do anything to velocity when turning around. Example:
-        ///   When player is moving _left_ and then turns around to move _right_,
-        ///   the velocity of running _left_ (negative) must first increase and pass 0 (positive),
-        ///   before the player starts running to the _right_.
-        ///   _(left: negative, right: positive)_
-        /// - `1` (_will hopefully be `ResetVelocity` in the future_)
-        ///   When turning around, reset velocity to 0.
-        ///   This means, the previous direction's velocity does _not_ need to drain first.
-        /// - `2` (_will hopefully be `InvertVelocity` in the future_)
-        ///   When turning around, the velocity's sign is instantly inverted (`velocity.x * -1.0`),
-        ///   which means, that no speed is lost when turning around.
-        quick_turnaround: 0,
-
-        /// Turning around behavior when in mid air.
-        air_quick_turnaround: 0,
-
-        /// If double jumping is enabled. `true` or `false`;
-        is_double_jump_enabled: true,
     ),
 )
