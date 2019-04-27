@@ -14,6 +14,8 @@ impl<'a> System<'a> for PlayerSystem {
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, DecreaseVelocity>,
         WriteStorage<'a, Gravity>,
+        WriteStorage<'a, AnimationsContainer>,
+        WriteStorage<'a, Flipped>,
     );
 
     fn run(
@@ -29,16 +31,28 @@ impl<'a> System<'a> for PlayerSystem {
             mut velocities,
             mut decr_velocities,
             mut gravities,
+            mut animations_containers,
+            mut flippeds,
         ): Self::SystemData,
     ) {
         let dt = time.delta_seconds();
 
-        for (player, velocity, decr_velocity, gravity, player_collision) in (
+        for (
+            player,
+            velocity,
+            decr_velocity,
+            gravity,
+            player_collision,
+            animations_container,
+            flipped_opt,
+        ) in (
             &mut players,
             &mut velocities,
             &mut decr_velocities,
             &mut gravities,
             &collisions,
+            &mut animations_containers,
+            (&mut flippeds).maybe(),
         )
             .join()
         {
@@ -64,6 +78,8 @@ impl<'a> System<'a> for PlayerSystem {
                 player,
                 velocity,
                 decr_velocity,
+                animations_container,
+                flipped_opt,
                 &sides_touching,
             );
 
@@ -108,6 +124,8 @@ fn handle_move(
     player: &Player,
     velocity: &mut Velocity,
     decr_velocity: &mut DecreaseVelocity,
+    animations_container: &mut AnimationsContainer,
+    flipped_opt: Option<&mut Flipped>,
     sides_touching: &SidesTouching,
 ) {
     if let Some(x) = input_handler.axis_value("player_x") {
@@ -149,6 +167,20 @@ fn handle_move(
             } else if x < 0.0 {
                 decr_velocity.dont_decrease_x_when_neg();
             }
+
+            // Set walking animation
+            animations_container.set("walking");
+            // Flip animation
+            if let Some(flip) = flipped_opt {
+                if flip == &Flipped::Horizontal && x > 0.0 {
+                    *flip = Flipped::None;
+                } else if flip == &Flipped::None && x < 0.0 {
+                    *flip = Flipped::Horizontal;
+                }
+            }
+        } else {
+            // Standing still - set idle animation
+            animations_container.set("idle");
         }
     }
 }

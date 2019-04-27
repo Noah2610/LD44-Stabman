@@ -1,16 +1,82 @@
 (
-  spritesheet_width:  128,
-  spritesheet_height: 64,
+  spritesheet_width:  256,
+  spritesheet_height: 512,
   sprites: [
-    (
+    ( // 0 - idle 0
       x:      0,
       y:      0,
       width:  32,
       height: 64,
     ),
-    (
+    ( // 1 - idle 1
       x:      32,
       y:      0,
+      width:  32,
+      height: 64,
+    ),
+    ( // 2 - idle 2
+      x:      64,
+      y:      0,
+      width:  32,
+      height: 64,
+    ),
+    ( // 3 - idle 3
+      x:      96,
+      y:      0,
+      width:  32,
+      height: 64,
+    ),
+    ( // 4 - walking 0
+      x:      0,
+      y:      64,
+      width:  32,
+      height: 64,
+    ),
+    ( // 5 - walking 1
+      x:      32,
+      y:      64,
+      width:  32,
+      height: 64,
+    ),
+    ( // 6 - walking 2
+      x:      64,
+      y:      64,
+      width:  32,
+      height: 64,
+    ),
+    ( // 7 - walking 3
+      x:      96,
+      y:      64,
+      width:  32,
+      height: 64,
+    ),
+    ( // 8 - falling
+      x:      0,
+      y:      128,
+      width:  32,
+      height: 64,
+    ),
+    ( // 9 - attack 0 player
+      x:      0,
+      y:      192,
+      width:  32,
+      height: 64,
+    ),
+    ( // 10 - attack 0 sword
+      x:      32,
+      y:      192,
+      width:  32,
+      height: 64,
+    ),
+    ( // 11 - attack 1 player
+      x:      64,
+      y:      192,
+      width:  32,
+      height: 64,
+    ),
+    ( // 12 - attack 1 sword
+      x:      96,
+      y:      192,
       width:  32,
       height: 64,
     ),

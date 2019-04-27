@@ -214,12 +214,42 @@ impl LevelLoader {
                 .with(CheckCollision)
                 .with(Push)
                 .with(
-                    Animation::new()
-                        .default_sprite_sheet_handle(spritesheet_handle)
-                        .default_delay_ms(500)
-                        .sprite_ids(vec![0, 1])
+                    AnimationsContainer::new()
+                        .insert(
+                            "idle",
+                            Animation::new()
+                                .default_sprite_sheet_handle(
+                                    spritesheet_handle.clone(),
+                                )
+                                .default_delay_ms(500)
+                                .sprite_ids(vec![0, 1, 2, 3])
+                                .build(),
+                        )
+                        .insert(
+                            "walking",
+                            Animation::new()
+                                .default_sprite_sheet_handle(
+                                    spritesheet_handle.clone(),
+                                )
+                                .default_delay_ms(500)
+                                .sprite_ids(vec![4, 5, 6, 7])
+                                .build(),
+                        )
+                        .insert(
+                            "falling",
+                            Animation::new()
+                                .default_sprite_sheet_handle(
+                                    spritesheet_handle.clone(),
+                                )
+                                .default_delay_ms(500)
+                                .sprite_ids(vec![8])
+                                .build(),
+                        )
+                        .current("idle")
+                        // TODO: Attacking animation
                         .build(),
                 )
+                .with(Flipped::None)
                 .build();
             self.player_id = Some(player.id());
         }
