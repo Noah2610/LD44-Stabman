@@ -138,7 +138,11 @@ fn build_game_data<'a, 'b>(
                 "player_system",
             ],
         )?
-        .with("ingame", AnimationSystem, "animation_system", &[])?;
+        .with("ingame", AnimationSystem, "animation_system", &[])?
+        .with("ingame", PlayerAttackSystem, "player_attack_system", &[
+            "move_entities_system",
+            "player_system",
+        ])?;
     Ok(game_data)
 }
 

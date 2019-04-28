@@ -233,7 +233,8 @@ fn handle_attack(
     player: &mut Player,
     animations_container: &mut AnimationsContainer,
 ) {
-    if input_manager.is_down("player_attack") {
+    if !player.is_attacking && input_manager.is_down("player_attack") {
+        player.is_attacking = true;
         // Play attack animation
         animations_container.play("attack");
     }

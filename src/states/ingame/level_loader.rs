@@ -185,28 +185,35 @@ impl LevelLoader {
                 "{}/{}",
                 SPRITESHEET_DIR, PLAYER_SPRITESHEET_FILENAME
             ));
-            let (spritesheet_handle, sprite_render) = {
+            let (spritesheet_handle, sprite_render, atk_sprite_render) = {
                 let spritesheet_handle = data
                     .world
                     .write_resource::<SpriteSheetHandles>()
                     .get_or_load(spritesheet_path, &data.world);
-                (spritesheet_handle.clone(), SpriteRender {
-                    sprite_sheet:  spritesheet_handle,
-                    sprite_number: 0,
-                })
+                (
+                    spritesheet_handle.clone(),
+                    SpriteRender {
+                        sprite_sheet:  spritesheet_handle.clone(),
+                        sprite_number: 0,
+                    },
+                    SpriteRender {
+                        sprite_sheet:  spritesheet_handle,
+                        sprite_number: 0, // TODO: Initialize with proper ID
+                    },
+                )
             };
 
             let player = data
                 .world
                 .create_entity()
                 .with(Player::new(settings.player.clone()))
-                .with(transform)
+                .with(transform.clone())
                 .with(sprite_render)
                 .with(Transparent)
                 .with(Velocity::default())
                 .with(MaxVelocity::from(settings.player.max_velocity))
                 .with(DecreaseVelocity::from(settings.player.decr_velocity))
-                .with(size)
+                .with(size.clone())
                 .with(ScaleOnce)
                 .with(Gravity::from(settings.player.gravity))
                 .with(Solid)
@@ -248,7 +255,9 @@ impl LevelLoader {
                         .insert(
                             "attack",
                             Animation::new()
-                                .default_sprite_sheet_handle(spritesheet_handle)
+                                .default_sprite_sheet_handle(
+                                    spritesheet_handle.clone(),
+                                )
                                 .default_delay_ms(500)
                                 .sprite_ids(vec![9, 11])
                                 .build(),
@@ -259,6 +268,32 @@ impl LevelLoader {
                 .with(Flipped::None)
                 .build();
             self.player_id = Some(player.id());
+
+            // Create PlayerAttack entity
+            data.world
+                .create_entity()
+                .with(PlayerAttack::default())
+                .with(transform)
+                .with(atk_sprite_render)
+                .with(Transparent)
+                .with(size)
+                .with(ScaleOnce)
+                .with(CheckCollision)
+                .with(
+                    AnimationsContainer::new()
+                        .insert(
+                            "attack_default",
+                            Animation::new()
+                                .default_sprite_sheet_handle(spritesheet_handle)
+                                .default_delay_ms(500)
+                                .sprite_ids(vec![10, 12])
+                                .build(),
+                        )
+                        .build(),
+                )
+                .with(Flipped::None)
+                .with(Hidden)
+                .build();
         }
     }
 

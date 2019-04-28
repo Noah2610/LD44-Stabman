@@ -12,6 +12,7 @@ pub struct Player {
     pub slide_strength:       f32,
     pub quick_turnaround:     SettingsPlayerQuickTurnaround,
     pub air_quick_turnaround: SettingsPlayerQuickTurnaround,
+    pub is_attacking:         bool,
 }
 
 impl Player {
@@ -28,6 +29,7 @@ impl Player {
             slide_strength:       settings.slide_strength,
             quick_turnaround:     settings.quick_turnaround,
             air_quick_turnaround: settings.air_quick_turnaround,
+            is_attacking:         false,
         }
     }
 }
