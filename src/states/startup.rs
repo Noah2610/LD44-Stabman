@@ -105,6 +105,7 @@ impl Default for Startup {
 
 // TODO
 fn register_components(world: &mut World) {
+    world.register::<Enemy>();
 }
 
 fn load_settings() -> Settings {

@@ -19,6 +19,7 @@ pub struct Settings {
     pub camera:        SettingsCamera,
     pub loading_text:  SettingsLoadingText,
     pub level_manager: SettingsLevelManager,
+    pub enemies:       SettingsEnemies,
 }
 
 #[derive(Clone, Deserialize)]
@@ -64,6 +65,20 @@ pub struct SettingsLevelManager {
     pub levels_dir:  String,
     pub level_names: Vec<String>,
     pub tile_size:   Vector,
+}
+
+#[derive(Clone, Deserialize)]
+pub struct SettingsEnemies {
+    pub gravity: Vector,
+    pub normal:  SettingsEnemy,
+}
+
+#[derive(Clone, Deserialize)]
+pub struct SettingsEnemy {
+    pub health:        f32,
+    pub damage:        f32,
+    pub max_velocity:  (Option<f32>, Option<f32>),
+    pub decr_velocity: Vector,
 }
 
 struct QTAVisitor;

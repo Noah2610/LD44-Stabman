@@ -65,5 +65,15 @@ Settings(
       levels_dir:  "levels",
       level_names: ("one.json"),
       tile_size:   (32.0, 32.0),
+    ),
+
+    enemies: (
+      gravity: (0.0, -500.0),
+      normal:  (
+        health:        100.0,
+        damage:        10.0,
+        max_velocity:  (Some(75.0), Some(500.0)),
+        decr_velocity: (2000.0, 1000.0),
+      )
     )
 )

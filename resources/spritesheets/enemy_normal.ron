@@ -1,0 +1,36 @@
+(
+  spritesheet_width:  320,
+  spritesheet_height: 64,
+  sprites: [
+    ( // 0 - idle 0
+      x:      0,
+      y:      0,
+      width:  64,
+      height: 64,
+    ),
+    ( // 1 - idle 1
+      x:      64,
+      y:      0,
+      width:  64,
+      height: 64,
+    ),
+    ( // 2 - idle 2
+      x:      128,
+      y:      0,
+      width:  64,
+      height: 64,
+    ),
+    ( // 3 - idle 3
+      x:      192,
+      y:      0,
+      width:  64,
+      height: 64,
+    ),
+    ( // 4 - idle 4
+      x:      256,
+      y:      0,
+      width:  64,
+      height: 64,
+    ),
+  ],
+)

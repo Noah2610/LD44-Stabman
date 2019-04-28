@@ -14,9 +14,11 @@ const PLAYER_Z: f32 = 0.5;
 const CAMERA_Z: f32 = 10.0;
 const TILE_Z: f32 = 0.0;
 const PARALLAX_Z: f32 = -1.0;
+const ENEMY_Z: f32 = 0.25;
 const SPRITESHEET_DIR: &str = "spritesheets";
 const PLAYER_SPRITESHEET_FILENAME: &str = "player.png";
 const BACKGROUNDS_DIR: &str = "textures/bg";
+const ENEMY_NORMAL_SPRITESHEET_FILENAME: &str = "enemy_normal.png";
 
 struct SpriteData {
     pub spritesheet_path: String,
@@ -44,6 +46,7 @@ pub struct LevelLoader {
     player_data:   Option<EntityData>,
     tiles_data:    Vec<EntityData>,
     parallax_data: Vec<EntityData>,
+    enemies_data:  Vec<EntityData>,
 }
 
 impl LevelLoader {
@@ -55,6 +58,7 @@ impl LevelLoader {
             player_data:   None,
             tiles_data:    Vec::new(),
             parallax_data: Vec::new(),
+            enemies_data:  Vec::new(),
         }
     }
 
@@ -87,6 +91,7 @@ impl LevelLoader {
         self.build_camera(data);
         self.build_tiles(data);
         self.build_parallax(data);
+        self.build_enemies(data);
     }
 
     fn load_objects(&mut self, json: &JsonValue) {
@@ -108,18 +113,26 @@ impl LevelLoader {
                 ),
                 &object_data["properties"],
             ) {
+                let pos = (x, y).into();
+                let size = (w, h).into();
                 match obj_type {
                     "Player" => {
                         self.player_data = Some(EntityData {
-                            pos:        (x, y).into(),
-                            size:       (w, h).into(),
+                            pos:        pos,
+                            size:       size,
                             properties: properties.clone(),
                             graphic:    None,
                         })
                     }
                     "Parallax" => self.parallax_data.push(EntityData {
-                        pos:        (x, y).into(),
-                        size:       (w, h).into(),
+                        pos:        pos,
+                        size:       size,
+                        properties: properties.clone(),
+                        graphic:    None,
+                    }),
+                    "Enemy" => self.enemies_data.push(EntityData {
+                        pos:        pos,
+                        size:       size,
                         properties: properties.clone(),
                         graphic:    None,
                     }),
@@ -480,6 +493,104 @@ impl LevelLoader {
 
                 entity.build();
             }
+        }
+    }
+
+    fn build_enemies<T>(&mut self, data: &mut StateData<CustomGameData<T>>) {
+        let settings = data.world.settings();
+
+        for EntityData {
+            pos,
+            size,
+            properties,
+            graphic: _,
+        } in &self.enemies_data
+        {
+            let (
+                enemy_type,
+                enemy_settings,
+                (spritesheet_handle, sprite_render),
+                animations_container,
+            ) = {
+                let mut spritesheet_handles =
+                    data.world.write_resource::<SpriteSheetHandles>();
+
+                match properties["enemy_type"].as_str().expect(
+                    "`enemy_type` property must be given for object of type \
+                     `Enemy`",
+                ) {
+                    "Normal" => {
+                        let (spritesheet_handle, sprite_render) = {
+                            let handle = spritesheet_handles.get_or_load(
+                                resource(format!(
+                                    "{}/{}",
+                                    SPRITESHEET_DIR,
+                                    ENEMY_NORMAL_SPRITESHEET_FILENAME
+                                )),
+                                data.world,
+                            );
+                            (handle.clone(), SpriteRender {
+                                sprite_sheet:  handle,
+                                sprite_number: 0,
+                            })
+                        };
+                        (
+                            EnemyType::Normal(NormalEnemy::default()),
+                            settings.enemies.normal.clone(),
+                            (spritesheet_handle.clone(), sprite_render),
+                            AnimationsContainer::new()
+                                .insert(
+                                    "idle",
+                                    Animation::new()
+                                        .default_sprite_sheet_handle(
+                                            spritesheet_handle.clone(),
+                                        )
+                                        .default_delay_ms(150)
+                                        .sprite_ids(vec![0, 1, 2, 3, 4])
+                                        .build(),
+                                )
+                                .insert(
+                                    "walking",
+                                    Animation::new()
+                                        .default_sprite_sheet_handle(
+                                            spritesheet_handle.clone(),
+                                        )
+                                        .default_delay_ms(150)
+                                        .sprite_ids(vec![2, 3, 4, 3])
+                                        .build(),
+                                )
+                                .current("idle")
+                                .build(),
+                        )
+                    }
+                    t => panic!(format!("EnemyType '{}' does not exist", t)),
+                }
+            };
+
+            let mut transform = Transform::default();
+            transform.set_xyz(
+                pos.0,
+                pos.1,
+                properties[PROPERTY_Z_KEY].as_f32().unwrap_or(ENEMY_Z),
+            );
+
+            data.world
+                .create_entity()
+                .with(transform)
+                .with(Size::from(*size))
+                .with(Velocity::default())
+                .with(MaxVelocity::from(enemy_settings.max_velocity))
+                .with(DecreaseVelocity::from(enemy_settings.decr_velocity))
+                .with(Gravity::from(settings.enemies.gravity))
+                .with(Collision::new())
+                .with(Solid)
+                .with(ScaleOnce)
+                .with(Enemy::new(enemy_type, enemy_settings))
+                .with(sprite_render)
+                .with(Flipped::None)
+                .with(animations_container)
+                .with(Transparent)
+                .build();
         }
     }
 }

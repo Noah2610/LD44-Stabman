@@ -6,6 +6,6 @@
     "quit":          [ [Key(Escape)], [Key(Q)], ],
     "pause":         [ [Key(P)], ],
     "player_jump":   [ [Key(Space)], [Key(W)], [Key(K)], ],
-    "player_attack": [ [Key(J),], [Key(LShift)], ],
+    "player_attack": [ [Key(J),], ],
   },
 )

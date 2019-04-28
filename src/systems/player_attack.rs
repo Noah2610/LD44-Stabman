@@ -87,11 +87,14 @@ impl<'a> System<'a> for PlayerAttackSystem {
                 attack_transform.set_x(pos.0);
                 attack_transform.set_y(pos.1);
 
-                // Play animation, set active state, insert/remove Hidden component
+                // Play animation, set active state, insert/remove Hidden component,
+                // and actual attack/hit logic
                 if is_attacking {
                     attack.active = true;
                     attack_animations_container.play("attack_default");
                     hiddens.remove(attack_entity);
+
+                // TODO: Attacking logic
                 } else {
                     attack.active = false;
                     attack_animations_container.play_once = None;
