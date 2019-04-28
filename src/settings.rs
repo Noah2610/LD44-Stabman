@@ -32,20 +32,21 @@ pub struct SettingsCamera {
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsPlayer {
-    pub size:                 Vector,
-    pub acceleration:         Vector,
-    pub jump_strength:        f32,
-    pub decr_jump_strength:   f32,
-    pub min_jump_velocity:    f32,
-    pub max_velocity:         (Option<f32>, Option<f32>),
-    pub decr_velocity:        Vector,
-    pub gravity:              Vector,
-    pub jump_gravity:         Vector,
-    pub slide_strength:       f32,
-    pub quick_turnaround:     SettingsPlayerQuickTurnaround,
-    pub air_quick_turnaround: SettingsPlayerQuickTurnaround,
-    pub health:               f32,
-    pub damage:               f32,
+    pub size:                       Vector,
+    pub acceleration:               Vector,
+    pub jump_strength:              f32,
+    pub decr_jump_strength:         f32,
+    pub min_jump_velocity:          f32,
+    pub max_velocity:               (Option<f32>, Option<f32>),
+    pub decr_velocity:              Vector,
+    pub gravity:                    Vector,
+    pub jump_gravity:               Vector,
+    pub slide_strength:             f32,
+    pub quick_turnaround:           SettingsPlayerQuickTurnaround,
+    pub air_quick_turnaround:       SettingsPlayerQuickTurnaround,
+    pub decrease_x_velocity_in_air: bool,
+    pub health:                     f32,
+    pub damage:                     f32,
 }
 
 #[derive(Clone)]
@@ -80,6 +81,7 @@ pub struct SettingsEnemy {
     pub health:        f32,
     pub damage:        f32,
     pub reward:        f32,
+    pub knockback:     Vector,
     pub max_velocity:  (Option<f32>, Option<f32>),
     pub decr_velocity: Vector,
 }

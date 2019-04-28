@@ -143,7 +143,13 @@ fn build_game_data<'a, 'b>(
             "move_entities_system",
             "collision_system",
             "player_system",
-        ])?;
+        ])?
+        .with(
+            "ingame",
+            PlayerTakeDamageSystem,
+            "player_take_damage_system",
+            &["move_entities_system", "collision_system", "player_system"],
+        )?;
     Ok(game_data)
 }
 

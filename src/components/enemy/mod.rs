@@ -7,6 +7,7 @@ pub mod prelude {
 }
 
 use super::component_prelude::*;
+use super::Player;
 use crate::settings::SettingsEnemy;
 
 pub enum EnemyType {
@@ -18,6 +19,7 @@ pub struct Enemy {
     pub health:     f32,
     pub damage:     f32,
     pub reward:     f32,
+    pub knockback:  Vector,
 }
 
 impl Enemy {
@@ -27,7 +29,12 @@ impl Enemy {
             health:     settings.health,
             damage:     settings.damage,
             reward:     settings.reward,
+            knockback:  settings.knockback,
         }
+    }
+
+    pub fn deal_damage_to(&self, player: &mut Player) {
+        player.take_damage(self.damage);
     }
 
     pub fn take_damage(&mut self, damage: f32) {

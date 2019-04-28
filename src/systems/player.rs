@@ -70,7 +70,12 @@ impl<'a> System<'a> for PlayerSystem {
                 &sides_touching,
             );
 
-            handle_on_ground(player, velocity, &sides_touching);
+            handle_on_ground_and_in_air(
+                player,
+                velocity,
+                decr_velocity,
+                &sides_touching,
+            );
 
             handle_move(
                 dt,
@@ -213,10 +218,11 @@ fn handle_jump(
     }
 }
 
-/// Handle some specifics when player is standing on solid ground.
-fn handle_on_ground(
+/// Handle some specifics when player is standing on solid ground vs when in air.
+fn handle_on_ground_and_in_air(
     player: &mut Player,
     velocity: &mut Velocity,
+    decr_velocity: &mut DecreaseVelocity,
     sides_touching: &SidesTouching,
 ) {
     // Reset y velocity to 0 when standing on solid ground
@@ -225,6 +231,11 @@ fn handle_on_ground(
         || (sides_touching.is_touching_top && velocity.y > 0.0)
     {
         velocity.y = 0.0;
+    }
+    // Don't decrease velocity when in air.
+    if !player.decrease_x_velocity_in_air && !sides_touching.is_touching_bottom
+    {
+        decr_velocity.dont_decrease_x();
     }
 }
 
