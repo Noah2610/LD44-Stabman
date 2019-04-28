@@ -53,6 +53,10 @@ Settings(
         quick_turnaround:     0,
         /// Turning around behavior when in mid air.
         air_quick_turnaround: 0,
+        /// Player starting health (there is no max health)
+        health:               50.0,
+        /// Player damage
+        damage:               25.0,
     ),
 
     loading_text: (
@@ -72,6 +76,7 @@ Settings(
       normal:  (
         health:        100.0,
         damage:        10.0,
+        reward:        10.0,
         max_velocity:  (Some(75.0), Some(500.0)),
         decr_velocity: (2000.0, 1000.0),
       )

@@ -8,12 +8,14 @@ impl<'a> System<'a> for PlayerAttackSystem {
     type SystemData = (
         Entities<'a>,
         ReadStorage<'a, Size>,
+        ReadStorage<'a, Collision>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, PlayerAttack>,
         WriteStorage<'a, Transform>,
         WriteStorage<'a, AnimationsContainer>,
         WriteStorage<'a, Flipped>,
         WriteStorage<'a, Hidden>,
+        WriteStorage<'a, Enemy>,
     );
 
     fn run(
@@ -21,12 +23,14 @@ impl<'a> System<'a> for PlayerAttackSystem {
         (
             entities,
             sizes,
+            collisions,
             mut players,
             mut player_attacks,
             mut transforms,
             mut animations_containers,
             mut flippeds,
             mut hiddens,
+            mut enemies,
         ): Self::SystemData,
     ) {
         // Get some player data
@@ -55,6 +59,8 @@ impl<'a> System<'a> for PlayerAttackSystem {
         if let Some((is_attacking, player_pos, player_size, player_flipped)) =
             player_data_opt
         {
+            let mut attack_id_opt = None;
+
             for (
                 attack_entity,
                 attack,
@@ -70,35 +76,79 @@ impl<'a> System<'a> for PlayerAttackSystem {
             )
                 .join()
             {
-                // Move PlayerAttack's transform
-                let mut pos = player_pos.clone();
-                match player_flipped {
-                    Flipped::None => {
-                        pos.0 += player_size.0;
-                    }
-                    Flipped::Horizontal => {
-                        pos.0 -= player_size.0;
-                    }
-                    _ => (),
-                }
-                if *attack_flipped != player_flipped {
-                    *attack_flipped = player_flipped.clone();
-                }
-                attack_transform.set_x(pos.0);
-                attack_transform.set_y(pos.1);
+                attack_id_opt = Some(attack_entity.id());
 
-                // Play animation, set active state, insert/remove Hidden component,
-                // and actual attack/hit logic
                 if is_attacking {
+                    // Move PlayerAttack's transform
+                    let mut pos = player_pos.clone();
+                    match player_flipped {
+                        Flipped::None => {
+                            pos.0 += player_size.0;
+                        }
+                        Flipped::Horizontal => {
+                            pos.0 -= player_size.0;
+                        }
+                        _ => (),
+                    }
+                    if *attack_flipped != player_flipped {
+                        *attack_flipped = player_flipped.clone();
+                    }
+                    attack_transform.set_x(pos.0);
+                    attack_transform.set_y(pos.1);
                     attack.active = true;
                     attack_animations_container.play("attack_default");
                     hiddens.remove(attack_entity);
-
-                // TODO: Attacking logic
                 } else {
+                    // Hacky: move PlayerAttack way off screen, so collision data is unset
+                    attack_transform.set_x(-1000.0);
+                    attack_transform.set_y(-1000.0);
                     attack.active = false;
                     attack_animations_container.play_once = None;
                     hiddens.insert(attack_entity, Hidden).unwrap();
+                }
+            }
+
+            // Actual attacking logic
+            if let Some(attack_id) = attack_id_opt {
+                // Enemies to remove, below
+                let mut enemies_to_delete = Vec::new();
+
+                for player in (&mut players).join() {
+                    for (attack, attack_collision) in
+                        (&player_attacks, &collisions).join()
+                    {
+                        for (enemy_entity, enemy, enemy_animations_container) in
+                            (
+                                &entities,
+                                &mut enemies,
+                                &mut animations_containers,
+                            )
+                                .join()
+                        {
+                            let enemy_id = enemy_entity.id();
+                            // Attack enemy
+                            if attack.active {
+                                if let Some(collision::Data {
+                                    side: Side::Inner,
+                                    state: collision::State::Enter,
+                                    ..
+                                }) =
+                                    attack_collision.collision_with(enemy_id)
+                                {
+                                    player.deal_damage_to(enemy);
+                                    if enemy.is_dead() {
+                                        player.gain_reward(enemy.reward);
+                                        enemies_to_delete.push(enemy_entity);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Remove killed enemies
+                for enemy in enemies_to_delete {
+                    entities.delete(enemy).unwrap();
                 }
             }
         }

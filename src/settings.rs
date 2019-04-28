@@ -44,6 +44,8 @@ pub struct SettingsPlayer {
     pub slide_strength:       f32,
     pub quick_turnaround:     SettingsPlayerQuickTurnaround,
     pub air_quick_turnaround: SettingsPlayerQuickTurnaround,
+    pub health:               f32,
+    pub damage:               f32,
 }
 
 #[derive(Clone)]
@@ -77,6 +79,7 @@ pub struct SettingsEnemies {
 pub struct SettingsEnemy {
     pub health:        f32,
     pub damage:        f32,
+    pub reward:        f32,
     pub max_velocity:  (Option<f32>, Option<f32>),
     pub decr_velocity: Vector,
 }

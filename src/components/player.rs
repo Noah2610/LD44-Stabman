@@ -1,4 +1,5 @@
 use super::component_prelude::*;
+use super::Enemy;
 
 pub struct Player {
     pub acceleration:         Vector,
@@ -12,6 +13,8 @@ pub struct Player {
     pub slide_strength:       f32,
     pub quick_turnaround:     SettingsPlayerQuickTurnaround,
     pub air_quick_turnaround: SettingsPlayerQuickTurnaround,
+    pub health:               f32,
+    pub damage:               f32,
     pub is_attacking:         bool,
 }
 
@@ -29,8 +32,18 @@ impl Player {
             slide_strength:       settings.slide_strength,
             quick_turnaround:     settings.quick_turnaround,
             air_quick_turnaround: settings.air_quick_turnaround,
+            health:               settings.health,
+            damage:               settings.damage,
             is_attacking:         false,
         }
+    }
+
+    pub fn deal_damage_to(&self, enemy: &mut Enemy) {
+        enemy.take_damage(self.damage);
+    }
+
+    pub fn gain_reward(&mut self, reward: f32) {
+        self.health += reward;
     }
 }
 

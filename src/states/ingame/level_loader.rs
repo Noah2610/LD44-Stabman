@@ -291,6 +291,7 @@ impl LevelLoader {
                 .with(Transparent)
                 .with(size)
                 .with(ScaleOnce)
+                .with(Collision::new())
                 .with(CheckCollision)
                 .with(
                     AnimationsContainer::new()
@@ -557,6 +558,16 @@ impl LevelLoader {
                                         )
                                         .default_delay_ms(150)
                                         .sprite_ids(vec![2, 3, 4, 3])
+                                        .build(),
+                                )
+                                .insert(
+                                    "hit",
+                                    Animation::new()
+                                        .default_sprite_sheet_handle(
+                                            spritesheet_handle.clone(),
+                                        )
+                                        .default_delay_ms(50)
+                                        .sprite_ids(vec![3, 4])
                                         .build(),
                                 )
                                 .current("idle")
