@@ -16,9 +16,9 @@ pub enum EnemyType {
 
 pub struct Enemy {
     pub enemy_type: EnemyType,
-    pub health:     f32,
-    pub damage:     f32,
-    pub reward:     f32,
+    pub health:     u32,
+    pub damage:     u32,
+    pub reward:     u32,
     pub knockback:  Vector,
 }
 
@@ -37,16 +37,20 @@ impl Enemy {
         player.take_damage(self.damage);
     }
 
-    pub fn take_damage(&mut self, damage: f32) {
-        self.health -= damage;
+    pub fn take_damage(&mut self, damage: u32) {
+        if (self.health as i32) - (damage as i32) >= 0 {
+            self.health -= damage;
+        } else {
+            self.health = 0;
+        }
     }
 
     pub fn is_alive(&self) -> bool {
-        self.health > 0.0
+        self.health > 0
     }
 
     pub fn is_dead(&self) -> bool {
-        self.health <= 0.0
+        self.health <= 0
     }
 }
 

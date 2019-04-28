@@ -15,7 +15,6 @@ const CAMERA_Z: f32 = 10.0;
 const TILE_Z: f32 = 0.0;
 const PARALLAX_Z: f32 = -1.0;
 const ENEMY_Z: f32 = 0.25;
-const SPRITESHEET_DIR: &str = "spritesheets";
 const PLAYER_SPRITESHEET_FILENAME: &str = "player.png";
 const BACKGROUNDS_DIR: &str = "textures/bg";
 const ENEMY_NORMAL_SPRITESHEET_FILENAME: &str = "enemy_normal.png";
@@ -158,10 +157,8 @@ impl LevelLoader {
                 &tile_data["properties"],
                 tile_data["ts"].as_str(),
             ) {
-                let spritesheet_path = resource(format!(
-                    "{}/{}.png",
-                    SPRITESHEET_DIR, tileset_name
-                ));
+                let spritesheet_path =
+                    resource(format!("spritesheets/{}.png", tileset_name));
 
                 self.tiles_data.push(EntityData {
                     pos:        (x, y).into(),
@@ -195,8 +192,8 @@ impl LevelLoader {
             let size = Size::from(*size);
 
             let spritesheet_path = resource(format!(
-                "{}/{}",
-                SPRITESHEET_DIR, PLAYER_SPRITESHEET_FILENAME
+                "spritesheets/{}",
+                PLAYER_SPRITESHEET_FILENAME
             ));
             let (spritesheet_handle, sprite_render, atk_sprite_render) = {
                 let spritesheet_handle = data
@@ -524,8 +521,7 @@ impl LevelLoader {
                         let (spritesheet_handle, sprite_render) = {
                             let handle = spritesheet_handles.get_or_load(
                                 resource(format!(
-                                    "{}/{}",
-                                    SPRITESHEET_DIR,
+                                    "spritesheets/{}",
                                     ENEMY_NORMAL_SPRITESHEET_FILENAME
                                 )),
                                 data.world,

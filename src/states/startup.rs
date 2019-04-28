@@ -64,8 +64,11 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Startup {
         register_components(&mut data.world);
 
         // Resources
+        let mut sprite_sheet_handles = SpriteSheetHandles::default();
+        sprite_sheet_handles
+            .load(resource("spritesheets/player_hearts.png"), &mut data.world);
         data.world.add_resource(load_settings());
-        data.world.add_resource(SpriteSheetHandles::default());
+        data.world.add_resource(sprite_sheet_handles);
         data.world.add_resource(TextureHandles::default());
         data.world.add_resource(AudioHandles::default());
         data.world.add_resource(InputManager::default());

@@ -149,6 +149,12 @@ fn build_game_data<'a, 'b>(
             PlayerTakeDamageSystem,
             "player_take_damage_system",
             &["move_entities_system", "collision_system", "player_system"],
+        )?
+        .with(
+            "ingame",
+            HealthDisplaySystem::default(),
+            "health_display_system",
+            &["player_take_damage_system"],
         )?;
     Ok(game_data)
 }

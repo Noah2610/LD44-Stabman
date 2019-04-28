@@ -14,8 +14,8 @@ pub struct Player {
     pub quick_turnaround:           SettingsPlayerQuickTurnaround,
     pub air_quick_turnaround:       SettingsPlayerQuickTurnaround,
     pub decrease_x_velocity_in_air: bool,
-    pub health:                     f32,
-    pub damage:                     f32,
+    pub health:                     u32,
+    pub damage:                     u32,
     pub is_attacking:               bool,
 }
 
@@ -44,20 +44,24 @@ impl Player {
         enemy.take_damage(self.damage);
     }
 
-    pub fn take_damage(&mut self, damage: f32) {
-        self.health -= damage;
+    pub fn take_damage(&mut self, damage: u32) {
+        if (self.health as i32) - (damage as i32) >= 0 {
+            self.health -= damage;
+        } else {
+            self.health = 0;
+        }
     }
 
-    pub fn gain_reward(&mut self, reward: f32) {
+    pub fn gain_reward(&mut self, reward: u32) {
         self.health += reward;
     }
 
     pub fn is_alive(&self) -> bool {
-        self.health > 0.0
+        self.health > 0
     }
 
     pub fn is_dead(&self) -> bool {
-        self.health <= 0.0
+        self.health <= 0
     }
 }
 
