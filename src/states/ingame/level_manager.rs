@@ -1,3 +1,5 @@
+use amethyst::ecs::{Join, ReadStorage, WriteStorage};
+
 use super::super::state_prelude::*;
 use super::level_loader::LevelLoader;
 
@@ -6,8 +8,9 @@ pub mod prelude {
 }
 
 pub struct LevelManager {
-    settings:    SettingsLevelManager,
-    level_index: usize,
+    settings:              SettingsLevelManager,
+    level_index:           usize,
+    player_checkpoint_opt: Option<Player>,
 }
 
 impl LevelManager {
@@ -15,6 +18,7 @@ impl LevelManager {
         Self {
             settings,
             level_index: 0,
+            player_checkpoint_opt: None,
         }
     }
 
@@ -38,5 +42,41 @@ impl LevelManager {
         let mut level_loader = LevelLoader::new(self.settings.clone());
         level_loader.load_level(level_filepath);
         level_loader.build(data);
+
+        // Load checkpoint / player data
+        if let Some(player_checkpoint) = &self.player_checkpoint_opt {
+            data.world.exec(|mut players: WriteStorage<Player>| {
+                if let Some(player) = (&mut players).join().next() {
+                    *player = player_checkpoint.clone();
+                }
+            });
+        }
+    }
+
+    pub fn set_player_checkpoint(
+        &mut self,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
+        self.player_checkpoint_opt =
+            data.world.exec(|players: ReadStorage<Player>| {
+                (&players).join().next().map(Clone::clone)
+            });
+    }
+
+    pub fn load_next_level(
+        &mut self,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
+        if self.has_next_level() {
+            data.world.delete_all(); // Remove _ALL_ existing entities first
+            self.level_index += 1;
+            self.load_current_level(data);
+        } else {
+            panic!("There is no next level");
+        }
+    }
+
+    pub fn has_next_level(&self) -> bool {
+        self.level_index + 1 < self.settings.level_names.len()
     }
 }

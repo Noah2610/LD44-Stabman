@@ -54,7 +54,7 @@ Settings(
         /// Turning around behavior when in mid air.
         air_quick_turnaround:       0,
         /// If the x velocity should be decreased when in air.
-        decrease_x_velocity_in_air: false,
+        decrease_x_velocity_in_air: true,
         /// Player starting health (there is no max health)
         health:                     10,
         /// Player damage
@@ -69,7 +69,7 @@ Settings(
 
     level_manager: (
       levels_dir:  "levels",
-      level_names: ("one.json"),
+      level_names: ("one.json", "two.json"),
       tile_size:   (32.0, 32.0),
     ),
 

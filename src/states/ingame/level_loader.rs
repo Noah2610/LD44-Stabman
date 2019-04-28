@@ -15,6 +15,7 @@ const CAMERA_Z: f32 = 10.0;
 const TILE_Z: f32 = 0.0;
 const PARALLAX_Z: f32 = -1.0;
 const ENEMY_Z: f32 = 0.25;
+const GOAL_Z: f32 = 0.1;
 const PLAYER_SPRITESHEET_FILENAME: &str = "player.png";
 const BACKGROUNDS_DIR: &str = "textures/bg";
 const ENEMY_NORMAL_SPRITESHEET_FILENAME: &str = "enemy_normal.png";
@@ -46,6 +47,7 @@ pub struct LevelLoader {
     tiles_data:    Vec<EntityData>,
     parallax_data: Vec<EntityData>,
     enemies_data:  Vec<EntityData>,
+    goal_data:     Option<EntityData>,
 }
 
 impl LevelLoader {
@@ -58,6 +60,7 @@ impl LevelLoader {
             tiles_data:    Vec::new(),
             parallax_data: Vec::new(),
             enemies_data:  Vec::new(),
+            goal_data:     None,
         }
     }
 
@@ -91,6 +94,7 @@ impl LevelLoader {
         self.build_tiles(data);
         self.build_parallax(data);
         self.build_enemies(data);
+        self.build_goal(data);
     }
 
     fn load_objects(&mut self, json: &JsonValue) {
@@ -135,6 +139,14 @@ impl LevelLoader {
                         properties: properties.clone(),
                         graphic:    None,
                     }),
+                    "Goal" => {
+                        self.goal_data = Some(EntityData {
+                            pos:        pos,
+                            size:       size,
+                            properties: properties.clone(),
+                            graphic:    None,
+                        })
+                    }
                     _ => (),
                 }
             }
@@ -270,6 +282,26 @@ impl LevelLoader {
                                 )
                                 .default_delay_ms(500)
                                 .sprite_ids(vec![9, 11])
+                                .build(),
+                        )
+                        .insert(
+                            "level_start",
+                            Animation::new()
+                                .default_sprite_sheet_handle(
+                                    spritesheet_handle.clone(),
+                                )
+                                .default_delay_ms(500)
+                                .sprite_ids(vec![0, 2, 10, 5])
+                                .build(),
+                        )
+                        .insert(
+                            "level_end",
+                            Animation::new()
+                                .default_sprite_sheet_handle(
+                                    spritesheet_handle.clone(),
+                                )
+                                .default_delay_ms(500)
+                                .sprite_ids(vec![5, 10, 2, 12])
                                 .build(),
                         )
                         .current("idle")
@@ -597,6 +629,31 @@ impl LevelLoader {
                 .with(Flipped::None)
                 .with(animations_container)
                 .with(Transparent)
+                .build();
+        }
+    }
+
+    fn build_goal<T>(&mut self, data: &mut StateData<CustomGameData<T>>) {
+        if let Some(EntityData {
+            pos,
+            size,
+            properties,
+            graphic: _,
+        }) = &self.goal_data
+        {
+            let mut transform = Transform::default();
+            transform.set_xyz(
+                pos.0,
+                pos.1,
+                properties[PROPERTY_Z_KEY].as_f32().unwrap_or(GOAL_Z),
+            );
+
+            data.world
+                .create_entity()
+                .with(Goal::default())
+                .with(transform)
+                .with(Size::from(*size))
+                .with(Collision::new())
                 .build();
         }
     }

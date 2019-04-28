@@ -1,8 +1,8 @@
 use super::system_prelude::*;
 
-pub struct PlayerSystem;
+pub struct PlayerControlsSystem;
 
-impl<'a> System<'a> for PlayerSystem {
+impl<'a> System<'a> for PlayerControlsSystem {
     type SystemData = (
         Entities<'a>,
         Read<'a, Time>,
@@ -10,6 +10,7 @@ impl<'a> System<'a> for PlayerSystem {
         Read<'a, InputManager>,
         ReadStorage<'a, Collision>,
         ReadStorage<'a, Solid>,
+        ReadStorage<'a, Goal>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, DecreaseVelocity>,
@@ -27,6 +28,7 @@ impl<'a> System<'a> for PlayerSystem {
             input_manager,
             collisions,
             solids,
+            goals,
             mut players,
             mut velocities,
             mut decr_velocities,
@@ -36,6 +38,12 @@ impl<'a> System<'a> for PlayerSystem {
         ): Self::SystemData,
     ) {
         let dt = time.delta_seconds();
+
+        let goal_next_level = (&goals)
+            .join()
+            .next()
+            .map(|goal| goal.next_level)
+            .unwrap_or(false);
 
         for (
             player,
@@ -77,26 +85,41 @@ impl<'a> System<'a> for PlayerSystem {
                 &sides_touching,
             );
 
-            handle_move(
-                dt,
-                &input_handler,
-                player,
-                velocity,
-                decr_velocity,
-                animations_container,
-                flipped_opt,
-                &sides_touching,
-            );
+            if player.in_control && !goal_next_level {
+                handle_move(
+                    dt,
+                    &input_handler,
+                    player,
+                    velocity,
+                    decr_velocity,
+                    animations_container,
+                    flipped_opt,
+                    &sides_touching,
+                );
 
-            handle_jump(
-                &input_manager,
-                player,
-                velocity,
-                gravity,
-                &sides_touching,
-            );
+                handle_jump(
+                    &input_manager,
+                    player,
+                    velocity,
+                    gravity,
+                    &sides_touching,
+                );
 
-            handle_attack(&input_manager, player, animations_container);
+                handle_attack(&input_manager, player, animations_container);
+            } else if !player.in_control && !goal_next_level {
+                // Start of a level
+                // Play the level_start animation once, then regain control
+                animations_container.set("level_start");
+                if animations_container
+                    .current
+                    .as_ref()
+                    .map(|(_, anim)| anim.has_played())
+                    .unwrap_or(true)
+                {
+                    player.in_control = true;
+                    animations_container.set("idle");
+                }
+            }
         }
     }
 }

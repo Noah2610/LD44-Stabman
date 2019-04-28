@@ -1,6 +1,7 @@
 use super::component_prelude::*;
 use super::Enemy;
 
+#[derive(Clone)]
 pub struct Player {
     pub acceleration:               Vector,
     pub air_acceleration:           Vector,
@@ -17,6 +18,7 @@ pub struct Player {
     pub health:                     u32,
     pub damage:                     u32,
     pub is_attacking:               bool,
+    pub in_control:                 bool,
 }
 
 impl Player {
@@ -37,6 +39,7 @@ impl Player {
             health:                     settings.health,
             damage:                     settings.damage,
             is_attacking:               false,
+            in_control:                 false,
         }
     }
 

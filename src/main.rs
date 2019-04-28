@@ -104,18 +104,19 @@ fn build_game_data<'a, 'b>(
         ])?
         .with_core(ScaleSpritesSystem, "scale_sprites_system", &[])?
         .with_core(DebugSystem::default(), "debug_system", &[])?
-        .with("ingame", PlayerSystem, "player_system", &[])?
+        .with("ingame", PlayerControlsSystem, "player_controls_system", &[
+        ])?
         .with("ingame", GravitySystem, "gravity_system", &[])?
         .with(
             "ingame",
             LimitVelocitiesSystem,
             "limit_velocities_system",
-            &["gravity_system", "player_system"],
+            &["gravity_system", "player_controls_system"],
         )?
         .with("ingame", MoveEntitiesSystem, "move_entities_system", &[
             "gravity_system",
             "limit_velocities_system",
-            "player_system",
+            "player_controls_system",
         ])?
         .with("ingame", CameraSystem, "camera_system", &[
             "move_entities_system",
@@ -135,27 +136,35 @@ fn build_game_data<'a, 'b>(
                 "gravity_system",
                 "limit_velocities_system",
                 "move_entities_system",
-                "player_system",
+                "player_controls_system",
             ],
         )?
         .with("ingame", AnimationSystem, "animation_system", &[])?
         .with("ingame", PlayerAttackSystem, "player_attack_system", &[
             "move_entities_system",
             "collision_system",
-            "player_system",
+            "player_controls_system",
         ])?
         .with(
             "ingame",
             PlayerTakeDamageSystem,
             "player_take_damage_system",
-            &["move_entities_system", "collision_system", "player_system"],
+            &[
+                "move_entities_system",
+                "collision_system",
+                "player_controls_system",
+            ],
         )?
         .with(
             "ingame",
             HealthDisplaySystem::default(),
             "health_display_system",
             &["player_take_damage_system"],
-        )?;
+        )?
+        .with("ingame", GoalSystem, "goal_system", &[
+            "move_entities_system",
+            "collision_system",
+        ])?;
     Ok(game_data)
 }
 
