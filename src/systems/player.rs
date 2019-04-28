@@ -90,6 +90,8 @@ impl<'a> System<'a> for PlayerSystem {
                 gravity,
                 &sides_touching,
             );
+
+            handle_attack(&input_manager, player, animations_container);
         }
     }
 }
@@ -223,6 +225,17 @@ fn handle_on_ground(
         || (sides_touching.is_touching_top && velocity.y > 0.0)
     {
         velocity.y = 0.0;
+    }
+}
+
+fn handle_attack(
+    input_manager: &InputManager,
+    player: &mut Player,
+    animations_container: &mut AnimationsContainer,
+) {
+    if input_manager.is_down("player_attack") {
+        // Play attack animation
+        animations_container.play("attack");
     }
 }
 

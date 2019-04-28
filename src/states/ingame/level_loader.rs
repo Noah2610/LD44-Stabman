@@ -222,7 +222,7 @@ impl LevelLoader {
                                     spritesheet_handle.clone(),
                                 )
                                 .default_delay_ms(500)
-                                .sprite_ids(vec![0, 1, 2, 3])
+                                .sprite_ids(vec![0, 1])
                                 .build(),
                         )
                         .insert(
@@ -231,8 +231,8 @@ impl LevelLoader {
                                 .default_sprite_sheet_handle(
                                     spritesheet_handle.clone(),
                                 )
-                                .default_delay_ms(500)
-                                .sprite_ids(vec![4, 5, 6, 7])
+                                .default_delay_ms(100)
+                                .sprite_ids(vec![2, 3, 4, 5, 6, 7])
                                 .build(),
                         )
                         .insert(
@@ -245,8 +245,15 @@ impl LevelLoader {
                                 .sprite_ids(vec![8])
                                 .build(),
                         )
+                        .insert(
+                            "attack",
+                            Animation::new()
+                                .default_sprite_sheet_handle(spritesheet_handle)
+                                .default_delay_ms(500)
+                                .sprite_ids(vec![9, 11])
+                                .build(),
+                        )
                         .current("idle")
-                        // TODO: Attacking animation
                         .build(),
                 )
                 .with(Flipped::None)

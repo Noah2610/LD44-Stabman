@@ -7,7 +7,7 @@ Settings(
         /// Rectangle in the center of the window, where the camera smoothly scrolls to player;
         /// Outside of this rectangle, the camera instantly snaps to where player is back inside.
         /// Basically, the player can never be outside of this inner rectangle.
-        inner_size:       (300.0,       200.0),
+        inner_size:       (200.0,       100.0),
         /// Camera's smooth scroll speed multiplier.
         base_speed:       (250.0,       250.0),
         /// Pixel padding, in which camera will stop scrolling to player.

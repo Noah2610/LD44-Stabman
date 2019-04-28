@@ -14,38 +14,38 @@
       width:  32,
       height: 64,
     ),
-    ( // 2 - idle 2
-      x:      64,
-      y:      0,
-      width:  32,
-      height: 64,
-    ),
-    ( // 3 - idle 3
-      x:      96,
-      y:      0,
-      width:  32,
-      height: 64,
-    ),
-    ( // 4 - walking 0
+    ( // 2 - walking 0
       x:      0,
       y:      64,
       width:  32,
       height: 64,
     ),
-    ( // 5 - walking 1
+    ( // 3 - walking 1
       x:      32,
       y:      64,
       width:  32,
       height: 64,
     ),
-    ( // 6 - walking 2
+    ( // 4 - walking 2
       x:      64,
       y:      64,
       width:  32,
       height: 64,
     ),
-    ( // 7 - walking 3
+    ( // 5 - walking 3
       x:      96,
+      y:      64,
+      width:  32,
+      height: 64,
+    ),
+    ( // 6 - walking 4
+      x:      128,
+      y:      64,
+      width:  32,
+      height: 64,
+    ),
+    ( // 7 - walking 5
+      x:      160,
       y:      64,
       width:  32,
       height: 64,
