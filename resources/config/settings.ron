@@ -60,7 +60,7 @@ Settings(
         /// Player starting health (there is no max health)
         health:                     10,
         /// Player damage
-        damage:                     25,
+        damage:                     2,
     ),
 
     loading_text: (
@@ -78,7 +78,7 @@ Settings(
     enemies: (
       gravity: (0.0, -500.0),
       normal:  (
-        health:                100,
+        health:                10,
         damage:                1,
         reward:                10,
         knockback:             (500.0, 200.0),
@@ -100,9 +100,16 @@ Settings(
       knockback: (
         cost: 8,
       ),
+      bullet_shoot: (
+        cost: 8,
+      ),
 
       settings: (
-        knockback_strength: (1000.0, 500.0),
+        knockback_strength:       (1000.0, 500.0),
+        bullet_shoot_damage:      1,
+        bullet_shoot_velocity:    (500.0, 0.0),
+        bullet_shoot_size:        (16.0, 16.0),
+        bullet_shoot_lifetime_ms: 5000,
       )
     ),
 )

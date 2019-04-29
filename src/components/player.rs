@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use super::component_prelude::*;
 use super::Enemy;
 
@@ -8,6 +10,11 @@ pub struct ItemsData {
     pub can_wall_jump:    bool,
     pub knockback:        Vector,
     pub has_knockback:    bool,
+    pub can_shoot:        bool,
+    pub bullet_damage:    u32,
+    pub bullet_velocity:  Vector,
+    pub bullet_size:      Vector,
+    pub bullet_lifetime:  Duration,
 }
 
 #[derive(Clone)]

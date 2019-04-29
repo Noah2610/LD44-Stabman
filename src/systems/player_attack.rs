@@ -115,8 +115,6 @@ impl<'a> System<'a> for PlayerAttackSystem {
             // Actual attacking logic
             if let Some(attack_id) = attack_id_opt {
                 let now = Instant::now();
-                // Enemies to remove, below
-                let mut enemies_to_delete = Vec::new();
 
                 for player in (&mut players).join() {
                     for (attack, attack_collision, player_flipped) in
@@ -159,19 +157,10 @@ impl<'a> System<'a> for PlayerAttackSystem {
                                         enemy_velocity.y =
                                             player.items_data.knockback.1;
                                     }
-                                    if enemy.is_dead() {
-                                        player.gain_reward(enemy.reward);
-                                        enemies_to_delete.push(enemy_entity);
-                                    }
                                 }
                             }
                         }
                     }
-                }
-
-                // Remove killed enemies
-                for enemy in enemies_to_delete {
-                    entities.delete(enemy).unwrap();
                 }
             }
         }

@@ -95,10 +95,11 @@ pub struct SettingsEnemy {
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsItems {
-    pub extra_jump: SettingsItem,
-    pub wall_jump:  SettingsItem,
-    pub knockback:  SettingsItem,
-    pub settings:   SettingsItemSettings,
+    pub extra_jump:   SettingsItem,
+    pub wall_jump:    SettingsItem,
+    pub knockback:    SettingsItem,
+    pub bullet_shoot: SettingsItem,
+    pub settings:     SettingsItemSettings,
 }
 
 #[derive(Clone, Deserialize)]
@@ -108,7 +109,11 @@ pub struct SettingsItem {
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsItemSettings {
-    pub knockback_strength: Vector,
+    pub knockback_strength:       Vector,
+    pub bullet_shoot_damage:      u32,
+    pub bullet_shoot_velocity:    Vector,
+    pub bullet_shoot_size:        Vector,
+    pub bullet_shoot_lifetime_ms: u64,
 }
 
 struct QTAVisitor;

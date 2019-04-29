@@ -10,11 +10,11 @@ impl<'a> System<'a> for EnemyAiSystem {
     type SystemData = (
         Entities<'a>,
         Read<'a, Time>,
-        ReadStorage<'a, Player>,
         ReadStorage<'a, EnemyAi>,
         ReadStorage<'a, Transform>,
         ReadStorage<'a, Solid>,
         WriteStorage<'a, Enemy>,
+        WriteStorage<'a, Player>,
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, Flipped>,
         WriteStorage<'a, DecreaseVelocity>,
@@ -26,35 +26,34 @@ impl<'a> System<'a> for EnemyAiSystem {
         (
             entities,
             time,
-            players,
             enemy_ais,
             transforms,
             solids,
             mut enemies,
+            mut players,
             mut velocities,
             mut flippeds,
             mut decrease_velocities,
             mut max_velocities,
         ): Self::SystemData,
     ) {
-        if let Some(player_data) =
-            (&players, &transforms)
-                .join()
-                .find_map(|(player, transform)| {
-                    if player.in_control {
-                        Some(PlayerData {
-                            player,
-                            pos: transform.into(),
-                        })
-                    } else {
-                        None
-                    }
-                })
-        {
+        if let Some(player_data) = (&mut players, &transforms).join().find_map(
+            |(player, transform)| {
+                if player.in_control {
+                    Some(PlayerData {
+                        player,
+                        pos: transform.into(),
+                    })
+                } else {
+                    None
+                }
+            },
+        ) {
             let dt = time.delta_seconds();
             let now = Instant::now();
 
             for (
+                enemy_entity,
                 enemy,
                 enemy_ai,
                 enemy_transform,
@@ -63,6 +62,7 @@ impl<'a> System<'a> for EnemyAiSystem {
                 enemy_decr_vel,
                 enemy_max_vel,
             ) in (
+                &entities,
                 &mut enemies,
                 &enemy_ais,
                 &transforms,
@@ -105,6 +105,12 @@ impl<'a> System<'a> for EnemyAiSystem {
                         enemy_max_vel.dont_limit_x();
                     }
                 }
+
+                // Handle enemy death
+                if enemy.is_dead() {
+                    player_data.player.gain_reward(enemy.reward);
+                    entities.delete(enemy_entity).unwrap();
+                }
             }
         }
     }
@@ -134,6 +140,6 @@ fn run_for_tracer_ai<'a>(
 }
 
 struct PlayerData<'a> {
-    pub player: &'a Player,
+    pub player: &'a mut Player,
     pub pos:    Vector,
 }
