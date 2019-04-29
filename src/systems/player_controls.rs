@@ -1,10 +1,12 @@
 use super::system_prelude::*;
+use crate::settings::prelude::*;
 
 pub struct PlayerControlsSystem;
 
 impl<'a> System<'a> for PlayerControlsSystem {
     type SystemData = (
         Entities<'a>,
+        ReadExpect<'a, Settings>,
         Read<'a, Time>,
         Read<'a, InputHandler<String, String>>,
         Read<'a, InputManager>,
@@ -24,6 +26,7 @@ impl<'a> System<'a> for PlayerControlsSystem {
         &mut self,
         (
             entities,
+            settings,
             time,
             input_handler,
             input_manager,
@@ -109,7 +112,8 @@ impl<'a> System<'a> for PlayerControlsSystem {
 
                 handle_attack(&input_manager, player, animations_container);
 
-                handle_item_pickup(
+                handle_item_purchase(
+                    &settings.items,
                     &entities,
                     &input_manager,
                     player,
@@ -233,18 +237,37 @@ fn handle_jump(
     gravity: &mut Gravity,
     sides_touching: &SidesTouching,
 ) {
-    let can_jump = input_manager.is_down("player_jump")
-        && (sides_touching.is_touching_bottom || player.has_extra_jump());
+    let jump_btn_down = input_manager.is_down("player_jump");
+    let can_wall_jump = player.items_data.can_wall_jump
+        && jump_btn_down
+        && sides_touching.is_touching_horizontally();
+    let can_jump = jump_btn_down
+        && (sides_touching.is_touching_bottom || player.has_extra_jump())
+        && !can_wall_jump;
+    let mut jumped = false;
     if can_jump {
         // Jump
         velocity.y += player.jump_strength;
-        // Set different gravity when jumping
-        gravity.x = player.jump_gravity.0;
-        gravity.y = player.jump_gravity.1;
         // Was an extra jump
         if !sides_touching.is_touching_bottom {
             player.items_data.used_extra_jumps += 1;
         }
+        jumped = true;
+    } else if can_wall_jump {
+        // Wall jump
+        velocity.y += player.wall_jump_strength.1;
+        if sides_touching.is_touching_left {
+            velocity.x += player.wall_jump_strength.0;
+        } else if sides_touching.is_touching_right {
+            velocity.x -= player.wall_jump_strength.0;
+        }
+        jumped = true;
+    }
+
+    if jumped {
+        // Set different gravity when jumping
+        gravity.x = player.jump_gravity.0;
+        gravity.y = player.jump_gravity.1;
     } else if input_manager.is_up("player_jump") {
         // Kill some of the upwards momentum, keeping at least a certain minimum velocity
         if velocity.y > player.decr_jump_strength {
@@ -296,7 +319,8 @@ fn handle_attack(
     }
 }
 
-fn handle_item_pickup<'a>(
+fn handle_item_purchase<'a>(
+    settings: &SettingsItems,
     entities: &Entities<'a>,
     input_manager: &InputManager,
     player: &mut Player,
@@ -310,7 +334,6 @@ fn handle_item_pickup<'a>(
         let item_id = item_entity.id();
         if let Some(collision::Data {
             state: collision::State::Steady,
-            side: Side::Inner,
             ..
         }) = player_collision.collision_with(item_id)
         {
@@ -318,6 +341,7 @@ fn handle_item_pickup<'a>(
                 // Pickup item
                 item.apply(player);
                 entities.delete(item_entity);
+                player.take_damage(item.cost(settings));
             }
         }
     }

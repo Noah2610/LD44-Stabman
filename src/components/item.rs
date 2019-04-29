@@ -5,12 +5,14 @@ use deathframe::handlers::SpriteSheetHandles;
 use super::component_prelude::*;
 use super::Player;
 use crate::resource_helpers::*;
+use crate::settings::SettingsItems;
 
 const SPRITESHEET_FILENAME: &str = "items.png";
 
 #[derive(Clone, PartialEq)]
 pub enum Item {
     ExtraJump,
+    WallJump,
 }
 
 impl Item {
@@ -19,7 +21,21 @@ impl Item {
             Item::ExtraJump => {
                 player.items_data.extra_jumps += 1;
             }
+            Item::WallJump => {
+                player.items_data.can_wall_jump = true;
+            }
         }
+    }
+
+    pub fn settings(&self, settings: &SettingsItems) -> SettingsItem {
+        match self {
+            Item::ExtraJump => settings.extra_jump.clone(),
+            Item::WallJump => settings.wall_jump.clone(),
+        }
+    }
+
+    pub fn cost(&self, settings: &SettingsItems) -> u32 {
+        self.settings(settings).cost
     }
 
     pub fn sprite_id(&self) -> usize {
@@ -52,6 +68,7 @@ where
     fn from(name: T) -> Self {
         match name.to_string().as_str() {
             "ExtraJump" => Item::ExtraJump,
+            "WallJump" => Item::WallJump,
             n => panic!(format!("Item '{}' does not exist", n)),
         }
     }

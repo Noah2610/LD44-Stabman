@@ -7,6 +7,8 @@ use serde::{Deserialize, Deserializer, Serialize};
 pub mod prelude {
     pub use super::Settings;
     pub use super::SettingsCamera;
+    pub use super::SettingsItem;
+    pub use super::SettingsItems;
     pub use super::SettingsLevelManager;
     pub use super::SettingsLoadingText;
     pub use super::SettingsPlayer;
@@ -20,6 +22,7 @@ pub struct Settings {
     pub loading_text:  SettingsLoadingText,
     pub level_manager: SettingsLevelManager,
     pub enemies:       SettingsEnemies,
+    pub items:         SettingsItems,
 }
 
 #[derive(Clone, Deserialize)]
@@ -35,6 +38,7 @@ pub struct SettingsPlayer {
     pub size:                       Vector,
     pub acceleration:               Vector,
     pub jump_strength:              f32,
+    pub wall_jump_strength:         Vector,
     pub decr_jump_strength:         f32,
     pub min_jump_velocity:          f32,
     pub max_velocity:               (Option<f32>, Option<f32>),
@@ -86,6 +90,17 @@ pub struct SettingsEnemy {
     pub acceleration:     Vector,
     pub max_velocity:     (Option<f32>, Option<f32>),
     pub decr_velocity:    Vector,
+}
+
+#[derive(Clone, Deserialize)]
+pub struct SettingsItems {
+    pub extra_jump: SettingsItem,
+    pub wall_jump:  SettingsItem,
+}
+
+#[derive(Clone, Deserialize)]
+pub struct SettingsItem {
+    pub cost: u32,
 }
 
 struct QTAVisitor;

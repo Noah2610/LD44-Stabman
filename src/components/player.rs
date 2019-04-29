@@ -5,6 +5,7 @@ use super::Enemy;
 pub struct ItemsData {
     pub extra_jumps:      u32,
     pub used_extra_jumps: u32,
+    pub can_wall_jump:    bool,
 }
 
 #[derive(Clone)]
@@ -12,6 +13,7 @@ pub struct Player {
     pub acceleration:               Vector,
     pub air_acceleration:           Vector,
     pub jump_strength:              f32,
+    pub wall_jump_strength:         Vector,
     pub decr_jump_strength:         f32,
     pub min_jump_velocity:          f32,
     pub max_velocity:               (Option<f32>, Option<f32>),
@@ -34,6 +36,7 @@ impl Player {
             acceleration:               settings.acceleration,
             air_acceleration:           settings.acceleration, // TODO
             jump_strength:              settings.jump_strength,
+            wall_jump_strength:         settings.wall_jump_strength,
             decr_jump_strength:         settings.decr_jump_strength,
             min_jump_velocity:          settings.min_jump_velocity,
             max_velocity:               settings.max_velocity,

@@ -290,7 +290,7 @@ impl LevelLoader {
                                 .default_sprite_sheet_handle(
                                     spritesheet_handle.clone(),
                                 )
-                                .default_delay_ms(500)
+                                .default_delay_ms(100)
                                 .sprite_ids(vec![9, 11])
                                 .build(),
                         )
@@ -348,7 +348,7 @@ impl LevelLoader {
                             "attack_default",
                             Animation::new()
                                 .default_sprite_sheet_handle(spritesheet_handle)
-                                .default_delay_ms(500)
+                                .default_delay_ms(100)
                                 .sprite_ids(vec![10, 12])
                                 .build(),
                         )

@@ -40,48 +40,51 @@ impl<'a> System<'a> for PlayerTakeDamageSystem {
         )
             .join()
         {
-            for (enemy_entity, enemy) in (&entities, &enemies).join() {
-                let enemy_id = enemy_entity.id();
+            if player.in_control {
+                for (enemy_entity, enemy) in (&entities, &enemies).join() {
+                    let enemy_id = enemy_entity.id();
 
-                if let Some(collision::Data {
-                    side,
-                    state: collision::State::Enter,
-                    ..
-                }) = player_collision.collision_with(enemy_id)
-                {
-                    // Take damage
-                    enemy.deal_damage_to(player);
+                    if let Some(collision::Data {
+                        side,
+                        state: collision::State::Enter,
+                        ..
+                    }) = player_collision.collision_with(enemy_id)
+                    {
+                        // Take damage
+                        enemy.deal_damage_to(player);
 
-                    // Play death animation if killed
-                    if player.is_dead() {
-                        player.in_control = false;
-                        player_animations_container.play("death");
+                        // Knockback
+                        let knockback = match side {
+                            Side::Left => {
+                                (enemy.knockback.0, enemy.knockback.1)
+                            }
+                            Side::Right => {
+                                (enemy.knockback.0 * -1.0, enemy.knockback.1)
+                            }
+                            Side::Bottom | Side::Inner => (
+                                x_knockback_for_vertical_side(
+                                    enemy.knockback.0,
+                                    player_flipped,
+                                ),
+                                enemy.knockback.1,
+                            ),
+                            Side::Top => (
+                                x_knockback_for_vertical_side(
+                                    enemy.knockback.0,
+                                    player_flipped,
+                                ),
+                                enemy.knockback.1 * -1.0,
+                            ),
+                        };
+                        player_velocity.x = knockback.0;
+                        player_velocity.y = knockback.1;
                     }
+                }
 
-                    // Knockback
-                    let knockback = match side {
-                        Side::Left => (enemy.knockback.0, enemy.knockback.1),
-                        Side::Right => {
-                            (enemy.knockback.0 * -1.0, enemy.knockback.1)
-                        }
-                        Side::Bottom | Side::Inner => (
-                            x_knockback_for_vertical_side(
-                                enemy.knockback.0,
-                                player_flipped,
-                            ),
-                            enemy.knockback.1,
-                        ),
-                        Side::Top => (
-                            x_knockback_for_vertical_side(
-                                enemy.knockback.0,
-                                player_flipped,
-                            ),
-                            enemy.knockback.1 * -1.0,
-                        ),
-                    };
-                    dbg!(knockback);
-                    player_velocity.x = knockback.0;
-                    player_velocity.y = knockback.1;
+                // Play death animation if killed
+                if player.is_dead() {
+                    player.in_control = false;
+                    player_animations_container.play("death");
                 }
             }
         }
