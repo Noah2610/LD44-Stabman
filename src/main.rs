@@ -171,6 +171,9 @@ fn build_game_data<'a, 'b>(
             "decrease_velocities_system",
             "limit_velocities_system",
             "player_attack_system",
+        ])?
+        .with("ingame", BulletSystem, "bullet_system", &[
+            "move_entities_system",
         ])?;
     Ok(game_data)
 }

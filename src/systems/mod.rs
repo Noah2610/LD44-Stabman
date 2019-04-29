@@ -1,3 +1,4 @@
+mod bullet;
 mod debug;
 mod enemy_ai;
 mod goal;
@@ -9,6 +10,7 @@ mod player_take_damage;
 pub mod prelude {
     pub use deathframe::systems::prelude::*;
 
+    pub use super::bullet::BulletSystem;
     pub use super::debug::DebugSystem;
     pub use super::enemy_ai::EnemyAiSystem;
     pub use super::goal::GoalSystem;

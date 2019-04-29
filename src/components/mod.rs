@@ -1,3 +1,4 @@
+mod bullet;
 mod enemy;
 mod goal;
 mod heart;
@@ -8,6 +9,7 @@ mod player_attack;
 pub mod prelude {
     pub use deathframe::components::prelude::*;
 
+    pub use super::bullet::prelude::*;
     pub use super::enemy::prelude::*;
     pub use super::goal::Goal;
     pub use super::heart::Heart;
