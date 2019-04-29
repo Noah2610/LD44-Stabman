@@ -23,6 +23,7 @@ pub struct Settings {
     pub level_manager: SettingsLevelManager,
     pub enemies:       SettingsEnemies,
     pub items:         SettingsItems,
+    pub music_volume:  f32,
 }
 
 #[derive(Clone, Deserialize)]

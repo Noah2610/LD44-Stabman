@@ -1,4 +1,6 @@
 Settings(
+    music_volume: 0.5,
+
     camera: (
         /// Window size
         // size:             (1200.0,      800.0),
@@ -64,52 +66,52 @@ Settings(
     ),
 
     loading_text: (
-      text:      "Loading...",
-      font_file: "fonts/square.ttf",
-      font_size: 64.0,
+        text:      "Loading...",
+        font_file: "fonts/square.ttf",
+        font_size: 64.0,
     ),
 
     level_manager: (
-      levels_dir:  "levels",
-      level_names: ("one.json", "two.json"),
-      tile_size:   (32.0, 32.0),
+        levels_dir:  "levels",
+        level_names: ("one.json", "two.json"),
+        tile_size:   (32.0, 32.0),
     ),
 
     enemies: (
-      gravity: (0.0, -500.0),
-      normal:  (
-        health:                10,
-        damage:                1,
-        reward:                10,
-        knockback:             (500.0, 200.0),
-        trigger_distance:      (128.0, 128.0),
-        acceleration:          (200.0, 0.0),
-        max_velocity:          (Some(50.0), Some(500.0)),
-        decr_velocity:         (2000.0, 1000.0),
-        knockback_duration_ms: 1000,
-      ),
+        gravity: (0.0, -500.0),
+        normal:  (
+            health:                10,
+            damage:                1,
+            reward:                10,
+            knockback:             (500.0, 200.0),
+            trigger_distance:      (128.0, 128.0),
+            acceleration:          (200.0, 0.0),
+            max_velocity:          (Some(50.0), Some(500.0)),
+            decr_velocity:         (2000.0, 1000.0),
+            knockback_duration_ms: 1000,
+        ),
     ),
 
     items: (
-      extra_jump: (
-        cost: 8,
-      ),
-      wall_jump: (
-        cost: 8,
-      ),
-      knockback: (
-        cost: 8,
-      ),
-      bullet_shoot: (
-        cost: 8,
-      ),
+        extra_jump: (
+            cost: 8,
+        ),
+        wall_jump: (
+            cost: 8,
+        ),
+        knockback: (
+            cost: 8,
+        ),
+        bullet_shoot: (
+            cost: 8,
+        ),
 
-      settings: (
-        knockback_strength:       (1000.0, 500.0),
-        bullet_shoot_damage:      1,
-        bullet_shoot_velocity:    (500.0, 0.0),
-        bullet_shoot_size:        (16.0, 16.0),
-        bullet_shoot_lifetime_ms: 5000,
-      )
+        settings: (
+            knockback_strength:       (1000.0, 500.0),
+            bullet_shoot_damage:      1,
+            bullet_shoot_velocity:    (500.0, 0.0),
+            bullet_shoot_size:        (16.0, 16.0),
+            bullet_shoot_lifetime_ms: 5000,
+        )
     ),
 )

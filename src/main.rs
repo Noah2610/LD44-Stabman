@@ -11,6 +11,7 @@ mod states;
 mod systems;
 mod world_helpers;
 
+use amethyst::audio::AudioBundle;
 use amethyst::core::transform::TransformBundle;
 use amethyst::input::InputBundle;
 use amethyst::prelude::*;
@@ -29,6 +30,7 @@ use amethyst::utils::fps_counter::FPSCounterBundle;
 use amethyst::{LogLevelFilter, LoggerConfig};
 
 use deathframe::custom_game_data::prelude::*;
+use deathframe::handlers::AudioHandles;
 
 use resource_helpers::*;
 use systems::prelude::*;
@@ -85,6 +87,8 @@ fn build_game_data<'a, 'b>(
     let input_bundle = InputBundle::<String, String>::new()
         .with_bindings_from_file(&resource("config/bindings.ron"))?;
     let ui_bundle = UiBundle::<String, String>::new();
+    let audio_bundle =
+        AudioBundle::new(|audio: &mut AudioHandles| audio.get("level_1"));
     let fps_bundle = FPSCounterBundle;
 
     // Create GameDataBuilder
@@ -99,6 +103,7 @@ fn build_game_data<'a, 'b>(
         .with_core_bundle(input_bundle)?
         .with_core_bundle(ui_bundle)?
         .with_core_bundle(fps_bundle)?
+        .with_core_bundle(audio_bundle)?
         .with_core(InputManagerSystem, "input_manager_system", &[
             "input_system",
         ])?

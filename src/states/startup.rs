@@ -1,3 +1,5 @@
+use amethyst::audio::AudioSink;
+
 use super::state_prelude::*;
 
 pub struct Startup {
@@ -64,15 +66,24 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Startup {
         register_components(&mut data.world);
 
         // Resources
+        data.world.add_resource(load_settings());
+        let settings = data.world.settings();
         let mut sprite_sheet_handles = SpriteSheetHandles::default();
         sprite_sheet_handles
             .load(resource("spritesheets/player_hearts.png"), &mut data.world);
         sprite_sheet_handles
             .load(resource("spritesheets/player_bullets.png"), &mut data.world);
-        data.world.add_resource(load_settings());
+        {
+            let mut sink = data.world.write_resource::<AudioSink>();
+            sink.set_volume(settings.music_volume);
+        }
+        let mut audio_handles = AudioHandles::default();
+        audio_handles.load(resource("audio/level_1.ogg"), &mut data.world);
+        audio_handles.load(resource("audio/level_2.ogg"), &mut data.world);
+        audio_handles.load(resource("audio/level_3.ogg"), &mut data.world);
         data.world.add_resource(sprite_sheet_handles);
+        data.world.add_resource(audio_handles);
         data.world.add_resource(TextureHandles::default());
-        data.world.add_resource(AudioHandles::default());
         data.world.add_resource(InputManager::default());
 
         self.initialize_loading_text(&mut data);
@@ -110,7 +121,6 @@ impl Default for Startup {
 
 // TODO
 fn register_components(world: &mut World) {
-    world.register::<Enemy>();
 }
 
 fn load_settings() -> Settings {
