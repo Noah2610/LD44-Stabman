@@ -87,8 +87,8 @@ fn build_game_data<'a, 'b>(
     let input_bundle = InputBundle::<String, String>::new()
         .with_bindings_from_file(&resource("config/bindings.ron"))?;
     let ui_bundle = UiBundle::<String, String>::new();
-    let audio_bundle =
-        AudioBundle::new(|audio: &mut AudioHandles| audio.get("level_1"));
+    use amethyst::ecs::Read;
+    let audio_bundle = AudioBundle::new(|_: &mut AudioHandles| None); // I hate this
     let fps_bundle = FPSCounterBundle;
 
     // Create GameDataBuilder
@@ -103,7 +103,7 @@ fn build_game_data<'a, 'b>(
         .with_core_bundle(input_bundle)?
         .with_core_bundle(ui_bundle)?
         .with_core_bundle(fps_bundle)?
-        .with_core_bundle(audio_bundle)?
+        .with_bundle("ingame", audio_bundle)?
         .with_core(InputManagerSystem, "input_manager_system", &[
             "input_system",
         ])?

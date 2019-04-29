@@ -1,6 +1,7 @@
 mod level_loader;
 mod level_manager;
 
+use amethyst::audio::{output::Output, AudioSink, Source};
 use amethyst::ecs::{Join, ReadStorage};
 
 use super::state_prelude::*;
@@ -14,6 +15,29 @@ impl Ingame {
     pub fn new(settings: Settings) -> Self {
         Self {
             level_manager: LevelManager::new(settings.level_manager),
+        }
+    }
+
+    fn play_current_song(
+        &self,
+        mut data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
+        let output = data.world.read_resource::<Output>();
+        let mut sink = data.world.write_resource::<AudioSink>();
+        sink.stop();
+        *sink = AudioSink::new(&output);
+        let asset = data.world.read_resource::<AssetStorage<Source>>();
+        let name = format!("level_{}", self.level_manager.level_index + 1);
+        let handle = data
+            .world
+            .read_resource::<AudioHandles>()
+            .get(&name)
+            .expect(&format!(
+                "Audio SourceHandle with the given name doesn't exist: {}",
+                name
+            ));
+        if let Some(sound) = asset.get(&handle) {
+            sink.append(sound).unwrap();
         }
     }
 }
@@ -62,6 +86,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
             if self.level_manager.has_next_level() {
                 self.level_manager.set_player_checkpoint(&mut data);
                 self.level_manager.load_next_level(&mut data);
+                self.play_current_song(&mut data);
             } else {
                 // TODO: Beat game!
                 println!("You win!");
@@ -69,6 +94,10 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
         } else if player_dead {
             // Restart level and load player from checkoint
             self.level_manager.restart_level(&mut data);
+        } else {
+            if data.world.read_resource::<AudioSink>().empty() {
+                self.play_current_song(&mut data);
+            }
         }
 
         Trans::None
