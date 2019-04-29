@@ -96,5 +96,12 @@ Settings(
       wall_jump: (
         cost: 8,
       ),
+      knockback: (
+        cost: 8,
+      ),
+
+      settings: (
+        knockback_strength: (1000.0, 500.0),
+      )
     ),
 )

@@ -6,6 +6,8 @@ pub struct ItemsData {
     pub extra_jumps:      u32,
     pub used_extra_jumps: u32,
     pub can_wall_jump:    bool,
+    pub knockback:        Vector,
+    pub has_knockback:    bool,
 }
 
 #[derive(Clone)]

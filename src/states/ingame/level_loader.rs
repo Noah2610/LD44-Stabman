@@ -706,6 +706,8 @@ impl LevelLoader {
     }
 
     fn build_items<T>(&mut self, data: &mut StateData<CustomGameData<T>>) {
+        let settings = data.world.settings();
+
         for EntityData {
             pos,
             size,
@@ -714,12 +716,16 @@ impl LevelLoader {
         } in &self.items_data
         {
             let (item, spritesheet_handle, sprite_render) = {
-                let item = Item::from(properties["item_type"].as_str().expect(
-                    "`item_type` property must be given for object of type \
-                     `Item`",
-                ));
-                let (spritesheet_handle, sprite_render) =
-                    item.sprite_sheet_handle_and_sprite_render(&mut data.world);
+                let item = Item::new(
+                    properties["item_type"].as_str().expect(
+                        "`item_type` property must be given for object of \
+                         type `Item`",
+                    ),
+                    &settings.items,
+                );
+                let (spritesheet_handle, sprite_render) = item
+                    .item_type
+                    .sprite_sheet_handle_and_sprite_render(&mut data.world);
                 (item, spritesheet_handle, sprite_render)
             };
 

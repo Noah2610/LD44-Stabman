@@ -96,11 +96,18 @@ pub struct SettingsEnemy {
 pub struct SettingsItems {
     pub extra_jump: SettingsItem,
     pub wall_jump:  SettingsItem,
+    pub knockback:  SettingsItem,
+    pub settings:   SettingsItemSettings,
 }
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsItem {
     pub cost: u32,
+}
+
+#[derive(Clone, Deserialize)]
+pub struct SettingsItemSettings {
+    pub knockback_strength: Vector,
 }
 
 struct QTAVisitor;

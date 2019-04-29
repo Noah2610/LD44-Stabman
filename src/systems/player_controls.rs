@@ -339,9 +339,9 @@ fn handle_item_purchase<'a>(
         {
             if input_manager.is_down("player_buy_item") {
                 // Pickup item
-                item.apply(player);
-                entities.delete(item_entity);
-                player.take_damage(item.cost(settings));
+                item.apply(player, settings);
+                entities.delete(item_entity).unwrap();
+                player.take_damage(item.cost);
             }
         }
     }

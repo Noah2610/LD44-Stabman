@@ -11,7 +11,7 @@ pub mod prelude {
     pub use super::enemy::prelude::*;
     pub use super::goal::Goal;
     pub use super::heart::Heart;
-    pub use super::item::Item;
+    pub use super::item::prelude::*;
     pub use super::player::Player;
     pub use super::player_attack::PlayerAttack;
 }

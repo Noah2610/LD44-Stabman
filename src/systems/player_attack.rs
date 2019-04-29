@@ -12,6 +12,7 @@ impl<'a> System<'a> for PlayerAttackSystem {
         WriteStorage<'a, Player>,
         WriteStorage<'a, PlayerAttack>,
         WriteStorage<'a, Transform>,
+        WriteStorage<'a, Velocity>,
         WriteStorage<'a, AnimationsContainer>,
         WriteStorage<'a, Flipped>,
         WriteStorage<'a, Hidden>,
@@ -27,6 +28,7 @@ impl<'a> System<'a> for PlayerAttackSystem {
             mut players,
             mut player_attacks,
             mut transforms,
+            mut velocities,
             mut animations_containers,
             mut flippeds,
             mut hiddens,
@@ -114,16 +116,21 @@ impl<'a> System<'a> for PlayerAttackSystem {
                 let mut enemies_to_delete = Vec::new();
 
                 for player in (&mut players).join() {
-                    for (attack, attack_collision) in
-                        (&player_attacks, &collisions).join()
+                    for (attack, attack_collision, player_flipped) in
+                        (&player_attacks, &collisions, &flippeds).join()
                     {
-                        for (enemy_entity, enemy, enemy_animations_container) in
-                            (
-                                &entities,
-                                &mut enemies,
-                                &mut animations_containers,
-                            )
-                                .join()
+                        for (
+                            enemy_entity,
+                            enemy,
+                            enemy_velocity,
+                            enemy_animations_container,
+                        ) in (
+                            &entities,
+                            &mut enemies,
+                            &mut velocities,
+                            &mut animations_containers,
+                        )
+                            .join()
                         {
                             let enemy_id = enemy_entity.id();
                             // Attack enemy
@@ -136,6 +143,18 @@ impl<'a> System<'a> for PlayerAttackSystem {
                                     attack_collision.collision_with(enemy_id)
                                 {
                                     player.deal_damage_to(enemy);
+                                    // Knockback
+                                    if player.items_data.has_knockback {
+                                        enemy_velocity.x =
+                                            player.items_data.knockback.0
+                                                * match player_flipped {
+                                                    Flipped::None => 1.0,
+                                                    Flipped::Horizontal => -1.0,
+                                                    _ => 1.0,
+                                                };
+                                        enemy_velocity.y =
+                                            player.items_data.knockback.1;
+                                    }
                                     if enemy.is_dead() {
                                         player.gain_reward(enemy.reward);
                                         enemies_to_delete.push(enemy_entity);
