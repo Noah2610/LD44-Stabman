@@ -164,7 +164,8 @@ fn build_game_data<'a, 'b>(
         .with("ingame", GoalSystem, "goal_system", &[
             "move_entities_system",
             "collision_system",
-        ])?;
+        ])?
+        .with("ingame", EnemyAiSystem, "enemy_ai_system", &[])?;
     Ok(game_data)
 }
 

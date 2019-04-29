@@ -1,6 +1,12 @@
 use super::component_prelude::*;
 use super::Enemy;
 
+#[derive(Clone, Default)]
+pub struct ItemsData {
+    pub extra_jumps:      u32,
+    pub used_extra_jumps: u32,
+}
+
 #[derive(Clone)]
 pub struct Player {
     pub acceleration:               Vector,
@@ -19,6 +25,7 @@ pub struct Player {
     pub damage:                     u32,
     pub is_attacking:               bool,
     pub in_control:                 bool,
+    pub items_data:                 ItemsData,
 }
 
 impl Player {
@@ -40,6 +47,7 @@ impl Player {
             damage:                     settings.damage,
             is_attacking:               false,
             in_control:                 false,
+            items_data:                 ItemsData::default(),
         }
     }
 
@@ -65,6 +73,10 @@ impl Player {
 
     pub fn is_dead(&self) -> bool {
         self.health <= 0
+    }
+
+    pub fn has_extra_jump(&self) -> bool {
+        self.items_data.used_extra_jumps < self.items_data.extra_jumps
     }
 }
 

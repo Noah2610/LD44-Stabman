@@ -11,6 +11,7 @@ impl<'a> System<'a> for PlayerControlsSystem {
         ReadStorage<'a, Collision>,
         ReadStorage<'a, Solid>,
         ReadStorage<'a, Goal>,
+        ReadStorage<'a, Item>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, DecreaseVelocity>,
@@ -29,6 +30,7 @@ impl<'a> System<'a> for PlayerControlsSystem {
             collisions,
             solids,
             goals,
+            items,
             mut players,
             mut velocities,
             mut decr_velocities,
@@ -106,6 +108,15 @@ impl<'a> System<'a> for PlayerControlsSystem {
                 );
 
                 handle_attack(&input_manager, player, animations_container);
+
+                handle_item_pickup(
+                    &entities,
+                    &input_manager,
+                    player,
+                    player_collision,
+                    &items,
+                    &collisions,
+                );
             } else if !player.in_control && !goal_next_level {
                 // Start of a level
                 // Play the level_start animation once, then regain control
@@ -222,13 +233,18 @@ fn handle_jump(
     gravity: &mut Gravity,
     sides_touching: &SidesTouching,
 ) {
-    if input_manager.is_down("player_jump") && sides_touching.is_touching_bottom
-    {
+    let can_jump = input_manager.is_down("player_jump")
+        && (sides_touching.is_touching_bottom || player.has_extra_jump());
+    if can_jump {
         // Jump
         velocity.y += player.jump_strength;
         // Set different gravity when jumping
         gravity.x = player.jump_gravity.0;
         gravity.y = player.jump_gravity.1;
+        // Was an extra jump
+        if !sides_touching.is_touching_bottom {
+            player.items_data.used_extra_jumps += 1;
+        }
     } else if input_manager.is_up("player_jump") {
         // Kill some of the upwards momentum, keeping at least a certain minimum velocity
         if velocity.y > player.decr_jump_strength {
@@ -260,6 +276,12 @@ fn handle_on_ground_and_in_air(
     {
         decr_velocity.dont_decrease_x();
     }
+    // Recharge double jump
+    if sides_touching.is_touching_bottom {
+        if player.items_data.used_extra_jumps != 0 {
+            player.items_data.used_extra_jumps = 0;
+        }
+    }
 }
 
 fn handle_attack(
@@ -271,6 +293,33 @@ fn handle_attack(
         player.is_attacking = true;
         // Play attack animation
         animations_container.play("attack");
+    }
+}
+
+fn handle_item_pickup<'a>(
+    entities: &Entities<'a>,
+    input_manager: &InputManager,
+    player: &mut Player,
+    player_collision: &Collision,
+    items: &ReadStorage<'a, Item>,
+    collisions: &ReadStorage<'a, Collision>,
+) {
+    for (item_entity, item, item_collision) in
+        (entities, items, collisions).join()
+    {
+        let item_id = item_entity.id();
+        if let Some(collision::Data {
+            state: collision::State::Steady,
+            side: Side::Inner,
+            ..
+        }) = player_collision.collision_with(item_id)
+        {
+            if input_manager.is_down("player_buy_item") {
+                // Pickup item
+                item.apply(player);
+                entities.delete(item_entity);
+            }
+        }
     }
 }
 

@@ -16,6 +16,7 @@ const TILE_Z: f32 = 0.0;
 const PARALLAX_Z: f32 = -1.0;
 const ENEMY_Z: f32 = 0.25;
 const GOAL_Z: f32 = 0.1;
+const ITEM_Z: f32 = 0.6;
 const PLAYER_SPRITESHEET_FILENAME: &str = "player.png";
 const BACKGROUNDS_DIR: &str = "textures/bg";
 const ENEMY_NORMAL_SPRITESHEET_FILENAME: &str = "enemy_normal.png";
@@ -48,6 +49,7 @@ pub struct LevelLoader {
     parallax_data: Vec<EntityData>,
     enemies_data:  Vec<EntityData>,
     goal_data:     Option<EntityData>,
+    items_data:    Vec<EntityData>,
 }
 
 impl LevelLoader {
@@ -61,6 +63,7 @@ impl LevelLoader {
             parallax_data: Vec::new(),
             enemies_data:  Vec::new(),
             goal_data:     None,
+            items_data:    Vec::new(),
         }
     }
 
@@ -95,6 +98,7 @@ impl LevelLoader {
         self.build_parallax(data);
         self.build_enemies(data);
         self.build_goal(data);
+        self.build_items(data);
     }
 
     fn load_objects(&mut self, json: &JsonValue) {
@@ -147,6 +151,12 @@ impl LevelLoader {
                             graphic:    None,
                         })
                     }
+                    "Item" => self.items_data.push(EntityData {
+                        pos:        pos,
+                        size:       size,
+                        properties: properties.clone(),
+                        graphic:    None,
+                    }),
                     _ => (),
                 }
             }
@@ -573,6 +583,7 @@ impl LevelLoader {
             let (
                 enemy_type,
                 enemy_settings,
+                enemy_ai,
                 (spritesheet_handle, sprite_render),
                 animations_container,
             ) = {
@@ -600,6 +611,7 @@ impl LevelLoader {
                         (
                             EnemyType::Normal(NormalEnemy::default()),
                             settings.enemies.normal.clone(),
+                            EnemyAi::Tracer,
                             (spritesheet_handle.clone(), sprite_render),
                             AnimationsContainer::new()
                                 .insert(
@@ -658,11 +670,12 @@ impl LevelLoader {
                 .with(Collision::new())
                 .with(Solid)
                 .with(ScaleOnce)
-                .with(Enemy::new(enemy_type, enemy_settings))
+                .with(Enemy::new(enemy_type.clone(), enemy_settings))
                 .with(sprite_render)
                 .with(Flipped::None)
                 .with(animations_container)
                 .with(Transparent)
+                .with(enemy_ai)
                 .build();
         }
     }
@@ -688,6 +701,44 @@ impl LevelLoader {
                 .with(transform)
                 .with(Size::from(*size))
                 .with(Collision::new())
+                .build();
+        }
+    }
+
+    fn build_items<T>(&mut self, data: &mut StateData<CustomGameData<T>>) {
+        for EntityData {
+            pos,
+            size,
+            properties,
+            graphic: _,
+        } in &self.items_data
+        {
+            let (item, spritesheet_handle, sprite_render) = {
+                let item = Item::from(properties["item_type"].as_str().expect(
+                    "`item_type` property must be given for object of type \
+                     `Item`",
+                ));
+                let (spritesheet_handle, sprite_render) =
+                    item.sprite_sheet_handle_and_sprite_render(&mut data.world);
+                (item, spritesheet_handle, sprite_render)
+            };
+
+            let mut transform = Transform::default();
+            transform.set_xyz(
+                pos.0,
+                pos.1,
+                properties[PROPERTY_Z_KEY].as_f32().unwrap_or(ITEM_Z),
+            );
+
+            data.world
+                .create_entity()
+                .with(item)
+                .with(transform)
+                .with(Size::from(*size))
+                .with(ScaleOnce)
+                .with(Collision::new())
+                .with(sprite_render)
+                .with(Transparent)
                 .build();
         }
     }
