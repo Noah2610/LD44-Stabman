@@ -304,6 +304,16 @@ impl LevelLoader {
                                 .sprite_ids(vec![5, 10, 2, 12])
                                 .build(),
                         )
+                        .insert(
+                            "death",
+                            Animation::new()
+                                .default_sprite_sheet_handle(
+                                    spritesheet_handle.clone(),
+                                )
+                                .default_delay_ms(500)
+                                .sprite_ids(vec![5, 10, 2, 12])
+                                .build(),
+                        )
                         .current("idle")
                         .build(),
                 )

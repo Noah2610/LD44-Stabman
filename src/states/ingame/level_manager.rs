@@ -26,6 +26,7 @@ impl LevelManager {
         &mut self,
         data: &mut StateData<CustomGameData<CustomData>>,
     ) {
+        data.world.delete_all(); // Remove _ALL_ existing entities first
         let current_level_name = self
             .settings
             .level_names
@@ -68,7 +69,6 @@ impl LevelManager {
         data: &mut StateData<CustomGameData<CustomData>>,
     ) {
         if self.has_next_level() {
-            data.world.delete_all(); // Remove _ALL_ existing entities first
             self.level_index += 1;
             self.load_current_level(data);
         } else {
@@ -78,5 +78,12 @@ impl LevelManager {
 
     pub fn has_next_level(&self) -> bool {
         self.level_index + 1 < self.settings.level_names.len()
+    }
+
+    pub fn restart_level(
+        &mut self,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
+        self.load_current_level(data);
     }
 }
