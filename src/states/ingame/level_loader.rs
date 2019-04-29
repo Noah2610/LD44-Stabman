@@ -502,15 +502,39 @@ impl LevelLoader {
                                 )),
                             );
                         }
+                        ("speed_mult_x", _) => {
+                            parallax = parallax.speed_mult_x(
+                                val.as_f32()
+                                    .expect("Couldn't parse JsonValue as f32"),
+                            );
+                        }
+                        ("speed_mult_y", _) => {
+                            parallax = parallax.speed_mult_y(
+                                val.as_f32()
+                                    .expect("Couldn't parse JsonValue as f32"),
+                            );
+                        }
                         ("offset", _) => {
                             parallax = parallax.offset(parse_string_to_vector(
                                 val.as_str().expect(
                                     "Couldn't parse JsonValue as string",
                                 ),
-                            ))
+                            ));
+                        }
+                        ("offset_x", _) => {
+                            parallax = parallax.offset_x(
+                                val.as_f32()
+                                    .expect("Couldn't parse JsonValue as f32"),
+                            );
+                        }
+                        ("offset_y", _) => {
+                            parallax = parallax.offset_y(
+                                val.as_f32()
+                                    .expect("Couldn't parse JsonValue as f32"),
+                            );
                         }
                         ("image", Some(texture_handle)) => {
-                            entity = entity.with(texture_handle.clone())
+                            entity = entity.with(texture_handle.clone());
                         }
                         _ => (),
                     }
