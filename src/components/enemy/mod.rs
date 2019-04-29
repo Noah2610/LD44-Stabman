@@ -7,6 +7,8 @@ pub mod prelude {
     pub use super::EnemyType;
 }
 
+use std::time::{Duration, Instant};
+
 use super::component_prelude::*;
 use super::Player;
 use crate::settings::SettingsEnemy;
@@ -26,25 +28,31 @@ pub enum EnemyType {
 }
 
 pub struct Enemy {
-    pub enemy_type:       EnemyType,
-    pub health:           u32,
-    pub damage:           u32,
-    pub reward:           u32,
-    pub knockback:        Vector,
-    pub trigger_distance: Vector,
-    pub acceleration:     Vector,
+    pub enemy_type:         EnemyType,
+    pub health:             u32,
+    pub damage:             u32,
+    pub reward:             u32,
+    pub knockback:          Vector,
+    pub trigger_distance:   Vector,
+    pub acceleration:       Vector,
+    pub knockbacked_at:     Option<Instant>,
+    pub knockback_duration: Duration,
 }
 
 impl Enemy {
     pub fn new(enemy_type: EnemyType, settings: SettingsEnemy) -> Self {
         Self {
-            enemy_type:       enemy_type,
-            health:           settings.health,
-            damage:           settings.damage,
-            reward:           settings.reward,
-            knockback:        settings.knockback,
-            trigger_distance: settings.trigger_distance,
-            acceleration:     settings.acceleration,
+            enemy_type:         enemy_type,
+            health:             settings.health,
+            damage:             settings.damage,
+            reward:             settings.reward,
+            knockback:          settings.knockback,
+            trigger_distance:   settings.trigger_distance,
+            acceleration:       settings.acceleration,
+            knockbacked_at:     None,
+            knockback_duration: Duration::from_millis(
+                settings.knockback_duration_ms,
+            ),
         }
     }
 

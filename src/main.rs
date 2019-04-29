@@ -141,6 +141,8 @@ fn build_game_data<'a, 'b>(
         )?
         .with("ingame", AnimationSystem, "animation_system", &[])?
         .with("ingame", PlayerAttackSystem, "player_attack_system", &[
+            "decrease_velocities_system",
+            "limit_velocities_system",
             "move_entities_system",
             "collision_system",
             "player_controls_system",
@@ -165,7 +167,11 @@ fn build_game_data<'a, 'b>(
             "move_entities_system",
             "collision_system",
         ])?
-        .with("ingame", EnemyAiSystem, "enemy_ai_system", &[])?;
+        .with("ingame", EnemyAiSystem, "enemy_ai_system", &[
+            "decrease_velocities_system",
+            "limit_velocities_system",
+            "player_attack_system",
+        ])?;
     Ok(game_data)
 }
 

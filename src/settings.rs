@@ -82,14 +82,15 @@ pub struct SettingsEnemies {
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsEnemy {
-    pub health:           u32,
-    pub damage:           u32,
-    pub reward:           u32,
-    pub knockback:        Vector,
-    pub trigger_distance: Vector,
-    pub acceleration:     Vector,
-    pub max_velocity:     (Option<f32>, Option<f32>),
-    pub decr_velocity:    Vector,
+    pub health:                u32,
+    pub damage:                u32,
+    pub reward:                u32,
+    pub knockback:             Vector,
+    pub trigger_distance:      Vector,
+    pub acceleration:          Vector,
+    pub max_velocity:          (Option<f32>, Option<f32>),
+    pub decr_velocity:         Vector,
+    pub knockback_duration_ms: u64,
 }
 
 #[derive(Clone, Deserialize)]

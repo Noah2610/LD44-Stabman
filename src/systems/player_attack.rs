@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 use deathframe::geo::Vector;
 
 use super::system_prelude::*;
@@ -112,6 +114,7 @@ impl<'a> System<'a> for PlayerAttackSystem {
 
             // Actual attacking logic
             if let Some(attack_id) = attack_id_opt {
+                let now = Instant::now();
                 // Enemies to remove, below
                 let mut enemies_to_delete = Vec::new();
 
@@ -145,6 +148,7 @@ impl<'a> System<'a> for PlayerAttackSystem {
                                     player.deal_damage_to(enemy);
                                     // Knockback
                                     if player.items_data.has_knockback {
+                                        enemy.knockbacked_at = Some(now);
                                         enemy_velocity.x =
                                             player.items_data.knockback.0
                                                 * match player_flipped {

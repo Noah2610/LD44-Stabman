@@ -1,3 +1,5 @@
+use std::time::{Duration, Instant};
+
 use deathframe::geo::Vector;
 
 use super::system_prelude::*;
@@ -6,25 +8,33 @@ pub struct EnemyAiSystem;
 
 impl<'a> System<'a> for EnemyAiSystem {
     type SystemData = (
+        Entities<'a>,
         Read<'a, Time>,
         ReadStorage<'a, Player>,
-        ReadStorage<'a, Enemy>,
         ReadStorage<'a, EnemyAi>,
         ReadStorage<'a, Transform>,
+        ReadStorage<'a, Solid>,
+        WriteStorage<'a, Enemy>,
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, Flipped>,
+        WriteStorage<'a, DecreaseVelocity>,
+        WriteStorage<'a, MaxVelocity>,
     );
 
     fn run(
         &mut self,
         (
+            entities,
             time,
             players,
-            enemies,
             enemy_ais,
             transforms,
+            solids,
+            mut enemies,
             mut velocities,
             mut flippeds,
+            mut decrease_velocities,
+            mut max_velocities,
         ): Self::SystemData,
     ) {
         if let Some(player_data) =
@@ -42,6 +52,7 @@ impl<'a> System<'a> for EnemyAiSystem {
                 })
         {
             let dt = time.delta_seconds();
+            let now = Instant::now();
 
             for (
                 enemy,
@@ -49,12 +60,16 @@ impl<'a> System<'a> for EnemyAiSystem {
                 enemy_transform,
                 enemy_velocity,
                 enemy_flipped,
+                enemy_decr_vel,
+                enemy_max_vel,
             ) in (
-                &enemies,
+                &mut enemies,
                 &enemy_ais,
                 &transforms,
                 &mut velocities,
                 &mut flippeds,
+                &mut decrease_velocities,
+                &mut max_velocities,
             )
                 .join()
             {
@@ -77,6 +92,18 @@ impl<'a> System<'a> for EnemyAiSystem {
                     && enemy_flipped == &mut Flipped::None
                 {
                     *enemy_flipped = Flipped::Horizontal;
+                }
+
+                // Handle knockbacked state
+                if let Some(knockbacked_at) = enemy.knockbacked_at {
+                    if now.duration_since(knockbacked_at)
+                        >= enemy.knockback_duration
+                    {
+                        enemy.knockbacked_at = None;
+                    } else {
+                        enemy_decr_vel.dont_decrease_x();
+                        enemy_max_vel.dont_limit_x();
+                    }
                 }
             }
         }
