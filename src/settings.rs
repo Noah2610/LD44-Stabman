@@ -79,6 +79,9 @@ pub struct SettingsLevelManager {
 pub struct SettingsEnemies {
     pub gravity: Vector,
     pub normal:  SettingsEnemy,
+    pub charger: SettingsEnemy,
+    pub flying:  SettingsEnemy,
+    pub reaper:  SettingsEnemy,
 }
 
 #[derive(Clone, Deserialize)]

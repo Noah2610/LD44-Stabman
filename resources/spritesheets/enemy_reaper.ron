@@ -1,0 +1,30 @@
+(
+  spritesheet_width:  128,
+  spritesheet_height: 256,
+  sprites: [
+    ( // 0 - idle 0
+      x:      0,
+      y:      0,
+      width:  96,
+      height: 128,
+    ),
+    ( // 1 - idle 1
+      x:      96,
+      y:      0,
+      width:  96,
+      height: 128,
+    ),
+    ( // 2 - walk 0
+      x:      0,
+      y:      128,
+      width:  96,
+      height: 128,
+    ),
+    ( // 3 - walk 1
+      x:      96,
+      y:      128,
+      width:  96,
+      height: 128,
+    ),
+  ],
+)

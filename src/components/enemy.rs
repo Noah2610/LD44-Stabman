@@ -1,7 +1,4 @@
-mod normal;
-
 pub mod prelude {
-    pub use super::normal::NormalEnemy;
     pub use super::Enemy;
     pub use super::EnemyAi;
     pub use super::EnemyType;
@@ -22,9 +19,12 @@ impl Component for EnemyAi {
     type Storage = VecStorage<Self>;
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub enum EnemyType {
-    Normal(normal::NormalEnemy),
+    Normal,
+    Charger,
+    Flying,
+    Reaper,
 }
 
 pub struct Enemy {

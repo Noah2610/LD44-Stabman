@@ -1,5 +1,5 @@
 (
-  spritesheet_width:  256,
+  spritesheet_width:  704,
   spritesheet_height: 512,
   sprites: [
     ( // 0 - idle 0
@@ -57,28 +57,52 @@
       height: 64,
     ),
     ( // 9 - attack 0 player
-      x:      0,
+      x:      320,
       y:      192,
       width:  32,
       height: 96,
     ),
     ( // 10 - attack 0 sword
-      x:      32,
+      x:      352,
       y:      192,
       width:  32,
       height: 96,
     ),
     ( // 11 - attack 1 player
-      x:      64,
+      x:      384,
       y:      192,
       width:  32,
       height: 96,
     ),
     ( // 12 - attack 1 sword
-      x:      96,
+      x:      416,
       y:      192,
       width:  32,
       height: 96,
+    ),
+    ( // 13 - attack 2 player
+      x:      448,
+      y:      192,
+      width:  32,
+      height: 96,
+    ),
+    ( // 14 - attack 2 sword
+      x:      480,
+      y:      192,
+      width:  32,
+      height: 96,
+    ),
+    ( // 15 - Wall cling
+      x:      0,
+      y:      288,
+      width:  32,
+      height: 64,
+    ),
+    ( // 16 - Item pickup
+      x:      0,
+      y:      352,
+      width:  32,
+      height: 64,
     ),
   ],
 )

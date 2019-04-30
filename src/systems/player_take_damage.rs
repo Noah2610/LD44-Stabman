@@ -45,7 +45,6 @@ impl<'a> System<'a> for PlayerTakeDamageSystem {
                     let enemy_id = enemy_entity.id();
 
                     if let Some(collision::Data {
-                        side,
                         state: collision::State::Enter,
                         ..
                     }) = player_collision.collision_with(enemy_id)
@@ -54,27 +53,11 @@ impl<'a> System<'a> for PlayerTakeDamageSystem {
                         enemy.deal_damage_to(player);
 
                         // Knockback
-                        let knockback = match side {
-                            Side::Left => {
+                        let knockback = match player_flipped {
+                            Flipped::Horizontal => {
                                 (enemy.knockback.0, enemy.knockback.1)
                             }
-                            Side::Right => {
-                                (enemy.knockback.0 * -1.0, enemy.knockback.1)
-                            }
-                            Side::Bottom | Side::Inner => (
-                                x_knockback_for_vertical_side(
-                                    enemy.knockback.0,
-                                    player_flipped,
-                                ),
-                                enemy.knockback.1,
-                            ),
-                            Side::Top => (
-                                x_knockback_for_vertical_side(
-                                    enemy.knockback.0,
-                                    player_flipped,
-                                ),
-                                enemy.knockback.1 * -1.0,
-                            ),
+                            _ => (enemy.knockback.0 * -1.0, enemy.knockback.1),
                         };
                         player_velocity.x = knockback.0;
                         player_velocity.y = knockback.1;

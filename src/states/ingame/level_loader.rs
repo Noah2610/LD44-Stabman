@@ -20,6 +20,9 @@ const ITEM_Z: f32 = 0.6;
 const PLAYER_SPRITESHEET_FILENAME: &str = "player.png";
 const BACKGROUNDS_DIR: &str = "textures/bg";
 const ENEMY_NORMAL_SPRITESHEET_FILENAME: &str = "enemy_normal.png";
+const ENEMY_CHARGER_SPRITESHEET_FILENAME: &str = "enemy_charger.png";
+const ENEMY_FLYING_SPRITESHEET_FILENAME: &str = "enemy_flying.png";
+const ENEMY_REAPER_SPRITESHEET_FILENAME: &str = "enemy_flying.png";
 
 struct SpriteData {
     pub spritesheet_path: String,
@@ -280,7 +283,7 @@ impl LevelLoader {
                                 .default_sprite_sheet_handle(
                                     spritesheet_handle.clone(),
                                 )
-                                .default_delay_ms(500)
+                                .default_delay_ms(1000)
                                 .sprite_ids(vec![8])
                                 .build(),
                         )
@@ -290,10 +293,11 @@ impl LevelLoader {
                                 .default_sprite_sheet_handle(
                                     spritesheet_handle.clone(),
                                 )
-                                .default_delay_ms(100)
-                                .sprite_ids(vec![9, 11])
+                                .delays_ms(vec![50, 50, 100, 75, 100])
+                                .sprite_ids(vec![11, 9, 13, 9, 11])
                                 .build(),
                         )
+                        // TODO: Un-nused
                         .insert(
                             "level_start",
                             Animation::new()
@@ -348,8 +352,8 @@ impl LevelLoader {
                             "attack_default",
                             Animation::new()
                                 .default_sprite_sheet_handle(spritesheet_handle)
-                                .default_delay_ms(100)
-                                .sprite_ids(vec![10, 12])
+                                .delays_ms(vec![50, 50, 100, 75, 100])
+                                .sprite_ids(vec![12, 10, 14, 10, 12])
                                 .build(),
                         )
                         .build(),
@@ -609,7 +613,7 @@ impl LevelLoader {
                             })
                         };
                         (
-                            EnemyType::Normal(NormalEnemy::default()),
+                            EnemyType::Normal,
                             settings.enemies.normal.clone(),
                             EnemyAi::Tracer,
                             (spritesheet_handle.clone(), sprite_render),
@@ -648,6 +652,140 @@ impl LevelLoader {
                                 .build(),
                         )
                     }
+                    "Charger" => {
+                        let (spritesheet_handle, sprite_render) = {
+                            let handle = spritesheet_handles.get_or_load(
+                                resource(format!(
+                                    "spritesheets/{}",
+                                    ENEMY_CHARGER_SPRITESHEET_FILENAME
+                                )),
+                                data.world,
+                            );
+                            (handle.clone(), SpriteRender {
+                                sprite_sheet:  handle,
+                                sprite_number: 0,
+                            })
+                        };
+                        (
+                            EnemyType::Charger,
+                            settings.enemies.charger.clone(),
+                            EnemyAi::Tracer,
+                            (spritesheet_handle.clone(), sprite_render),
+                            AnimationsContainer::new()
+                                .insert(
+                                    "idle",
+                                    Animation::new()
+                                        .default_sprite_sheet_handle(
+                                            spritesheet_handle.clone(),
+                                        )
+                                        .default_delay_ms(100)
+                                        .sprite_ids(vec![0, 1, 0, 7])
+                                        .build(),
+                                )
+                                .insert(
+                                    "walking",
+                                    Animation::new()
+                                        .default_sprite_sheet_handle(
+                                            spritesheet_handle.clone(),
+                                        )
+                                        .default_delay_ms(50)
+                                        .sprite_ids(vec![
+                                            0, 1, 2, 3, 4, 5, 6, 7,
+                                        ])
+                                        .build(),
+                                )
+                                .current("idle")
+                                .build(),
+                        )
+                    }
+                    "Flying" => {
+                        let (spritesheet_handle, sprite_render) = {
+                            let handle = spritesheet_handles.get_or_load(
+                                resource(format!(
+                                    "spritesheets/{}",
+                                    ENEMY_FLYING_SPRITESHEET_FILENAME
+                                )),
+                                data.world,
+                            );
+                            (handle.clone(), SpriteRender {
+                                sprite_sheet:  handle,
+                                sprite_number: 0,
+                            })
+                        };
+                        (
+                            EnemyType::Flying,
+                            settings.enemies.flying.clone(),
+                            EnemyAi::Tracer,
+                            (spritesheet_handle.clone(), sprite_render),
+                            AnimationsContainer::new()
+                                .insert(
+                                    "idle",
+                                    Animation::new()
+                                        .default_sprite_sheet_handle(
+                                            spritesheet_handle.clone(),
+                                        )
+                                        .default_delay_ms(100)
+                                        .sprite_ids(vec![0, 1, 2, 1])
+                                        .build(),
+                                )
+                                .insert(
+                                    "walking",
+                                    Animation::new()
+                                        .default_sprite_sheet_handle(
+                                            spritesheet_handle.clone(),
+                                        )
+                                        .default_delay_ms(100)
+                                        .sprite_ids(vec![0, 1, 2, 1])
+                                        .build(),
+                                )
+                                .current("idle")
+                                .build(),
+                        )
+                    }
+                    "Reaper" => {
+                        let (spritesheet_handle, sprite_render) = {
+                            let handle = spritesheet_handles.get_or_load(
+                                resource(format!(
+                                    "spritesheets/{}",
+                                    ENEMY_REAPER_SPRITESHEET_FILENAME
+                                )),
+                                data.world,
+                            );
+                            (handle.clone(), SpriteRender {
+                                sprite_sheet:  handle,
+                                sprite_number: 0,
+                            })
+                        };
+                        (
+                            EnemyType::Reaper,
+                            settings.enemies.reaper.clone(),
+                            EnemyAi::Tracer,
+                            (spritesheet_handle.clone(), sprite_render),
+                            AnimationsContainer::new()
+                                .insert(
+                                    "idle",
+                                    Animation::new()
+                                        .default_sprite_sheet_handle(
+                                            spritesheet_handle.clone(),
+                                        )
+                                        .default_delay_ms(250)
+                                        .sprite_ids(vec![0, 1])
+                                        .build(),
+                                )
+                                .insert(
+                                    "walking",
+                                    Animation::new()
+                                        .default_sprite_sheet_handle(
+                                            spritesheet_handle.clone(),
+                                        )
+                                        .default_delay_ms(1000)
+                                        .sprite_ids(vec![2])
+                                        .build(),
+                                )
+                                .current("idle")
+                                .build(),
+                        )
+                    }
                     t => panic!(format!("EnemyType '{}' does not exist", t)),
                 }
             };
@@ -659,14 +797,14 @@ impl LevelLoader {
                 properties[PROPERTY_Z_KEY].as_f32().unwrap_or(ENEMY_Z),
             );
 
-            data.world
+            let mut entity = data
+                .world
                 .create_entity()
                 .with(transform)
                 .with(Size::from(*size))
                 .with(Velocity::default())
                 .with(MaxVelocity::from(enemy_settings.max_velocity))
                 .with(DecreaseVelocity::from(enemy_settings.decr_velocity))
-                .with(Gravity::from(settings.enemies.gravity))
                 .with(Collision::new())
                 .with(Solid)
                 .with(ScaleOnce)
@@ -675,8 +813,13 @@ impl LevelLoader {
                 .with(Flipped::None)
                 .with(animations_container)
                 .with(Transparent)
-                .with(enemy_ai)
-                .build();
+                .with(enemy_ai);
+
+            if enemy_type != EnemyType::Flying {
+                entity = entity.with(Gravity::from(settings.enemies.gravity));
+            }
+
+            entity.build();
         }
     }
 

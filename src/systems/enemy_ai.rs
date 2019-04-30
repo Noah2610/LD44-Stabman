@@ -1,4 +1,4 @@
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 use deathframe::geo::Vector;
 
@@ -12,13 +12,13 @@ impl<'a> System<'a> for EnemyAiSystem {
         Read<'a, Time>,
         ReadStorage<'a, EnemyAi>,
         ReadStorage<'a, Transform>,
-        ReadStorage<'a, Solid>,
         WriteStorage<'a, Enemy>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, Flipped>,
         WriteStorage<'a, DecreaseVelocity>,
         WriteStorage<'a, MaxVelocity>,
+        WriteStorage<'a, AnimationsContainer>,
     );
 
     fn run(
@@ -28,13 +28,13 @@ impl<'a> System<'a> for EnemyAiSystem {
             time,
             enemy_ais,
             transforms,
-            solids,
             mut enemies,
             mut players,
             mut velocities,
             mut flippeds,
             mut decrease_velocities,
             mut max_velocities,
+            mut animations_containers,
         ): Self::SystemData,
     ) {
         if let Some(player_data) = (&mut players, &transforms).join().find_map(
@@ -61,6 +61,7 @@ impl<'a> System<'a> for EnemyAiSystem {
                 enemy_flipped,
                 enemy_decr_vel,
                 enemy_max_vel,
+                enemy_animations_container,
             ) in (
                 &entities,
                 &mut enemies,
@@ -70,6 +71,7 @@ impl<'a> System<'a> for EnemyAiSystem {
                 &mut flippeds,
                 &mut decrease_velocities,
                 &mut max_velocities,
+                &mut animations_containers,
             )
                 .join()
             {
@@ -84,14 +86,18 @@ impl<'a> System<'a> for EnemyAiSystem {
                 }
 
                 // Flip sprite
-                if enemy_velocity.x > 0.0
-                    && enemy_flipped == &mut Flipped::Horizontal
-                {
-                    *enemy_flipped = Flipped::None;
-                } else if enemy_velocity.x < 0.0
-                    && enemy_flipped == &mut Flipped::None
-                {
-                    *enemy_flipped = Flipped::Horizontal;
+                if enemy_velocity.x > 0.0 {
+                    if enemy_flipped == &mut Flipped::Horizontal {
+                        *enemy_flipped = Flipped::None;
+                    }
+                    enemy_animations_container.set("walking");
+                } else if enemy_velocity.x < 0.0 {
+                    if enemy_flipped == &mut Flipped::None {
+                        *enemy_flipped = Flipped::Horizontal;
+                    }
+                    enemy_animations_container.set("walking");
+                } else {
+                    enemy_animations_container.set("idle");
                 }
 
                 // Handle knockbacked state

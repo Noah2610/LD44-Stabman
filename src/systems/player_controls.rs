@@ -141,7 +141,8 @@ impl<'a> System<'a> for PlayerControlsSystem {
             } else if !player.in_control && !goal_next_level {
                 // Start of a level
                 // Play the level_start animation once, then regain control
-                animations_container.set("level_start");
+                // TODO: Cleanup
+                // animations_container.set("level_start");
                 if animations_container
                     .current
                     .as_ref()
@@ -210,8 +211,8 @@ impl<'a> System<'a> for PlayerControlsSystem {
                         entity,
                         Animation::new()
                             .default_sprite_sheet_handle(spritesheet_handle)
-                            .default_delay_ms(100)
-                            .sprite_ids(vec![0])
+                            .default_delay_ms(50)
+                            .sprite_ids(vec![0, 1, 2])
                             .build(),
                     )
                     .unwrap();

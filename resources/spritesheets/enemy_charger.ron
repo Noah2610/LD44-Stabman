@@ -1,54 +1,54 @@
 (
   spritesheet_width:  256,
-  spritesheet_height: 64,
+  spritesheet_height: 32,
   sprites: [
-    ( // 0 - ExtraJump
+    ( // 0
       x:      0,
       y:      0,
       width:  32,
-      height: 64,
+      height: 32,
     ),
-    ( // 1 - WallJump
+    ( // 1
       x:      32,
       y:      0,
       width:  32,
-      height: 64,
+      height: 32,
     ),
-    ( // 2 - Thorns
+    ( // 2
       x:      64,
       y:      0,
       width:  32,
-      height: 64,
+      height: 32,
     ),
-    ( // 3 - Deflect
+    ( // 3
       x:      96,
       y:      0,
       width:  32,
-      height: 64,
+      height: 32,
     ),
-    ( // 4 - DamageUp
+    ( // 4
       x:      128,
       y:      0,
       width:  32,
-      height: 64,
+      height: 32,
     ),
-    ( // 5 - SpeedUp
+    ( // 5
       x:      160,
       y:      0,
       width:  32,
-      height: 64,
+      height: 32,
     ),
-    ( // 6 - JumpHeightUp
+    ( // 6
       x:      192,
       y:      0,
       width:  32,
-      height: 64,
+      height: 32,
     ),
-    ( // 7 - BulletShoot
+    ( // 7
       x:      224,
       y:      0,
       width:  32,
-      height: 64,
+      height: 32,
     ),
   ],
 )

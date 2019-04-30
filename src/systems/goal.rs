@@ -33,7 +33,8 @@ impl<'a> System<'a> for GoalSystem {
                     // Beat the level
                     goal.next_level = true;
                     player.in_control = false;
-                    player_animations_container.play("level_end");
+                    // TODO: Cleanup
+                    // player_animations_container.play("level_end");
                 }
             }
         }

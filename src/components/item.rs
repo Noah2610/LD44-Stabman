@@ -89,9 +89,11 @@ impl ItemType {
     }
 
     pub fn sprite_id(&self) -> usize {
-        // TODO
         match self {
-            _ => 0,
+            ItemType::ExtraJump => 0,
+            ItemType::WallJump => 1,
+            ItemType::Knockback => 0, // TODO
+            ItemType::BulletShoot => 7,
         }
     }
 
