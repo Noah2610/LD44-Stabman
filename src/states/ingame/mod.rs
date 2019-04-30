@@ -63,19 +63,19 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
                 let next_level = (&goals)
                     .join()
                     .find_map(|goal| Some(goal.next_level))
-                    .unwrap_or(false)
-                    && (&players, &animations_containers)
-                        .join()
-                        .find_map(|(_, animations_container)| {
-                            Some(animations_container.play_once.is_none())
-                        })
-                        .unwrap_or(false);
+                    .unwrap_or(false);
+                // && (&players, &animations_containers)
+                //     .join()
+                //     .find_map(|(_, animations_container)| {
+                //         Some(animations_container.play_once.is_none())
+                //     })
+                // .unwrap_or(false);
                 let player_dead = (&players, &animations_containers)
                     .join()
                     .find_map(|(player, animations_container)| {
                         Some(
                             player.is_dead()
-                                && animations_container.play_once.is_none(),
+                                // && animations_container.play_once.is_none(),
                         )
                     })
                     .unwrap_or(false);
