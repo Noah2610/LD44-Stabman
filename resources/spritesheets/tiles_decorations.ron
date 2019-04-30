@@ -1,5 +1,5 @@
 (
-  spritesheet_width:  192,
+  spritesheet_width:  320,
   spritesheet_height: 192,
   sprites: [
     (
@@ -39,6 +39,30 @@
       height: 32,
     ),
     (
+      x:      192,
+      y:      0,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      224,
+      y:      0,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      256,
+      y:      0,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      288,
+      y:      0,
+      width:  32,
+      height: 32,
+    ),
+    (
       x:      0,
       y:      32,
       width:  32,
@@ -75,6 +99,30 @@
       height: 32,
     ),
     (
+      x:      192,
+      y:      32,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      224,
+      y:      32,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      256,
+      y:      32,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      288,
+      y:      32,
+      width:  32,
+      height: 32,
+    ),
+    (
       x:      0,
       y:      64,
       width:  32,
@@ -111,6 +159,30 @@
       height: 32,
     ),
     (
+      x:      192,
+      y:      64,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      224,
+      y:      64,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      256,
+      y:      64,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      288,
+      y:      64,
+      width:  32,
+      height: 32,
+    ),
+    (
       x:      0,
       y:      96,
       width:  32,
@@ -147,6 +219,30 @@
       height: 32,
     ),
     (
+      x:      192,
+      y:      96,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      224,
+      y:      96,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      256,
+      y:      96,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      288,
+      y:      96,
+      width:  32,
+      height: 32,
+    ),
+    (
       x:      0,
       y:      128,
       width:  32,
@@ -183,6 +279,30 @@
       height: 32,
     ),
     (
+      x:      192,
+      y:      128,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      224,
+      y:      128,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      256,
+      y:      128,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      288,
+      y:      128,
+      width:  32,
+      height: 32,
+    ),
+    (
       x:      0,
       y:      160,
       width:  32,
@@ -214,6 +334,30 @@
     ),
     (
       x:      160,
+      y:      160,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      192,
+      y:      160,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      224,
+      y:      160,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      256,
+      y:      160,
+      width:  32,
+      height: 32,
+    ),
+    (
+      x:      288,
       y:      160,
       width:  32,
       height: 32,

@@ -4,8 +4,7 @@ Settings(
     camera: (
         /// Window size
         // size:             (1200.0,      800.0),
-        // size:             (600.0,      400.0),
-        size:             (300.0,      200.0),
+        size:             (600.0,      400.0),
         /// Rectangle in the center of the window, where the camera smoothly scrolls to player;
         /// Outside of this rectangle, the camera instantly snaps to where player is back inside.
         /// Basically, the player can never be outside of this inner rectangle.
@@ -97,7 +96,7 @@ Settings(
             knockback:             (2000.0, 200.0),
             trigger_distance:      (256.0, 32.0),
             acceleration:          (500.0, 0.0),
-            max_velocity:          (Some(200.0), Some(500.0)),
+            max_velocity:          (Some(1000.0), Some(500.0)),
             decr_velocity:         (2000.0, 1000.0),
             knockback_duration_ms: 1000,
         ),
