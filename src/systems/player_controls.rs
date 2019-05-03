@@ -205,6 +205,10 @@ fn handle_wall_cling(
             if velocity.y < slide_strength {
                 velocity.y = slide_strength;
             }
+            // Reset ExtraJumps
+            if player.items_data.used_extra_jumps != 0 {
+                player.items_data.used_extra_jumps = 0;
+            }
         }
     }
 }
