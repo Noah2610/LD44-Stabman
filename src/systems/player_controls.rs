@@ -259,10 +259,12 @@ fn handle_move(
             // Set walking animation
             animations_container.set("walking");
             // Flip animation
-            if flipped == &Flipped::Horizontal && x > 0.0 {
-                *flipped = Flipped::None;
-            } else if flipped == &Flipped::None && x < 0.0 {
-                *flipped = Flipped::Horizontal;
+            if !player.is_attacking {
+                if flipped == &Flipped::Horizontal && x > 0.0 {
+                    *flipped = Flipped::None;
+                } else if flipped == &Flipped::None && x < 0.0 {
+                    *flipped = Flipped::Horizontal;
+                }
             }
         } else {
             // Standing still - set idle animation
