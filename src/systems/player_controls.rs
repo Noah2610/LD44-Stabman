@@ -132,9 +132,12 @@ impl<'a> System<'a> for PlayerControlsSystem {
                     &sides_touching,
                 );
 
-                should_shoot_bullet =
-                    handle_attack(&input_manager, player, animations_container)
-                        && player.items_data.can_shoot;
+                should_shoot_bullet = handle_attack(
+                    &input_manager,
+                    player,
+                    animations_container,
+                    flipped,
+                ) && player.items_data.can_shoot;
 
                 handle_item_purchase(
                     &settings.items,
@@ -361,15 +364,31 @@ fn handle_attack<'a>(
     input_manager: &InputManager,
     player: &mut Player,
     animations_container: &mut AnimationsContainer,
+    flipped: &mut Flipped,
 ) -> bool {
-    if !player.is_attacking && input_manager.is_down("player_attack") {
+    let is_attacking = if !player.is_attacking {
+        if input_manager.is_down("player_attack") {
+            true
+        } else if input_manager.is_down("player_attack_left") {
+            *flipped = Flipped::Horizontal;
+            true
+        } else if input_manager.is_down("player_attack_right") {
+            *flipped = Flipped::None;
+            true
+        } else {
+            false
+        }
+    } else {
+        false
+    };
+
+    if is_attacking {
         player.is_attacking = true;
         // Play attack animation
         animations_container.play("attack");
-        true
-    } else {
-        false
     }
+
+    is_attacking
 }
 
 fn handle_item_purchase<'a>(

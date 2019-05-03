@@ -3,10 +3,12 @@
     "player_x": Emulated(pos: Key(D), neg: Key(A)),
   },
   actions: {
-    "quit":            [ [Key(Escape)], [Key(Q)], ],
-    "pause":           [ [Key(P)], ],
-    "player_jump":     [ [Key(Space)], [Key(W)], [Key(K)], ],
-    "player_attack":   [ [Key(J),], ],
-    "player_buy_item": [ [Key(E),], ],
+    "quit":                [ [Key(Escape)], [Key(Q)], ],
+    "pause":               [ [Key(P)], ],
+    "player_jump":         [ [Key(Space)], [Key(W)], [Key(K)], [Key(Up)], ],
+    "player_attack":       [ [Key(J),], ],
+    "player_attack_left":  [ [Key(Left),], [Key(H)], ],
+    "player_attack_right": [ [Key(Right),], [Key(L)], ],
+    "player_buy_item":     [ [Key(E),], ],
   },
 )
