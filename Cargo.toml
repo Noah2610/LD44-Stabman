@@ -1,14 +1,14 @@
 [package]
 name = "LD44"
-version = "0.0.0"
+version = "0.1.0"
 authors = ["Noah Rosenzweig <rosenzweig.noah@gmail.com>"]
 edition = "2018"
 description = "Our Ludum Dare 44 Game Jam Entry"
 
 [dependencies]
 amethyst   = "0.10.0"
-#deathframe = { git = "https://github.com/Noah2610/deathframe" }
-deathframe = { path = "../../Rust/amethyst/deathframe" }
+deathframe = { git = "https://github.com/Noah2610/deathframe", tag = "LD44" }
+#deathframe = { path = "../../Rust/amethyst/deathframe" }
 json       = "0.11.13"
 regex      = "1.1.5"
 rand       = "0.6.5"
