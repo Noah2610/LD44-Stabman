@@ -12,6 +12,9 @@ impl<'a> System<'a> for EnemyAiSystem {
         Read<'a, Time>,
         ReadStorage<'a, EnemyAi>,
         ReadStorage<'a, Transform>,
+        ReadStorage<'a, Collision>,
+        ReadStorage<'a, Solid>,
+        ReadStorage<'a, Gravity>,
         WriteStorage<'a, Enemy>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, Velocity>,
@@ -28,6 +31,9 @@ impl<'a> System<'a> for EnemyAiSystem {
             time,
             enemy_ais,
             transforms,
+            collisions,
+            solids,
+            gravities,
             mut enemies,
             mut players,
             mut velocities,
@@ -62,6 +68,8 @@ impl<'a> System<'a> for EnemyAiSystem {
                 enemy_decr_vel,
                 enemy_max_vel,
                 enemy_animations_container,
+                enemy_collision,
+                enemy_gravity_opt,
             ) in (
                 &entities,
                 &mut enemies,
@@ -72,9 +80,19 @@ impl<'a> System<'a> for EnemyAiSystem {
                 &mut decrease_velocities,
                 &mut max_velocities,
                 &mut animations_containers,
+                &collisions,
+                (&gravities).maybe(),
             )
                 .join()
             {
+                let sides_touching = SidesTouching::new(
+                    &entities,
+                    enemy_collision,
+                    &collisions,
+                    &solids,
+                );
+
+                // Run AI specific code
                 match enemy_ai {
                     EnemyAi::Tracer => run_for_tracer_ai(
                         dt,
@@ -83,6 +101,14 @@ impl<'a> System<'a> for EnemyAiSystem {
                         enemy_transform,
                         enemy_velocity,
                     ),
+                }
+
+                // Reset y velocity if enemy has gravity and they are standing on a solid
+                if (sides_touching.is_touching_bottom && enemy_velocity.y < 0.0)
+                    || (sides_touching.is_touching_top
+                        && enemy_velocity.y > 0.0)
+                {
+                    enemy_velocity.y = 0.0;
                 }
 
                 // Flip sprite

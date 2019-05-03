@@ -287,6 +287,9 @@ fn handle_jump(
         && !can_wall_jump;
     let mut jumped = false;
     if can_jump {
+        if velocity.y < 0.0 {
+            velocity.y = 0.0;
+        }
         // Jump
         velocity.y += player.jump_strength;
         // Was an extra jump
@@ -295,6 +298,9 @@ fn handle_jump(
         }
         jumped = true;
     } else if can_wall_jump {
+        if velocity.y < 0.0 {
+            velocity.y = 0.0;
+        }
         // Wall jump
         velocity.y += player.wall_jump_strength.1;
         if sides_touching.is_touching_left {

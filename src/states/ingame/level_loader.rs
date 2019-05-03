@@ -806,6 +806,7 @@ impl LevelLoader {
                 .with(MaxVelocity::from(enemy_settings.max_velocity))
                 .with(DecreaseVelocity::from(enemy_settings.decr_velocity))
                 .with(Collision::new())
+                .with(CheckCollision)
                 .with(Solid)
                 .with(ScaleOnce)
                 .with(Enemy::new(enemy_type.clone(), enemy_settings))
