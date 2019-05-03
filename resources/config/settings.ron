@@ -62,6 +62,8 @@ Settings(
         health:                     10,
         /// Player damage
         damage:                     2,
+        /// Y level, at which to kill the player, when they dip below it.
+        death_floor:                -200.0,
     ),
 
     loading_text: (

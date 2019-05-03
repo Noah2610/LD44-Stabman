@@ -72,6 +72,7 @@ impl<'a> System<'a> for PlayerControlsSystem {
 
         for (
             player,
+            transform,
             velocity,
             decr_velocity,
             gravity,
@@ -80,6 +81,7 @@ impl<'a> System<'a> for PlayerControlsSystem {
             flipped,
         ) in (
             &mut players,
+            &transforms,
             &mut velocities,
             &mut decr_velocities,
             &mut gravities,
@@ -104,6 +106,11 @@ impl<'a> System<'a> for PlayerControlsSystem {
                 decr_velocity,
                 &sides_touching,
             );
+
+            // Kill the player, if they fall below this y level
+            if transform.translation().y <= settings.player.death_floor {
+                player.health = 0;
+            }
 
             if player.in_control && !goal_next_level {
                 handle_move(
@@ -143,12 +150,12 @@ impl<'a> System<'a> for PlayerControlsSystem {
                 // Play the level_start animation once, then regain control
                 // TODO: Cleanup
                 // animations_container.set("level_start");
-                if animations_container
-                    .current
-                    .as_ref()
-                    .map(|(_, anim)| anim.has_played())
-                    .unwrap_or(true)
-                {
+                // if animations_container
+                //     .current
+                //     .as_ref()
+                //     .map(|(_, anim)| anim.has_played())
+                //     .unwrap_or(true)
+                if true {
                     player.in_control = true;
                     animations_container.set("idle");
                 }

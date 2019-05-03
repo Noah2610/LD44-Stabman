@@ -52,6 +52,7 @@ pub struct SettingsPlayer {
     pub decrease_x_velocity_in_air: bool,
     pub health:                     u32,
     pub damage:                     u32,
+    pub death_floor:                f32,
 }
 
 #[derive(Clone)]
