@@ -7,7 +7,6 @@ use std::time::Duration;
 
 use amethyst::ecs::World;
 use amethyst::renderer::{SpriteRender, SpriteSheetHandle};
-use deathframe::geo::Vector;
 use deathframe::handlers::SpriteSheetHandles;
 
 use super::component_prelude::*;
@@ -62,6 +61,19 @@ impl Item {
                     settings.settings.bullet_shoot_lifetime_ms,
                 );
             }
+            ItemType::SpeedUp => {
+                player
+                    .max_velocity
+                    .0
+                    .as_mut()
+                    .map(|x| *x += settings.settings.speed_up_max_velocity_up);
+            }
+            ItemType::JumpUp => {
+                player.jump_strength += settings.settings.jump_up;
+            }
+            ItemType::DamageUp => {
+                player.damage += settings.settings.damage_up;
+            }
         }
     }
 }
@@ -76,6 +88,9 @@ pub enum ItemType {
     WallJump,
     Knockback,
     BulletShoot,
+    SpeedUp,
+    JumpUp,
+    DamageUp,
 }
 
 impl ItemType {
@@ -85,6 +100,9 @@ impl ItemType {
             ItemType::WallJump => settings.wall_jump.clone(),
             ItemType::Knockback => settings.knockback.clone(),
             ItemType::BulletShoot => settings.bullet_shoot.clone(),
+            ItemType::SpeedUp => settings.speed_up.clone(),
+            ItemType::JumpUp => settings.jump_up.clone(),
+            ItemType::DamageUp => settings.damage_up.clone(),
         }
     }
 
@@ -94,6 +112,9 @@ impl ItemType {
             ItemType::WallJump => 1,
             ItemType::Knockback => 0, // TODO
             ItemType::BulletShoot => 7,
+            ItemType::SpeedUp => 5,
+            ItemType::JumpUp => 6,
+            ItemType::DamageUp => 4,
         }
     }
 
@@ -125,6 +146,9 @@ where
             "WallJump" => ItemType::WallJump,
             "Knockback" => ItemType::Knockback,
             "BulletShoot" => ItemType::BulletShoot,
+            "SpeedUp" => ItemType::SpeedUp,
+            "JumpUp" => ItemType::JumpUp,
+            "DamageUp" => ItemType::DamageUp,
             n => panic!(format!("Item '{}' does not exist", n)),
         }
     }

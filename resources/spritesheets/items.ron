@@ -38,7 +38,7 @@
       width:  32,
       height: 64,
     ),
-    ( // 6 - JumpHeightUp
+    ( // 6 - JumpUp
       x:      192,
       y:      0,
       width:  32,

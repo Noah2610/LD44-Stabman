@@ -59,7 +59,7 @@ Settings(
         /// If the x velocity should be decreased when in air.
         decrease_x_velocity_in_air: true,
         /// Player starting health (there is no max health)
-        health:                     10,
+        health:                     100,
         /// Player damage
         damage:                     2,
         /// Y level, at which to kill the player, when they dip below it.
@@ -139,6 +139,15 @@ Settings(
         bullet_shoot: (
             cost: 8,
         ),
+        speed_up: (
+            cost: 8,
+        ),
+        jump_up: (
+            cost: 8,
+        ),
+        damage_up: (
+            cost: 8,
+        ),
 
         settings: (
             knockback_strength:       (1000.0, 500.0),
@@ -146,6 +155,10 @@ Settings(
             bullet_shoot_velocity:    (500.0, 0.0),
             bullet_shoot_size:        (16.0, 16.0),
             bullet_shoot_lifetime_ms: 5000,
+            speed_up_max_velocity_up: 500.0,
+            speed_up_acceleration_up: 300.0,
+            jump_up:                  100.0,
+            damage_up:                1,
         )
     ),
 )

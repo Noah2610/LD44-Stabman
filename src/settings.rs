@@ -104,6 +104,9 @@ pub struct SettingsItems {
     pub wall_jump:    SettingsItem,
     pub knockback:    SettingsItem,
     pub bullet_shoot: SettingsItem,
+    pub speed_up:     SettingsItem,
+    pub jump_up:      SettingsItem,
+    pub damage_up:    SettingsItem,
     pub settings:     SettingsItemSettings,
 }
 
@@ -119,6 +122,10 @@ pub struct SettingsItemSettings {
     pub bullet_shoot_velocity:    Vector,
     pub bullet_shoot_size:        Vector,
     pub bullet_shoot_lifetime_ms: u64,
+    pub speed_up_max_velocity_up: f32,
+    pub speed_up_acceleration_up: f32,
+    pub jump_up:                  f32,
+    pub damage_up:                u32,
 }
 
 struct QTAVisitor;
