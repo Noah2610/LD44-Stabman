@@ -507,6 +507,8 @@ impl LevelLoader {
                     .follow(camera_id)
                     .follow_anchor(Anchor::BottomLeft);
 
+                let mut has_set_offset = false;
+
                 for (key, val) in properties.entries() {
                     match (key, &texture_handle_opt) {
                         ("speed_mult", _) => {
@@ -529,6 +531,7 @@ impl LevelLoader {
                             );
                         }
                         ("offset", _) => {
+                            has_set_offset = true;
                             parallax = parallax.offset(parse_string_to_vector(
                                 val.as_str().expect(
                                     "Couldn't parse JsonValue as string",
@@ -552,6 +555,11 @@ impl LevelLoader {
                         }
                         _ => (),
                     }
+                }
+
+                // Set offset as parallax object position, unless 'offset' property was given
+                if !has_set_offset {
+                    parallax = parallax.offset(*pos);
                 }
 
                 // Add transform and size to entity
