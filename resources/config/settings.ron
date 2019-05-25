@@ -24,18 +24,18 @@ Settings(
         /// Jump velocity boost.
         jump_strength:              400.0,
         /// Wall jump velocity boost (x, y).
-        wall_jump_strength:         (400.0, 400.0),
+        wall_jump_strength:         (500.0, 500.0),
         /// Amount of velocity to kill when releasing the jump button.
         decr_jump_strength:         200.0,
         /// The minimum amount of y velocity, after killing the jump.
         min_jump_velocity:          50.0,
         /// Max velocity when _not running_.
-        max_velocity:               (Some(150.0), None),
+        max_velocity:               (Some(250.0), None),
         /// Decrease velocity by this amount, every frame.
         /// x value has no effect when moving, y value has no effect when falling/jumping.
         decr_velocity:              (2000.0,      1000.0),
         /// Gravitational pull when _not jumping_.
-        gravity:                    (0.0,         -500.0),
+        gravity:                    (0.0,         -800.0),
         /// Gravitational pull _when jumping_.
         jump_gravity:               (0.0,         -350.0),
         /// Velocity when sliding on / clinging to a `Solid` & `Collision` entity.
@@ -85,7 +85,7 @@ Settings(
             damage:                2,
             reward:                2,
             knockback:             (500.0, 200.0),
-            trigger_distance:      (128.0, 128.0),
+            trigger_distance:      (96.0, 64.0),
             acceleration:          (200.0, 0.0),
             max_velocity:          (Some(50.0), Some(500.0)),
             decr_velocity:         (2000.0, 1000.0),
@@ -96,7 +96,7 @@ Settings(
             damage:                4,
             reward:                2,
             knockback:             (2000.0, 200.0),
-            trigger_distance:      (256.0, 32.0),
+            trigger_distance:      (128.0, 32.0),
             acceleration:          (500.0, 0.0),
             max_velocity:          (Some(1000.0), Some(500.0)),
             decr_velocity:         (2000.0, 1000.0),
@@ -107,14 +107,14 @@ Settings(
             damage:                5,
             reward:                3,
             knockback:             (2000.0, 200.0),
-            trigger_distance:      (512.0, 512.0),
+            trigger_distance:      (192.0, 128.0),
             acceleration:          (500.0, 100.0),
             max_velocity:          (Some(25.0), Some(25.0)),
             decr_velocity:         (100.0, 100.0),
             knockback_duration_ms: 1000,
         ),
         reaper:  (
-            health:                10,
+            health:                30,
             damage:                1,
             reward:                3,
             knockback:             (2000.0, 200.0),
@@ -155,9 +155,9 @@ Settings(
             bullet_shoot_velocity:    (500.0, 0.0),
             bullet_shoot_size:        (16.0, 16.0),
             bullet_shoot_lifetime_ms: 5000,
-            speed_up_max_velocity_up: 500.0,
+            speed_up_max_velocity_up: 700.0,
             speed_up_acceleration_up: 300.0,
-            jump_up:                  100.0,
+            jump_up:                  50.0,
             damage_up:                1,
         )
     ),
