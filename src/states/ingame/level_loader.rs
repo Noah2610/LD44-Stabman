@@ -246,7 +246,7 @@ impl LevelLoader {
                 .with(sprite_render)
                 .with(Transparent)
                 .with(Velocity::default())
-                .with(MaxVelocity::from(settings.player.max_velocity))
+                // .with(MaxVelocity::from(settings.player.max_velocity)) // TODO
                 .with(DecreaseVelocity::from(settings.player.decr_velocity))
                 .with(size.clone())
                 .with(ScaleOnce)

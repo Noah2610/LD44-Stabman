@@ -249,12 +249,16 @@ fn handle_move(
             }
 
             // Move player
-            velocity.x += (if on_ground {
+            let velocity_increase = (if on_ground {
                 player.acceleration.0
             } else {
                 player.air_acceleration.0
             } * dt)
                 * x_sign; // TODO: Maybe don't use the sign? Might work well with controller axis inputs.
+
+            // Increase velocity with a maximum
+            velocity
+                .increase_x_with_max(velocity_increase, player.max_velocity.0);
 
             // Don't decrease velocity when moving
             if x > 0.0 {
