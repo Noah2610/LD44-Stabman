@@ -13,7 +13,7 @@ impl<'a> System<'a> for PlayerControlsSystem {
         Read<'a, Time>,
         Read<'a, InputHandler<String, String>>,
         Read<'a, InputManager>,
-        ReadStorage<'a, Solid>,
+        ReadStorage<'a, Solid<SolidTag>>,
         ReadStorage<'a, Goal>,
         ReadStorage<'a, Item>,
         WriteStorage<'a, Collision>,

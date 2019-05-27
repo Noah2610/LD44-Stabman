@@ -8,6 +8,7 @@ use json::JsonValue;
 use super::super::state_prelude::*;
 use crate::components::prelude::*;
 use crate::settings::SettingsLevelManager;
+use crate::solid_tag::SolidTag;
 
 const PROPERTY_Z_KEY: &str = "z";
 const PLAYER_Z: f32 = 0.5;
@@ -251,7 +252,7 @@ impl LevelLoader {
                 .with(size.clone())
                 .with(ScaleOnce)
                 .with(Gravity::from(settings.player.gravity))
-                .with(Solid)
+                .with(Solid::new(SolidTag::Player))
                 .with(Collision::new())
                 .with(CheckCollision)
                 .with(Push)
@@ -464,7 +465,9 @@ impl LevelLoader {
 
             if let Some(is_solid) = properties["solid"].as_bool() {
                 if is_solid {
-                    entity = entity.with(Solid).with(Collision::new());
+                    entity = entity
+                        .with(Solid::new(SolidTag::default()))
+                        .with(Collision::new());
                 }
             }
 
@@ -811,11 +814,11 @@ impl LevelLoader {
                 .with(transform)
                 .with(Size::from(*size))
                 .with(Velocity::default())
-                .with(MaxVelocity::from(enemy_settings.max_velocity))
+                // .with(MaxVelocity::from(enemy_settings.max_velocity)) // TODO
                 .with(DecreaseVelocity::from(enemy_settings.decr_velocity))
                 .with(Collision::new())
                 .with(CheckCollision)
-                .with(Solid)
+                .with(Solid::new(SolidTag::Enemy))
                 .with(ScaleOnce)
                 .with(Enemy::new(enemy_type.clone(), enemy_settings))
                 .with(sprite_render)

@@ -26,6 +26,7 @@ mod system_prelude {
 
     pub use super::helpers::*;
     pub use crate::components::prelude::*;
+    pub use crate::solid_tag::SolidTag;
 }
 
 mod helpers {
@@ -44,7 +45,7 @@ mod helpers {
             entities: &Entities<'a>,
             player_collision: &Collision,
             collisions: &ReadStorage<'a, Collision>,
-            solids: &ReadStorage<Solid>,
+            solids: &ReadStorage<Solid<SolidTag>>,
         ) -> Self {
             let mut is_touching_top = false;
             let mut is_touching_bottom = false;
@@ -87,7 +88,7 @@ mod helpers {
             entities: &Entities<'a>,
             player_collision: &Collision,
             collisions: &WriteStorage<'a, Collision>,
-            solids: &ReadStorage<Solid>,
+            solids: &ReadStorage<Solid<SolidTag>>,
         ) -> Self {
             let mut is_touching_top = false;
             let mut is_touching_bottom = false;

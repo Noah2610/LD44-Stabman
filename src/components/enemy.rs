@@ -10,6 +10,10 @@ use super::component_prelude::*;
 use super::Player;
 use crate::settings::SettingsEnemy;
 
+// If player is within this range, enemy should _not_ move closer
+// (to avoid alternating Flipped state, when crossing)
+const TRIGGER_DISTANCE_DEADZONE: (f32, f32) = (8.0, 8.0);
+
 #[derive(Clone, PartialEq)]
 pub enum EnemyAi {
     Tracer,
@@ -35,6 +39,7 @@ pub struct Enemy {
     pub knockback:          Vector,
     pub trigger_distance:   Vector,
     pub acceleration:       Vector,
+    pub max_velocity:       (Option<f32>, Option<f32>),
     pub knockbacked_at:     Option<Instant>,
     pub knockback_duration: Duration,
 }
@@ -49,6 +54,7 @@ impl Enemy {
             knockback:          settings.knockback,
             trigger_distance:   settings.trigger_distance,
             acceleration:       settings.acceleration,
+            max_velocity:       settings.max_velocity,
             knockbacked_at:     None,
             knockback_duration: Duration::from_millis(
                 settings.knockback_duration_ms,
@@ -76,9 +82,12 @@ impl Enemy {
         self.health <= 0
     }
 
-    pub fn in_trigger_distance(&self, distance: Vector) -> bool {
-        distance.0.abs() <= self.trigger_distance.0.abs()
-            || distance.1.abs() <= self.trigger_distance.1.abs()
+    pub fn in_trigger_distance(&self, distance: (f32, f32)) -> bool {
+        let distance = (distance.0.abs(), distance.1.abs());
+        distance.0 <= self.trigger_distance.0.abs()
+            || distance.1 <= self.trigger_distance.1.abs()
+        // && distance.0 > TRIGGER_DISTANCE_DEADZONE.0
+        // && distance.1 > TRIGGER_DISTANCE_DEADZONE.1
     }
 }
 

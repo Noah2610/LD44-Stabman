@@ -7,6 +7,7 @@ extern crate json;
 mod components;
 mod resource_helpers;
 mod settings;
+mod solid_tag;
 mod states;
 mod systems;
 mod world_helpers;
@@ -87,7 +88,6 @@ fn build_game_data<'a, 'b>(
     let input_bundle = InputBundle::<String, String>::new()
         .with_bindings_from_file(&resource("config/bindings.ron"))?;
     let ui_bundle = UiBundle::<String, String>::new();
-    use amethyst::ecs::Read;
     let audio_bundle = AudioBundle::new(|_: &mut AudioHandles| None); // I hate this
     let fps_bundle = FPSCounterBundle;
 
@@ -118,11 +118,16 @@ fn build_game_data<'a, 'b>(
             "limit_velocities_system",
             &["gravity_system", "player_controls_system"],
         )?
-        .with("ingame", MoveEntitiesSystem, "move_entities_system", &[
-            "gravity_system",
-            "limit_velocities_system",
-            "player_controls_system",
-        ])?
+        .with(
+            "ingame",
+            MoveEntitiesSystem::<solid_tag::SolidTag>::default(),
+            "move_entities_system",
+            &[
+                "gravity_system",
+                "limit_velocities_system",
+                "player_controls_system",
+            ],
+        )?
         .with("ingame", CameraSystem, "camera_system", &[
             "move_entities_system",
         ])?

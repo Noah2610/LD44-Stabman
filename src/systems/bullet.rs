@@ -8,7 +8,7 @@ impl<'a> System<'a> for BulletSystem {
     type SystemData = (
         Entities<'a>,
         ReadStorage<'a, Collision>,
-        ReadStorage<'a, Solid>,
+        ReadStorage<'a, Solid<SolidTag>>,
         WriteStorage<'a, Bullet>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, Enemy>,

@@ -13,14 +13,14 @@ impl<'a> System<'a> for EnemyAiSystem {
         ReadStorage<'a, EnemyAi>,
         ReadStorage<'a, Transform>,
         ReadStorage<'a, Collision>,
-        ReadStorage<'a, Solid>,
+        ReadStorage<'a, Solid<SolidTag>>,
         ReadStorage<'a, Gravity>,
         WriteStorage<'a, Enemy>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, Flipped>,
         WriteStorage<'a, DecreaseVelocity>,
-        WriteStorage<'a, MaxVelocity>,
+        // WriteStorage<'a, MaxVelocity>,
         WriteStorage<'a, AnimationsContainer>,
     );
 
@@ -39,7 +39,7 @@ impl<'a> System<'a> for EnemyAiSystem {
             mut velocities,
             mut flippeds,
             mut decrease_velocities,
-            mut max_velocities,
+            // mut max_velocities,
             mut animations_containers,
         ): Self::SystemData,
     ) {
@@ -66,7 +66,7 @@ impl<'a> System<'a> for EnemyAiSystem {
                 enemy_velocity,
                 enemy_flipped,
                 enemy_decr_vel,
-                enemy_max_vel,
+                // enemy_max_vel,
                 enemy_animations_container,
                 enemy_collision,
                 enemy_gravity_opt,
@@ -78,7 +78,7 @@ impl<'a> System<'a> for EnemyAiSystem {
                 &mut velocities,
                 &mut flippeds,
                 &mut decrease_velocities,
-                &mut max_velocities,
+                // &mut max_velocities,
                 &mut animations_containers,
                 &collisions,
                 (&gravities).maybe(),
@@ -126,17 +126,18 @@ impl<'a> System<'a> for EnemyAiSystem {
                     enemy_animations_container.set("idle");
                 }
 
+                // TODO Cleanup
                 // Handle knockbacked state
-                if let Some(knockbacked_at) = enemy.knockbacked_at {
-                    if now.duration_since(knockbacked_at)
-                        >= enemy.knockback_duration
-                    {
-                        enemy.knockbacked_at = None;
-                    } else {
-                        enemy_decr_vel.dont_decrease_x();
-                        enemy_max_vel.dont_limit_x();
-                    }
-                }
+                // if let Some(knockbacked_at) = enemy.knockbacked_at {
+                //     if now.duration_since(knockbacked_at)
+                //         >= enemy.knockback_duration
+                //     {
+                //         enemy.knockbacked_at = None;
+                //     } else {
+                //         enemy_decr_vel.dont_decrease_x();
+                //         enemy_max_vel.dont_limit_x();
+                //     }
+                // }
 
                 // Handle enemy death
                 if enemy.is_dead() {
@@ -161,13 +162,15 @@ fn run_for_tracer_ai<'a>(
         enemy_pos.1 - player_data.pos.1,
     );
 
-    if enemy.in_trigger_distance(distance_to_player.into()) {
-        velocity.x +=
-            enemy.acceleration.0 * -distance_to_player.0.signum() * dt;
-        if enemy.acceleration.1 != 0.0 {
-            velocity.y +=
-                enemy.acceleration.1 * -distance_to_player.1.signum() * dt;
-        }
+    if enemy.in_trigger_distance(distance_to_player) {
+        velocity.increase_with_max(
+            (
+                enemy.acceleration.0 * -distance_to_player.0.signum() * dt,
+                enemy.acceleration.1 * -distance_to_player.1.signum() * dt,
+            )
+                .into(),
+            enemy.max_velocity,
+        );
     }
 }
 
