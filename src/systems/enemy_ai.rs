@@ -103,6 +103,7 @@ impl<'a> System<'a> for EnemyAiSystem {
                         enemy,
                         enemy_transform,
                         enemy_velocity,
+                        enemy_decr_vel,
                     ),
                 }
 
@@ -163,6 +164,7 @@ fn run_for_tracer_ai<'a>(
     enemy: &Enemy,
     transform: &Transform,
     velocity: &mut Velocity,
+    decr_velocity: &mut DecreaseVelocity,
 ) {
     let enemy_pos = Vector::from(transform);
     let distance_to_player = (
@@ -171,14 +173,23 @@ fn run_for_tracer_ai<'a>(
     );
 
     if enemy.in_trigger_distance(distance_to_player) {
-        velocity.increase_with_max(
-            (
-                enemy.acceleration.0 * -distance_to_player.0.signum() * dt,
-                enemy.acceleration.1 * -distance_to_player.1.signum() * dt,
-            )
-                .into(),
-            enemy.max_velocity,
+        let increase = Vector::new(
+            enemy.acceleration.0 * -distance_to_player.0.signum() * dt,
+            enemy.acceleration.1 * -distance_to_player.1.signum() * dt,
         );
+        // Don't decrease velocity when moving
+        if increase.0 > 0.0 {
+            decr_velocity.dont_decrease_x_when_pos();
+        } else if increase.0 < 0.0 {
+            decr_velocity.dont_decrease_x_when_neg();
+        }
+        if increase.1 > 0.0 {
+            decr_velocity.dont_decrease_y_when_pos();
+        } else if increase.1 < 0.0 {
+            decr_velocity.dont_decrease_y_when_neg();
+        }
+        // Increase velocity
+        velocity.increase_with_max(increase, enemy.max_velocity);
     }
 }
 
