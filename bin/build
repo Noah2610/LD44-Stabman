@@ -1,9 +1,9 @@
 #!/bin/bash
-# Run the project for development.
+# Build the project for development.
 
 ROOT="$( cd $(dirname $0)/..; pwd )"
 source "$ROOT/bin/util.sh"
 
 check "cargo" && \
   # cargo $cmd
-  cargo +nightly-2019-03-01 run "$@" --features amethyst/nightly
+  cargo +nightly-2019-03-01 build "$@" --features amethyst/nightly
