@@ -3,12 +3,14 @@ use std::time::Instant;
 use deathframe::geo::Vector;
 
 use super::system_prelude::*;
+use crate::settings::prelude::*;
 
 pub struct EnemyAiSystem;
 
 impl<'a> System<'a> for EnemyAiSystem {
     type SystemData = (
         Entities<'a>,
+        ReadExpect<'a, Settings>,
         Read<'a, Time>,
         ReadStorage<'a, EnemyAi>,
         ReadStorage<'a, Transform>,
@@ -28,6 +30,7 @@ impl<'a> System<'a> for EnemyAiSystem {
         &mut self,
         (
             entities,
+            settings,
             time,
             enemy_ais,
             transforms,
@@ -138,6 +141,11 @@ impl<'a> System<'a> for EnemyAiSystem {
                 //         enemy_max_vel.dont_limit_x();
                 //     }
                 // }
+
+                // Kill the enemies when they fall below the death_floor
+                if enemy_transform.translation().y < settings.death_floor {
+                    enemy.health = 0;
+                }
 
                 // Handle enemy death
                 if enemy.is_dead() {

@@ -24,6 +24,7 @@ pub struct Settings {
     pub enemies:       SettingsEnemies,
     pub items:         SettingsItems,
     pub music_volume:  f32,
+    pub death_floor:   f32,
 }
 
 #[derive(Clone, Deserialize)]
@@ -52,7 +53,6 @@ pub struct SettingsPlayer {
     pub decrease_x_velocity_in_air: bool,
     pub health:                     u32,
     pub damage:                     u32,
-    pub death_floor:                f32,
 }
 
 #[derive(Clone)]

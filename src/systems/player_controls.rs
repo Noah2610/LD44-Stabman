@@ -107,8 +107,8 @@ impl<'a> System<'a> for PlayerControlsSystem {
                 &sides_touching,
             );
 
-            // Kill the player, if they fall below this y level
-            if transform.translation().y <= settings.player.death_floor {
+            // Kill the player, if they fall below the death_floor
+            if transform.translation().y < settings.death_floor {
                 player.health = 0;
             }
 
