@@ -12,7 +12,7 @@ use crate::settings::SettingsEnemy;
 
 // If player is within this range, enemy should _not_ move closer
 // (to avoid alternating Flipped state, when crossing)
-const TRIGGER_DISTANCE_DEADZONE: (f32, f32) = (8.0, 8.0);
+const TRIGGER_DISTANCE_DEADZONE: (f32, f32) = (16.0, 16.0);
 
 #[derive(Clone, PartialEq)]
 pub enum EnemyAi {
@@ -85,9 +85,17 @@ impl Enemy {
     pub fn in_trigger_distance(&self, distance: (f32, f32)) -> bool {
         let distance = (distance.0.abs(), distance.1.abs());
         distance.0 <= self.trigger_distance.0.abs()
-            || distance.1 <= self.trigger_distance.1.abs()
-        // && distance.0 > TRIGGER_DISTANCE_DEADZONE.0
-        // && distance.1 > TRIGGER_DISTANCE_DEADZONE.1
+            && distance.1 <= self.trigger_distance.1.abs()
+    }
+
+    pub fn is_outside_deadzone_x(&self, distance: f32) -> bool {
+        let distance = distance.abs();
+        distance > TRIGGER_DISTANCE_DEADZONE.0
+    }
+
+    pub fn is_outside_deadzone_y(&self, distance: f32) -> bool {
+        let distance = distance.abs();
+        distance > TRIGGER_DISTANCE_DEADZONE.1
     }
 }
 

@@ -174,8 +174,16 @@ fn run_for_tracer_ai<'a>(
 
     if enemy.in_trigger_distance(distance_to_player) {
         let increase = Vector::new(
-            enemy.acceleration.0 * -distance_to_player.0.signum() * dt,
-            enemy.acceleration.1 * -distance_to_player.1.signum() * dt,
+            if enemy.is_outside_deadzone_x(distance_to_player.0) {
+                enemy.acceleration.0 * -distance_to_player.0.signum() * dt
+            } else {
+                0.0
+            },
+            if enemy.is_outside_deadzone_y(distance_to_player.1) {
+                enemy.acceleration.1 * -distance_to_player.1.signum() * dt
+            } else {
+                0.0
+            },
         );
         // Don't decrease velocity when moving
         if increase.0 > 0.0 {
