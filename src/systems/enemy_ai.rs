@@ -234,7 +234,19 @@ fn run_for_charger_ai(
     solids: &ReadStorage<Solid<SolidTag>>,
 ) {
     if ai_data.is_moving {
+        // Increase velocity
         velocity.increase_with_max(ai_data.velocity, enemy.max_velocity);
+        // Don't decrease velocity when moving
+        if ai_data.velocity.0 > 0.0 {
+            decr_velocity.dont_decrease_x_when_pos();
+        } else if ai_data.velocity.0 < 0.0 {
+            decr_velocity.dont_decrease_x_when_neg();
+        }
+        if ai_data.velocity.1 > 0.0 {
+            decr_velocity.dont_decrease_y_when_pos();
+        } else if ai_data.velocity.1 < 0.0 {
+            decr_velocity.dont_decrease_y_when_neg();
+        }
         // Check if in collision with solid
         let in_collision = if let Some(stop_moving_sides) =
             &ai_data.stop_moving_when_colliding_sides
