@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::prelude::*;
 
 use amethyst::ecs::world::Index;
-use deathframe::geo::{Anchor, Vector};
+use deathframe::geo::{Anchor, Side, Vector};
 use json::JsonValue;
 
 use super::super::state_prelude::*;
@@ -680,7 +680,13 @@ impl LevelLoader {
                         (
                             EnemyType::Charger,
                             settings.enemies.charger.clone(),
-                            EnemyAi::Tracer,
+                            EnemyAi::Charger(EnemyAiChargerData {
+                                stop_moving_when_colliding_sides: Some(vec![
+                                    Side::Left,
+                                    Side::Right,
+                                ]),
+                                ..Default::default()
+                            }),
                             (spritesheet_handle.clone(), sprite_render),
                             AnimationsContainer::new()
                                 .insert(

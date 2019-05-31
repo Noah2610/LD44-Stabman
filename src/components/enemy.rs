@@ -1,10 +1,13 @@
 pub mod prelude {
     pub use super::Enemy;
     pub use super::EnemyAi;
+    pub use super::EnemyAiChargerData;
     pub use super::EnemyType;
 }
 
 use std::time::{Duration, Instant};
+
+use deathframe::geo::Side;
 
 use super::component_prelude::*;
 use super::Player;
@@ -14,9 +17,17 @@ use crate::settings::SettingsEnemy;
 // (to avoid alternating Flipped state, when crossing)
 const TRIGGER_DISTANCE_DEADZONE: (f32, f32) = (16.0, 16.0);
 
+#[derive(Clone, PartialEq, Default)]
+pub struct EnemyAiChargerData {
+    pub is_moving:                        bool,
+    pub velocity:                         Vector,
+    pub stop_moving_when_colliding_sides: Option<Vec<Side>>,
+}
+
 #[derive(Clone, PartialEq)]
 pub enum EnemyAi {
     Tracer,
+    Charger(EnemyAiChargerData),
 }
 
 impl Component for EnemyAi {

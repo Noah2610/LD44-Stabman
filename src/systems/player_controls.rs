@@ -294,7 +294,8 @@ fn handle_jump(
     let jump_btn_down = input_manager.is_down("player_jump");
     let can_wall_jump = player.items_data.can_wall_jump
         && jump_btn_down
-        && sides_touching.is_touching_horizontally();
+        && sides_touching.is_touching_horizontally()
+        && !sides_touching.is_touching_bottom;
     let can_jump = jump_btn_down
         && (sides_touching.is_touching_bottom || player.has_extra_jump())
         && !can_wall_jump;
