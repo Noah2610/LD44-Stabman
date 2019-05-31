@@ -5,9 +5,9 @@ pub struct PlayerTakeDamageSystem;
 impl<'a> System<'a> for PlayerTakeDamageSystem {
     type SystemData = (
         Entities<'a>,
+        ReadStorage<'a, Transform>,
         ReadStorage<'a, Collision>,
         ReadStorage<'a, Enemy>,
-        ReadStorage<'a, Flipped>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, AnimationsContainer>,
@@ -17,9 +17,9 @@ impl<'a> System<'a> for PlayerTakeDamageSystem {
         &mut self,
         (
             entities,
+            transforms,
             collisions,
             enemies,
-            flippeds,
             mut players,
             mut velocities,
             mut animations_containers,
@@ -27,21 +27,23 @@ impl<'a> System<'a> for PlayerTakeDamageSystem {
     ) {
         for (
             player,
+            player_transform,
             player_collision,
             player_velocity,
-            player_flipped,
             player_animations_container,
         ) in (
             &mut players,
+            &transforms,
             &collisions,
             &mut velocities,
-            &flippeds,
             &mut animations_containers,
         )
             .join()
         {
             if player.in_control {
-                for (enemy_entity, enemy) in (&entities, &enemies).join() {
+                for (enemy_entity, enemy, enemy_transform) in
+                    (&entities, &enemies, &transforms).join()
+                {
                     let enemy_id = enemy_entity.id();
 
                     if let Some(collision::Data {
@@ -53,12 +55,26 @@ impl<'a> System<'a> for PlayerTakeDamageSystem {
                         enemy.deal_damage_to(player);
 
                         // Knockback
-                        let knockback = match player_flipped {
-                            Flipped::Horizontal => {
-                                (enemy.knockback.0, enemy.knockback.1)
-                            }
-                            _ => (enemy.knockback.0 * -1.0, enemy.knockback.1),
-                        };
+                        // Figure out which direction to knock the player into by comparing the
+                        // player's and the enemy's positions to each other.
+                        let player_pos = player_transform.translation();
+                        let enemy_pos = enemy_transform.translation();
+                        let knockback = (
+                            if player_pos.x > enemy_pos.x {
+                                enemy.knockback.0
+                            } else if player_pos.x < enemy_pos.x {
+                                enemy.knockback.0 * -1.0
+                            } else {
+                                0.0
+                            },
+                            if player_pos.y > enemy_pos.y {
+                                enemy.knockback.1
+                            } else if player_pos.y < enemy_pos.y {
+                                enemy.knockback.1 * -1.0
+                            } else {
+                                0.0
+                            },
+                        );
                         player_velocity.x = knockback.0;
                         player_velocity.y = knockback.1;
                     }
@@ -71,13 +87,5 @@ impl<'a> System<'a> for PlayerTakeDamageSystem {
                 }
             }
         }
-    }
-}
-
-fn x_knockback_for_vertical_side(knockback: f32, flipped: &Flipped) -> f32 {
-    if let Flipped::None = flipped {
-        knockback * -1.0
-    } else {
-        knockback
     }
 }
