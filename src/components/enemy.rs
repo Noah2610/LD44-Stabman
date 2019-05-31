@@ -43,33 +43,27 @@ pub enum EnemyType {
 }
 
 pub struct Enemy {
-    pub enemy_type:         EnemyType,
-    pub health:             u32,
-    pub damage:             u32,
-    pub reward:             u32,
-    pub knockback:          Vector,
-    pub trigger_distance:   Vector,
-    pub acceleration:       Vector,
-    pub max_velocity:       (Option<f32>, Option<f32>),
-    pub knockbacked_at:     Option<Instant>,
-    pub knockback_duration: Duration,
+    pub enemy_type:       EnemyType,
+    pub health:           u32,
+    pub damage:           u32,
+    pub reward:           u32,
+    pub knockback:        Vector,
+    pub trigger_distance: Vector,
+    pub acceleration:     Vector,
+    pub max_velocity:     (Option<f32>, Option<f32>),
 }
 
 impl Enemy {
     pub fn new(enemy_type: EnemyType, settings: SettingsEnemy) -> Self {
         Self {
-            enemy_type:         enemy_type,
-            health:             settings.health,
-            damage:             settings.damage,
-            reward:             settings.reward,
-            knockback:          settings.knockback,
-            trigger_distance:   settings.trigger_distance,
-            acceleration:       settings.acceleration,
-            max_velocity:       settings.max_velocity,
-            knockbacked_at:     None,
-            knockback_duration: Duration::from_millis(
-                settings.knockback_duration_ms,
-            ),
+            enemy_type:       enemy_type,
+            health:           settings.health,
+            damage:           settings.damage,
+            reward:           settings.reward,
+            knockback:        settings.knockback,
+            trigger_distance: settings.trigger_distance,
+            acceleration:     settings.acceleration,
+            max_velocity:     settings.max_velocity,
         }
     }
 
