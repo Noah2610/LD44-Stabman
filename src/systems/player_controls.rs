@@ -261,9 +261,21 @@ fn handle_move(
                 .increase_x_with_max(velocity_increase, player.max_velocity.0);
 
             // Don't decrease velocity when moving
-            if x > 0.0 {
+            if x > 0.0
+                && player
+                    .max_velocity
+                    .0
+                    .map(|max| velocity.x <= max)
+                    .unwrap_or(true)
+            {
                 decr_velocity.dont_decrease_x_when_pos();
-            } else if x < 0.0 {
+            } else if x < 0.0
+                && player
+                    .max_velocity
+                    .0
+                    .map(|max| velocity.x >= -max)
+                    .unwrap_or(true)
+            {
                 decr_velocity.dont_decrease_x_when_neg();
             }
 
