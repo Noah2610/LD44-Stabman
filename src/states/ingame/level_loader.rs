@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::prelude::*;
 
 use amethyst::ecs::world::Index;
-use deathframe::geo::{Anchor, Side, Vector};
+use deathframe::geo::{Anchor, Rect, Side, Vector};
 use json::JsonValue;
 
 use super::super::state_prelude::*;
@@ -46,6 +46,7 @@ struct EntityData {
 
 pub struct LevelLoader {
     settings:      SettingsLevelManager,
+    level_size:    Option<Vector>,
     camera_id:     Option<Index>,
     player_id:     Option<Index>,
     player_data:   Option<EntityData>,
@@ -60,6 +61,7 @@ impl LevelLoader {
     pub fn new(settings: SettingsLevelManager) -> Self {
         Self {
             settings:      settings,
+            level_size:    None,
             camera_id:     None,
             player_id:     None,
             player_data:   None,
@@ -90,6 +92,7 @@ impl LevelLoader {
         let json = json::parse(&json_raw)
             .expect(&format!("Could not parse JSON for level: {}", filepath));
 
+        self.load_level_data(&json["level"]);
         self.load_objects(&json["objects"]);
         self.load_tiles(&json["tiles"]);
     }
@@ -103,6 +106,21 @@ impl LevelLoader {
         self.build_enemies(data);
         self.build_goal(data);
         self.build_items(data);
+    }
+
+    fn load_level_data(&mut self, json: &JsonValue) {
+        const ERRMSG: &str = "\"level\".\"size\" values should be f32";
+        for (key, val) in json.entries() {
+            match key {
+                "size" => {
+                    self.level_size = Some(Vector::new(
+                        val["w"].as_f32().expect(ERRMSG),
+                        val["h"].as_f32().expect(ERRMSG),
+                    ))
+                }
+                _ => (),
+            }
+        }
     }
 
     fn load_objects(&mut self, json: &JsonValue) {
@@ -379,7 +397,7 @@ impl LevelLoader {
             camera = camera.follow(player_id);
         }
 
-        let entity = data
+        let mut entity_builder = data
             .world
             .create_entity()
             .with(AmethystCamera::from(Projection::orthographic(
@@ -393,8 +411,22 @@ impl LevelLoader {
             .with(Size::from(settings.camera.size))
             .with(InnerSize(Size::from(settings.camera.inner_size)))
             .with(Velocity::default())
-            .with(Collision::new())
-            .build();
+            .with(Collision::new());
+
+        if let Some(size) = self.level_size {
+            // NOTE: Offset the values by half of camera's size,
+            // because the `ConfineEntitiesSystem` assumes the entity's
+            // anchor point is in the center. The Camera is the only
+            // entity for which the anchor point is in the bottom left.
+            entity_builder = entity_builder.with(Confined::new(Rect {
+                top:    size.1 - settings.camera.size.1 * 0.5,
+                bottom: 0.0 - settings.camera.size.1 * 0.5,
+                left:   0.0 - settings.camera.size.0 * 0.5,
+                right:  size.0 - settings.camera.size.0 * 0.5,
+            }));
+        }
+
+        let entity = entity_builder.build();
 
         self.camera_id = Some(entity.id());
     }

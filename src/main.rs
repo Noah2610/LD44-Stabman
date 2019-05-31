@@ -131,6 +131,12 @@ fn build_game_data<'a, 'b>(
         .with("ingame", CameraSystem, "camera_system", &[
             "move_entities_system",
         ])?
+        .with(
+            "ingame",
+            ConfineEntitiesSystem,
+            "confine_entities_system",
+            &["move_entities_system", "camera_system"],
+        )?
         .with("ingame", ParallaxSystem, "parallax_system", &[
             "move_entities_system",
             "camera_system",
