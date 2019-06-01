@@ -78,11 +78,13 @@ pub struct SettingsLevelManager {
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsEnemies {
-    pub gravity: Vector,
-    pub normal:  SettingsEnemy,
-    pub charger: SettingsEnemy,
-    pub flying:  SettingsEnemy,
-    pub reaper:  SettingsEnemy,
+    pub gravity:     Vector,
+    pub normal:      SettingsEnemy,
+    pub charger:     SettingsEnemy,
+    pub flying:      SettingsEnemy,
+    pub reaper:      SettingsEnemy,
+    pub turret:      SettingsEnemy,
+    pub turret_data: SettingsEnemyTurret,
 }
 
 #[derive(Clone, Deserialize)]
@@ -95,6 +97,13 @@ pub struct SettingsEnemy {
     pub acceleration:     Vector,
     pub max_velocity:     (Option<f32>, Option<f32>),
     pub decr_velocity:    Vector,
+}
+
+#[derive(Clone, Deserialize)]
+pub struct SettingsEnemyTurret {
+    pub shot_interval_ms: u64,
+    pub bullet_velocity:  Vector,
+    pub bullet_size:      Vector,
 }
 
 #[derive(Clone, Deserialize)]

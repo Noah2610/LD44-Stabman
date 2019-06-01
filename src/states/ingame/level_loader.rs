@@ -23,7 +23,8 @@ const BACKGROUNDS_DIR: &str = "textures/bg";
 const ENEMY_NORMAL_SPRITESHEET_FILENAME: &str = "enemy_normal.png";
 const ENEMY_CHARGER_SPRITESHEET_FILENAME: &str = "enemy_charger.png";
 const ENEMY_FLYING_SPRITESHEET_FILENAME: &str = "enemy_flying.png";
-const ENEMY_REAPER_SPRITESHEET_FILENAME: &str = "enemy_flying.png";
+const ENEMY_REAPER_SPRITESHEET_FILENAME: &str = "enemy_reaper.png";
+const ENEMY_TURRET_SPRITESHEET_FILENAME: &str = "enemy_reaper.png"; // TODO
 
 struct SpriteData {
     pub spritesheet_path: String,
@@ -835,6 +836,81 @@ impl LevelLoader {
                                 .build(),
                         )
                     }
+                    "Turret" => {
+                        // TODO: Flipped
+                        let facing = if let Some(facing_str) =
+                            properties["facing"].as_str()
+                        {
+                            match facing_str {
+                                "Left" => Facing::Left,
+                                "Right" => Facing::Right,
+                                _ => panic!(format!(
+                                    "Couldn't parse `facing` property for \
+                                     enemy `Turret`: {}",
+                                    facing_str
+                                ),),
+                            }
+                        } else {
+                            Facing::default()
+                        };
+                        let (spritesheet_handle, sprite_render) = {
+                            let handle = spritesheet_handles.get_or_load(
+                                resource(format!(
+                                    "spritesheets/{}",
+                                    ENEMY_TURRET_SPRITESHEET_FILENAME
+                                )),
+                                data.world,
+                            );
+                            (handle.clone(), SpriteRender {
+                                sprite_sheet:  handle,
+                                sprite_number: 0,
+                            })
+                        };
+                        (
+                            EnemyType::Turret,
+                            settings.enemies.turret.clone(),
+                            EnemyAi::Turret(EnemyAiTurretData {
+                                facing,
+                                shot_interval_ms: settings
+                                    .enemies
+                                    .turret_data
+                                    .shot_interval_ms,
+                                bullet_velocity: settings
+                                    .enemies
+                                    .turret_data
+                                    .bullet_velocity,
+                                bullet_size: settings
+                                    .enemies
+                                    .turret_data
+                                    .bullet_size,
+                                ..Default::default()
+                            }),
+                            (spritesheet_handle.clone(), sprite_render),
+                            AnimationsContainer::new()
+                                .insert(
+                                    "idle",
+                                    Animation::new()
+                                        .default_sprite_sheet_handle(
+                                            spritesheet_handle.clone(),
+                                        )
+                                        .default_delay_ms(250)
+                                        .sprite_ids(vec![0, 1])
+                                        .build(),
+                                )
+                                .insert(
+                                    "shooting",
+                                    Animation::new()
+                                        .default_sprite_sheet_handle(
+                                            spritesheet_handle.clone(),
+                                        )
+                                        .default_delay_ms(500)
+                                        .sprite_ids(vec![2, 0, 1])
+                                        .build(),
+                                )
+                                .current("idle")
+                                .build(),
+                        )
+                    }
                     t => panic!(format!("EnemyType '{}' does not exist", t)),
                 }
             };
@@ -865,7 +941,9 @@ impl LevelLoader {
                 .with(Transparent)
                 .with(enemy_ai);
 
-            if enemy_type != EnemyType::Flying {
+            if enemy_type != EnemyType::Flying
+                && enemy_type != EnemyType::Turret
+            {
                 entity = entity.with(Gravity::from(settings.enemies.gravity));
             }
 

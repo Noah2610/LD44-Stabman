@@ -2,7 +2,9 @@ pub mod prelude {
     pub use super::Enemy;
     pub use super::EnemyAi;
     pub use super::EnemyAiChargerData;
+    pub use super::EnemyAiTurretData;
     pub use super::EnemyType;
+    pub use super::Facing;
 }
 
 use std::time::{Duration, Instant};
@@ -25,9 +27,45 @@ pub struct EnemyAiChargerData {
 }
 
 #[derive(Clone, PartialEq)]
+pub enum Facing {
+    Left,
+    Right,
+}
+
+impl Default for Facing {
+    fn default() -> Self {
+        Facing::Left
+    }
+}
+
+#[derive(Clone, PartialEq)]
+pub struct EnemyAiTurretData {
+    pub facing:           Facing,
+    pub shot_interval_ms: u64,
+    pub bullet_velocity:  Vector,
+    pub bullet_size:      Vector,
+    pub bullet_lifetime:  Duration,
+    pub last_shot_at:     Instant,
+}
+
+impl Default for EnemyAiTurretData {
+    fn default() -> Self {
+        Self {
+            facing:           Default::default(),
+            shot_interval_ms: Default::default(),
+            bullet_velocity:  Default::default(),
+            bullet_size:      Default::default(),
+            bullet_lifetime:  Duration::new(5, 0), // TODO load from settings
+            last_shot_at:     Instant::now(),
+        }
+    }
+}
+
+#[derive(Clone, PartialEq)]
 pub enum EnemyAi {
     Tracer,
     Charger(EnemyAiChargerData),
+    Turret(EnemyAiTurretData),
 }
 
 impl Component for EnemyAi {
@@ -40,6 +78,7 @@ pub enum EnemyType {
     Charger,
     Flying,
     Reaper,
+    Turret,
 }
 
 pub struct Enemy {

@@ -121,6 +121,21 @@ Settings(
             max_velocity:          (Some(100.0), Some(500.0)),
             decr_velocity:         (1000.0, 1000.0),
         ),
+        turret:  (
+            health:                3,
+            damage:                1,
+            reward:                3,
+            knockback:             (2000.0, 200.0),
+            trigger_distance:      (128.0, 128.0),
+            acceleration:          (0.0, 0.0),
+            max_velocity:          (None, None),
+            decr_velocity:         (0.0, 0.0),
+        ),
+        turret_data: (
+          bullet_velocity:  (100.0, 0.0),
+          bullet_size:      (16.0, 16.0),
+          shot_interval_ms: 500,
+        )
     ),
 
     items: (
