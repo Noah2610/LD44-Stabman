@@ -632,6 +632,7 @@ impl LevelLoader {
                 enemy_ai,
                 (spritesheet_handle, sprite_render),
                 animations_container,
+                flipped_opt,
             ) = enemy_components_for(&mut data.world, properties);
 
             let mut transform = Transform::default();
@@ -647,7 +648,6 @@ impl LevelLoader {
                 .with(transform)
                 .with(Size::from(*size))
                 .with(Velocity::default())
-                // .with(MaxVelocity::from(enemy_settings.max_velocity)) // TODO
                 .with(DecreaseVelocity::from(enemy_settings.decr_velocity))
                 .with(Collision::new())
                 .with(CheckCollision)
@@ -655,7 +655,7 @@ impl LevelLoader {
                 .with(ScaleOnce)
                 .with(Enemy::new(enemy_type.clone(), enemy_settings))
                 .with(sprite_render)
-                .with(Flipped::None)
+                .with(flipped_opt.unwrap_or(Flipped::None))
                 .with(animations_container)
                 .with(Transparent)
                 .with(enemy_ai);

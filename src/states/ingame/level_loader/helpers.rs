@@ -24,6 +24,7 @@ pub fn enemy_components_for(
     EnemyAi,
     (SpriteSheetHandle, SpriteRender),
     AnimationsContainer,
+    Option<Flipped>,
 ) {
     {
         let settings = world.settings();
@@ -85,6 +86,7 @@ pub fn enemy_components_for(
                         )
                         .current("idle")
                         .build(),
+                    None,
                 )
             }
             "Charger" => {
@@ -135,6 +137,7 @@ pub fn enemy_components_for(
                         )
                         .current("idle")
                         .build(),
+                    None,
                 )
             }
             "Flying" => {
@@ -179,6 +182,7 @@ pub fn enemy_components_for(
                         )
                         .current("idle")
                         .build(),
+                    None,
                 )
             }
             "Reaper" => {
@@ -223,23 +227,24 @@ pub fn enemy_components_for(
                         )
                         .current("idle")
                         .build(),
+                    None,
                 )
             }
             "Turret" => {
                 // TODO: Flipped
-                let facing =
+                let (facing, flipped) =
                     if let Some(facing_str) = properties["facing"].as_str() {
                         match facing_str {
-                            "Left" => Facing::Left,
-                            "Right" => Facing::Right,
+                            "Left" => (Facing::Left, Flipped::Horizontal),
+                            "Right" => (Facing::Right, Flipped::None),
                             _ => panic!(format!(
                                 "Couldn't parse `facing` property for enemy \
                                  `Turret`: {}",
                                 facing_str
-                            ),),
+                            )),
                         }
                     } else {
-                        Facing::default()
+                        (Facing::default(), Flipped::None)
                     };
                 let (spritesheet_handle, sprite_render) = {
                     let handle = spritesheet_handles.get_or_load(
@@ -294,6 +299,7 @@ pub fn enemy_components_for(
                         )
                         .current("idle")
                         .build(),
+                    Some(flipped),
                 )
             }
             t => panic!(format!("EnemyType '{}' does not exist", t)),

@@ -162,28 +162,15 @@ impl<'a> System<'a> for EnemyAiSystem {
                     if enemy_flipped == &mut Flipped::Horizontal {
                         *enemy_flipped = Flipped::None;
                     }
-                    enemy_animations_container.set("walking");
+                    enemy_animations_container.set_if_has("walking");
                 } else if enemy_velocity.x < 0.0 {
                     if enemy_flipped == &mut Flipped::None {
                         *enemy_flipped = Flipped::Horizontal;
                     }
-                    enemy_animations_container.set("walking");
+                    enemy_animations_container.set_if_has("walking");
                 } else {
-                    enemy_animations_container.set("idle");
+                    enemy_animations_container.set_if_has("idle");
                 }
-
-                // TODO Cleanup
-                // Handle knockbacked state
-                // if let Some(knockbacked_at) = enemy.knockbacked_at {
-                //     if now.duration_since(knockbacked_at)
-                //         >= enemy.knockback_duration
-                //     {
-                //         enemy.knockbacked_at = None;
-                //     } else {
-                //         enemy_decr_vel.dont_decrease_x();
-                //         enemy_max_vel.dont_limit_x();
-                //     }
-                // }
 
                 // Kill the enemies when they fall below the death_floor
                 if enemy_transform.translation().y < settings.death_floor {
