@@ -75,7 +75,7 @@ Settings(
 
     level_manager: (
         levels_dir:  "levels",
-        level_names: ("one.json", "two.json", "three.json"),
+        level_names: ("one.json", "two.json", "three.json", "four.json"),
         tile_size:   (32.0, 32.0),
     ),
 
