@@ -62,14 +62,17 @@ class Tileset:
 
     def ron_data(self):
         tileset = self.tileset
+        tile_size = { 'w': tileset.tileWidth(), 'h': tileset.tileHeight() }
+        spritesheet_size = { 'w': tileset.imageWidth(), 'h': tileset.imageHeight() }
+        spritesheet_size['w'] = spritesheet_size['w'] - spritesheet_size['w'] % tile_size['w']
+        spritesheet_size['h'] = spritesheet_size['h'] - spritesheet_size['h'] % tile_size['h']
         content = '('
         # content += '\n  filename: "' + self.filename() + '",'
-        content += '\n  spritesheet_width:  ' + str(tileset.imageWidth()) + ','
-        content += '\n  spritesheet_height: ' + str(tileset.imageHeight()) + ','
+        content += '\n  spritesheet_width:  ' + str(spritesheet_size['w']) + ','
+        content += '\n  spritesheet_height: ' + str(spritesheet_size['h']) + ','
         content += '\n  sprites: ['
-        tile_size = { 'w': tileset.tileWidth(), 'h': tileset.tileHeight() }
-        tiles_per_row = tileset.imageWidth() / tile_size['w']
-        tiles_per_col = tileset.imageHeight() / tile_size['h']
+        tiles_per_row = spritesheet_size['w'] / tile_size['w']
+        tiles_per_col = spritesheet_size['h'] / tile_size['h']
         tiles_count = tiles_per_row * tiles_per_col
         for i in range(int(tiles_count)):
             row = int(i / tiles_per_row)
