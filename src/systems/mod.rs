@@ -1,4 +1,5 @@
 mod bullet;
+mod bullet_creator;
 mod debug;
 mod enemy_ai;
 mod goal;
@@ -11,6 +12,7 @@ pub mod prelude {
     pub use deathframe::systems::prelude::*;
 
     pub use super::bullet::BulletSystem;
+    pub use super::bullet_creator::BulletCreatorSystem;
     pub use super::debug::DebugSystem;
     pub use super::enemy_ai::EnemyAiSystem;
     pub use super::goal::GoalSystem;
@@ -22,9 +24,11 @@ pub mod prelude {
 
 mod system_prelude {
     pub use deathframe::geo::Side;
+    pub use deathframe::handlers::SpriteSheetHandles;
     pub use deathframe::systems::system_prelude::*;
 
     pub use super::helpers::*;
+    pub use crate::bullet_creator::prelude::*;
     pub use crate::components::prelude::*;
     pub use crate::solid_tag::SolidTag;
 }

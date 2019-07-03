@@ -4,6 +4,7 @@ extern crate deathframe;
 extern crate serde;
 extern crate json;
 
+mod bullet_creator;
 mod components;
 mod resource_helpers;
 mod settings;

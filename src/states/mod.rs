@@ -42,14 +42,14 @@ mod state_prelude {
     pub use deathframe::handlers::prelude::*;
     pub use deathframe::input_manager::InputManager;
 
+    pub use super::helpers::*;
+    pub use super::prelude::*;
+    pub use crate::bullet_creator::prelude::*;
     pub use crate::components::prelude::*;
     pub use crate::resource_helpers::*;
     pub use crate::settings::prelude::*;
     pub use crate::world_helpers::*;
     pub use crate::CustomData;
-
-    pub use super::helpers::*;
-    pub use super::prelude::*;
 }
 
 pub use prelude::*;
