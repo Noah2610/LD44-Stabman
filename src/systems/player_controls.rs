@@ -7,27 +7,21 @@ impl<'a> System<'a> for PlayerControlsSystem {
     type SystemData = (
         Entities<'a>,
         ReadExpect<'a, Settings>,
-        ReadExpect<'a, SpriteSheetHandles>,
         Read<'a, Time>,
         Read<'a, InputHandler<String, String>>,
         Read<'a, InputManager>,
+        Write<'a, BulletCreator>,
+        ReadStorage<'a, Transform>,
+        ReadStorage<'a, Collision>,
         ReadStorage<'a, Solid<SolidTag>>,
         ReadStorage<'a, Goal>,
         ReadStorage<'a, Item>,
-        WriteStorage<'a, Collision>,
         WriteStorage<'a, Player>,
-        WriteStorage<'a, Transform>,
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, DecreaseVelocity>,
         WriteStorage<'a, Gravity>,
         WriteStorage<'a, AnimationsContainer>,
         WriteStorage<'a, Flipped>,
-        WriteStorage<'a, Bullet>,
-        WriteStorage<'a, CheckCollision>,
-        WriteStorage<'a, Size>,
-        WriteStorage<'a, SpriteRender>,
-        WriteStorage<'a, Animation>,
-        WriteStorage<'a, Transparent>,
     );
 
     fn run(
@@ -35,27 +29,21 @@ impl<'a> System<'a> for PlayerControlsSystem {
         (
             entities,
             settings,
-            spritesheet_handles,
             time,
             input_handler,
             input_manager,
+            mut bullet_creator,
+            transforms,
+            collisions,
             solids,
             goals,
             items,
-            mut collisions,
             mut players,
-            mut transforms,
             mut velocities,
             mut decr_velocities,
             mut gravities,
             mut animations_containers,
             mut flippeds,
-            mut bullets,
-            mut check_collisions,
-            mut sizes,
-            mut sprite_renders,
-            mut animations,
-            mut transparents,
         ): Self::SystemData,
     ) {
         let dt = time.delta_seconds();
@@ -65,8 +53,6 @@ impl<'a> System<'a> for PlayerControlsSystem {
             .next()
             .map(|goal| goal.next_level)
             .unwrap_or(false);
-
-        let mut should_shoot_bullet = false;
 
         for (
             player,
@@ -89,7 +75,7 @@ impl<'a> System<'a> for PlayerControlsSystem {
         )
             .join()
         {
-            let sides_touching = SidesTouching::new_with_collisions_mut(
+            let sides_touching = SidesTouching::new(
                 &entities,
                 player_collision,
                 &collisions,
@@ -130,12 +116,14 @@ impl<'a> System<'a> for PlayerControlsSystem {
                     &sides_touching,
                 );
 
-                should_shoot_bullet = handle_attack(
+                handle_attack(
                     &input_manager,
                     player,
+                    &transform,
                     animations_container,
                     flipped,
-                ) && player.items_data.can_shoot;
+                    &mut bullet_creator,
+                );
 
                 handle_item_purchase(
                     &settings.items,
@@ -161,25 +149,6 @@ impl<'a> System<'a> for PlayerControlsSystem {
                     animations_container.set("idle");
                 }
             }
-        }
-
-        // Player BulletShoot
-        if should_shoot_bullet {
-            shoot_bullet(
-                &entities,
-                &spritesheet_handles,
-                &players,
-                &mut transforms,
-                &mut velocities,
-                &mut sizes,
-                &mut flippeds,
-                &mut bullets,
-                &mut collisions,
-                &mut check_collisions,
-                &mut sprite_renders,
-                &mut animations,
-                &mut transparents,
-            );
         }
     }
 }
@@ -382,9 +351,11 @@ fn handle_on_ground_and_in_air(
 fn handle_attack<'a>(
     input_manager: &InputManager,
     player: &mut Player,
+    player_transform: &Transform,
     animations_container: &mut AnimationsContainer,
     flipped: &mut Flipped,
-) -> bool {
+    bullet_creator: &mut BulletCreator,
+) {
     let is_attacking = if !player.is_attacking {
         if input_manager.is_down("player_attack") {
             true
@@ -407,7 +378,33 @@ fn handle_attack<'a>(
         animations_container.play("attack");
     }
 
-    is_attacking
+    let should_shoot_bullet = is_attacking && player.items_data.can_shoot;
+
+    if should_shoot_bullet {
+        bullet_creator.push(BulletComponents {
+            bullet:    Bullet::new()
+                .owner(BulletOwner::Player)
+                .damage(player.items_data.bullet_damage)
+                .lifetime(player.items_data.bullet_lifetime)
+                .build(),
+            transform: {
+                let pos = player_transform.translation();
+                let mut transform = Transform::default();
+                transform.set_xyz(pos.x, pos.y, pos.z);
+                transform
+            },
+            velocity:  Velocity::new(
+                player.items_data.bullet_velocity.0
+                    * match flipped {
+                        Flipped::None => 1.0,
+                        Flipped::Horizontal => -1.0,
+                        _ => 1.0,
+                    },
+                player.items_data.bullet_velocity.1,
+            ),
+            size:      Size::from(player.items_data.bullet_size),
+        });
+    }
 }
 
 fn handle_item_purchase<'a>(
@@ -417,7 +414,7 @@ fn handle_item_purchase<'a>(
     player: &mut Player,
     player_collision: &Collision,
     items: &ReadStorage<'a, Item>,
-    collisions: &WriteStorage<'a, Collision>,
+    collisions: &ReadStorage<'a, Collision>,
 ) {
     for (item_entity, item, item_collision) in
         (entities, items, collisions).join()
@@ -435,86 +432,5 @@ fn handle_item_purchase<'a>(
                 player.take_damage(item.cost);
             }
         }
-    }
-}
-
-fn shoot_bullet<'a>(
-    entities: &Entities<'a>,
-    spritesheet_handles: &SpriteSheetHandles,
-    players: &WriteStorage<'a, Player>,
-    transforms: &mut WriteStorage<'a, Transform>,
-    velocities: &mut WriteStorage<'a, Velocity>,
-    sizes: &mut WriteStorage<'a, Size>,
-    flippeds: &mut WriteStorage<'a, Flipped>,
-    bullets: &mut WriteStorage<'a, Bullet>,
-    collisions: &mut WriteStorage<'a, Collision>,
-    check_collisions: &mut WriteStorage<'a, CheckCollision>,
-    sprite_renders: &mut WriteStorage<'a, SpriteRender>,
-    animations: &mut WriteStorage<'a, Animation>,
-    transparents: &mut WriteStorage<'a, Transparent>,
-) {
-    let player_data_opt = (players, &*transforms, &*flippeds)
-        .join()
-        .next()
-        .map(|(player, transform, flipped)| {
-            let trans = transform.translation();
-            (player, (trans.x, trans.y, trans.z), flipped)
-        });
-
-    if let Some((player, player_pos, player_flipped)) = player_data_opt {
-        let spritesheet_handle = spritesheet_handles
-            .get("player_bullets")
-            .expect("'player_bullets' spritesheet does not exist");
-        let entity = entities.create();
-        bullets
-            .insert(
-                entity,
-                Bullet::new()
-                    .owner(BulletOwner::Player)
-                    .damage(player.items_data.bullet_damage)
-                    .lifetime(player.items_data.bullet_lifetime)
-                    .build(),
-            )
-            .unwrap();
-        collisions.insert(entity, Collision::new()).unwrap();
-        check_collisions.insert(entity, CheckCollision).unwrap();
-        let mut transform = Transform::default();
-        transform.set_xyz(player_pos.0, player_pos.1, player_pos.2);
-        transforms.insert(entity, transform).unwrap();
-        velocities
-            .insert(
-                entity,
-                Velocity::new(
-                    player.items_data.bullet_velocity.0
-                        * match player_flipped {
-                            Flipped::None => 1.0,
-                            Flipped::Horizontal => -1.0,
-                            _ => 1.0,
-                        },
-                    player.items_data.bullet_velocity.1,
-                ),
-            )
-            .unwrap();
-        sizes
-            .insert(entity, Size::from(player.items_data.bullet_size))
-            .unwrap();
-        sprite_renders
-            .insert(entity, SpriteRender {
-                sprite_sheet:  spritesheet_handle.clone(),
-                sprite_number: 0,
-            })
-            .unwrap();
-        animations
-            .insert(
-                entity,
-                Animation::new()
-                    .default_sprite_sheet_handle(spritesheet_handle)
-                    .default_delay_ms(50)
-                    .sprite_ids(vec![0, 1, 2])
-                    .build(),
-            )
-            .unwrap();
-        transparents.insert(entity, Transparent).unwrap();
-        flippeds.insert(entity, player_flipped.clone()).unwrap();
     }
 }

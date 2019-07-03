@@ -19,4 +19,8 @@ impl BulletCreator {
     pub fn pop(&mut self) -> Option<BulletComponents> {
         self.0.pop()
     }
+
+    pub fn push(&mut self, bullet_components: BulletComponents) {
+        self.0.push(bullet_components);
+    }
 }

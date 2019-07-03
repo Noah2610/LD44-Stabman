@@ -191,6 +191,10 @@ fn build_game_data<'a, 'b>(
         ])?
         .with("ingame", BulletSystem, "bullet_system", &[
             "move_entities_system",
+        ])?
+        .with("ingame", BulletCreatorSystem, "bullet_creator_system", &[
+            "player_controls_system",
+            "enemy_ai_system",
         ])?;
     Ok(game_data)
 }
