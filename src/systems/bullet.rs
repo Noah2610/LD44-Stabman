@@ -58,15 +58,19 @@ impl<'a> System<'a> for BulletSystem {
                 }
             }
 
-            // Collides with solid?
-            for (solid_entity, _, _) in (&entities, &solids, !&players).join() {
+            // Collides with solid? (SolidTag::Default)
+            for (solid_entity, solid, _) in
+                (&entities, &solids, !&players).join()
+            {
                 let solid_id = solid_entity.id();
-                if let Some(collision::Data {
-                    state: collision::State::Enter,
-                    ..
-                }) = bullet_collision.collision_with(solid_id)
-                {
-                    entities.delete(bullet_entity).unwrap();
+                if let SolidTag::Default = solid.tag {
+                    if let Some(collision::Data {
+                        state: collision::State::Enter,
+                        ..
+                    }) = bullet_collision.collision_with(solid_id)
+                    {
+                        entities.delete(bullet_entity).unwrap();
+                    }
                 }
             }
 

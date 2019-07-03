@@ -14,6 +14,7 @@ impl<'a> System<'a> for EnemyAiSystem {
         Entities<'a>,
         ReadExpect<'a, Settings>,
         Read<'a, Time>,
+        Write<'a, BulletCreator>,
         ReadStorage<'a, Transform>,
         ReadStorage<'a, Collision>,
         ReadStorage<'a, Solid<SolidTag>>,
@@ -34,6 +35,7 @@ impl<'a> System<'a> for EnemyAiSystem {
             entities,
             settings,
             time,
+            mut bullet_creator,
             transforms,
             collisions,
             solids,
@@ -128,25 +130,8 @@ impl<'a> System<'a> for EnemyAiSystem {
                         enemy,
                         data,
                         enemy_transform,
+                        &mut bullet_creator,
                     ),
-                    // dt: f32,
-                    // player_data: &PlayerData,
-                    // enemy: &Enemy,
-                    // ai_data: &mut EnemyAiTurretData,
-                    // transform: &Transform,
-                    // flipped: &Flipped,
-                    // entities: &Entities,
-                    // spritesheet_handles: &SpriteSheetHandles,
-                    // transforms: &mut WriteStorage<Transform>,
-                    // velocities: &mut WriteStorage<Velocity>,
-                    // sizes: &mut WriteStorage<Size>,
-                    // flippeds: &mut WriteStorage<Flipped>,
-                    // bullets: &mut WriteStorage<Bullet>,
-                    // collisions: &mut WriteStorage<Collision>,
-                    // check_collisions: &mut WriteStorage<CheckCollision>,
-                    // sprite_renders: &mut WriteStorage<SpriteRender>,
-                    // animations: &mut WriteStorage<Animation>,
-                    // transparents: &mut WriteStorage<Transparent>,
                 }
 
                 // Reset y velocity if enemy has gravity and they are standing on a solid
@@ -326,19 +311,7 @@ fn run_for_turret_ai(
     enemy: &Enemy,
     ai_data: &mut EnemyAiTurretData,
     transform: &Transform,
-    // flipped: &Flipped,
-    // entities: &Entities,
-    // spritesheet_handles: &SpriteSheetHandles,
-    // transforms: &mut WriteStorage<Transform>,
-    // velocities: &mut WriteStorage<Velocity>,
-    // sizes: &mut WriteStorage<Size>,
-    // flippeds: &mut WriteStorage<Flipped>,
-    // bullets: &mut WriteStorage<Bullet>,
-    // collisions: &mut WriteStorage<Collision>,
-    // check_collisions: &mut WriteStorage<CheckCollision>,
-    // sprite_renders: &mut WriteStorage<SpriteRender>,
-    // animations: &mut WriteStorage<Animation>,
-    // transparents: &mut WriteStorage<Transparent>,
+    bullet_creator: &mut BulletCreator,
 ) {
     let enemy_pos = transform.translation();
     let distance_to_player = (
@@ -350,64 +323,29 @@ fn run_for_turret_ai(
         if now - ai_data.last_shot_at
             >= Duration::from_millis(ai_data.shot_interval_ms)
         {
-            // TODO
-            println!("SHOOT BULLET");
             ai_data.last_shot_at = now;
-            // Shoot bullet
-            // let spritesheet_handle = spritesheet_handles
-            //     .get("player_bullets")
-            //     .expect("'player_bullets' spritesheet does not exist");
-            // let entity = entities.create();
-            // bullets
-            //     .insert(
-            //         entity,
-            //         Bullet::new()
-            //             .owner(BulletOwner::Enemy)
-            //             .damage(enemy.damage)
-            //             .lifetime(ai_data.bullet_lifetime)
-            //             .build(),
-            //     )
-            //     .unwrap();
-            // collisions.insert(entity, Collision::new()).unwrap();
-            // check_collisions.insert(entity, CheckCollision).unwrap();
-            // let mut transform = Transform::default();
-            // transform.set_xyz(enemy_pos.x, enemy_pos.y, enemy_pos.z);
-            // transforms.insert(entity, transform).unwrap();
-            // velocities
-            //     .insert(
-            //         entity,
-            //         Velocity::new(
-            //             ai_data.bullet_velocity.0
-            //                 * match flipped {
-            //                     Flipped::None => 1.0,
-            //                     Flipped::Horizontal => -1.0,
-            //                     _ => 1.0,
-            //                 },
-            //             ai_data.bullet_velocity.1,
-            //         ),
-            //     )
-            //     .unwrap();
-            // sizes
-            //     .insert(entity, Size::from(ai_data.bullet_size))
-            //     .unwrap();
-            // sprite_renders
-            //     .insert(entity, SpriteRender {
-            //         sprite_sheet:  spritesheet_handle.clone(),
-            //         sprite_number: 0,
-            //     })
-            //     .unwrap();
-            // animations
-            //     .insert(
-            //         entity,
-            //         Animation::new()
-            //             .default_sprite_sheet_handle(spritesheet_handle)
-            //             .default_delay_ms(50)
-            //             .sprite_ids(vec![0, 1, 2])
-            //             .build(),
-            //     )
-            //     .unwrap();
-            // transparents.insert(entity, Transparent).unwrap();
-            // flippeds.insert(entity, flipped.clone()).unwrap();
+            bullet_creator.push(BulletComponents {
+                bullet:    Bullet::new()
+                    .owner(BulletOwner::Enemy)
+                    .damage(enemy.damage)
+                    .lifetime(ai_data.bullet_lifetime)
+                    .build(),
+                transform: {
+                    let pos = transform.translation();
+                    let mut trans = Transform::default();
+                    trans.set_xyz(pos.x, pos.y, pos.z);
+                    trans
+                },
+                velocity:  Velocity::new(
+                    ai_data.bullet_velocity.0
+                        * match ai_data.facing {
+                            Facing::Right => 1.0,
+                            Facing::Left => -1.0,
+                        },
+                    ai_data.bullet_velocity.1,
+                ),
+                size:      Size::from(ai_data.bullet_size),
+            });
         }
     }
 }
