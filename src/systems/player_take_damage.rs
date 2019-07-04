@@ -63,14 +63,14 @@ impl<'a> System<'a> for PlayerTakeDamageSystem {
                             if player_pos.x > enemy_pos.x {
                                 enemy.knockback.0
                             } else if player_pos.x < enemy_pos.x {
-                                enemy.knockback.0 * -1.0
+                                -enemy.knockback.0
                             } else {
                                 0.0
                             },
                             if player_pos.y > enemy_pos.y {
                                 enemy.knockback.1
                             } else if player_pos.y < enemy_pos.y {
-                                enemy.knockback.1 * -1.0
+                                -enemy.knockback.1
                             } else {
                                 0.0
                             },

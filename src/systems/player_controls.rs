@@ -386,6 +386,12 @@ fn handle_attack<'a>(
                 .owner(BulletOwner::Player)
                 .damage(player.items_data.bullet_damage)
                 .lifetime(player.items_data.bullet_lifetime)
+                .knockback(player.items_data.knockback)
+                .facing(match flipped {
+                    Flipped::None => Facing::Right,
+                    Flipped::Horizontal => Facing::Left,
+                    _ => Facing::Right,
+                })
                 .build(),
             transform: {
                 let pos = player_transform.translation();

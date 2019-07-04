@@ -329,6 +329,8 @@ fn run_for_turret_ai(
                     .owner(BulletOwner::Enemy)
                     .damage(enemy.damage)
                     .lifetime(ai_data.bullet_lifetime)
+                    .knockback(enemy.knockback)
+                    .facing(ai_data.facing.clone())
                     .build(),
                 transform: {
                     let pos = transform.translation();

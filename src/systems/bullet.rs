@@ -12,11 +12,20 @@ impl<'a> System<'a> for BulletSystem {
         WriteStorage<'a, Bullet>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, Enemy>,
+        WriteStorage<'a, Velocity>,
     );
 
     fn run(
         &mut self,
-        (entities, collisions, solids, mut bullets, mut players, mut enemies): Self::SystemData,
+        (
+            entities,
+            collisions,
+            solids,
+            mut bullets,
+            mut players,
+            mut enemies,
+            mut velocities,
+        ): Self::SystemData,
     ) {
         let now = Instant::now();
 
@@ -25,8 +34,8 @@ impl<'a> System<'a> for BulletSystem {
         {
             // Collides with player?
             if bullet.owner != BulletOwner::Player {
-                if let Some((player_entity, player)) =
-                    (&entities, &mut players).join().next()
+                if let Some((player_entity, player, player_velocity)) =
+                    (&entities, &mut players, &mut velocities).join().next()
                 {
                     let player_id = player_entity.id();
                     if let Some(collision::Data {
@@ -37,6 +46,43 @@ impl<'a> System<'a> for BulletSystem {
                         // Bullet is colliding with player;
                         // deal damage to player and delete bullet entity.
                         player.take_damage(bullet.damage);
+                        // Knockback
+                        let knockback_opt =
+                            match (&bullet.knockback, &bullet.facing) {
+                                (Some(knockback), Some(facing)) => match facing
+                                {
+                                    Facing::Left => {
+                                        Some((-knockback.0, knockback.1))
+                                    }
+                                    Facing::Right => {
+                                        Some((knockback.0, knockback.1))
+                                    }
+                                },
+                                (Some(knockback), None) => {
+                                    None
+                                    // (
+                                    //     if player_pos.x > enemy_pos.x {
+                                    //         enemy.knockback.0
+                                    //     } else if player_pos.x < enemy_pos.x {
+                                    //         enemy.knockback.0 * -1.0
+                                    //     } else {
+                                    //         0.0
+                                    //     },
+                                    //     if player_pos.y > enemy_pos.y {
+                                    //         enemy.knockback.1
+                                    //     } else if player_pos.y < enemy_pos.y {
+                                    //         enemy.knockback.1 * -1.0
+                                    //     } else {
+                                    //         0.0
+                                    //     },
+                                    // );
+                                }
+                                _ => None,
+                            };
+                        if let Some(knockback) = knockback_opt {
+                            player_velocity.x = knockback.0;
+                            player_velocity.y = knockback.1;
+                        }
                         entities.delete(bullet_entity).unwrap();
                     }
                 }

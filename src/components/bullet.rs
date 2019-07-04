@@ -19,6 +19,8 @@ pub struct Bullet {
     pub damage:     u32,
     pub created_at: Instant,
     pub lifetime:   Duration,
+    pub knockback:  Option<Vector>,
+    pub facing:     Option<Facing>,
 }
 
 impl Bullet {
@@ -29,9 +31,11 @@ impl Bullet {
 
 #[derive(Default)]
 pub struct BulletBuilder {
-    owner:    Option<BulletOwner>,
-    damage:   Option<u32>,
-    lifetime: Option<Duration>,
+    owner:     Option<BulletOwner>,
+    damage:    Option<u32>,
+    lifetime:  Option<Duration>,
+    knockback: Option<Vector>,
+    facing:    Option<Facing>,
 }
 
 impl BulletBuilder {
@@ -50,6 +54,16 @@ impl BulletBuilder {
         self
     }
 
+    pub fn knockback(mut self, knockback: Vector) -> Self {
+        self.knockback = Some(knockback);
+        self
+    }
+
+    pub fn facing(mut self, facing: Facing) -> Self {
+        self.facing = Some(facing);
+        self
+    }
+
     pub fn build(self) -> Bullet {
         Bullet {
             owner:      self.owner.expect("Bullet needs an owner BulletOwner"),
@@ -58,6 +72,8 @@ impl BulletBuilder {
             lifetime:   self
                 .lifetime
                 .expect("Bullet needs a lifetime Duration"),
+            knockback:  self.knockback,
+            facing:     self.facing,
         }
     }
 }

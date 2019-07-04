@@ -21,6 +21,7 @@ pub mod prelude {
 mod component_prelude {
     pub use deathframe::components::component_prelude::*;
 
+    pub use super::enemy::Facing;
     pub use crate::settings::prelude::*;
 }
 

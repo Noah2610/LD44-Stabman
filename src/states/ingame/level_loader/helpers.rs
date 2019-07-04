@@ -13,7 +13,7 @@ const ENEMY_NORMAL_SPRITESHEET_FILENAME: &str = "enemy_normal.png";
 const ENEMY_CHARGER_SPRITESHEET_FILENAME: &str = "enemy_charger.png";
 const ENEMY_FLYING_SPRITESHEET_FILENAME: &str = "enemy_flying.png";
 const ENEMY_REAPER_SPRITESHEET_FILENAME: &str = "enemy_reaper.png";
-const ENEMY_TURRET_SPRITESHEET_FILENAME: &str = "enemy_reaper.png"; // TODO
+const ENEMY_TURRET_SPRITESHEET_FILENAME: &str = "enemy_turret.png";
 
 pub fn enemy_components_for(
     world: &mut World,

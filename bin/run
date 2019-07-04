@@ -7,5 +7,5 @@ source "$ROOT/bin/util.sh"
 check "cargo" && \
 check "termite" && \
   # cargo $cmd
-  termite -e 'cargo +nightly-2019-03-01 run '"$*"' --features amethyst/nightly' & \
+  termite -e "bash -c 'cargo +nightly-2019-03-01 run \"$*\" --features amethyst/nightly || (echo -e \"----------\n[CONTINUE]\"; read')" & \
     disown
