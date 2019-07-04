@@ -5,5 +5,7 @@ ROOT="$( cd $(dirname $0)/..; pwd )"
 source "$ROOT/bin/util.sh"
 
 check "cargo" && \
+check "termite" && \
   # cargo $cmd
-  cargo +nightly-2019-03-01 run "$@" --features amethyst/nightly
+  termite -e 'cargo +nightly-2019-03-01 run '"$*"' --features amethyst/nightly' & \
+    disown
