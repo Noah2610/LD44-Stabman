@@ -4,8 +4,4 @@
 ROOT="$( cd $(dirname $0)/..; pwd )"
 source "$ROOT/bin/util.sh"
 
-check "cargo" && \
-check "termite" && \
-  # cargo $cmd
-  termite -e "bash -c 'cargo +nightly-2019-03-01 run \"$*\" --features amethyst/nightly || (echo -e \"----------\n[CONTINUE]\"; read')" & \
-    disown
+run_terminal "cargo +nightly-2019-03-01 run $* --features amethyst/nightly"
