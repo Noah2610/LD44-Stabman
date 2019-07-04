@@ -40,9 +40,10 @@ function try_run {
 
 function run_terminal {
   cmd="$1"
+  cmd_bash="bash -c '$cmd || (echo -e \"----------\n[CONTINUE]\"; read')"
   ([ -n "$cmd" ] || err "No command given to function \`$0\`.") &&
     check "cargo" &&
     check "termite" &&
-    termite -d "$ROOT" -e "bash -c '$cmd || (echo -e \"----------\n[CONTINUE]\"; read')" & \
+    termite -d "$ROOT" -e "$cmd_bash" & \
     disown
 }
