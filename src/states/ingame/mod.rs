@@ -27,7 +27,15 @@ impl Ingame {
         sink.stop();
         *sink = AudioSink::new(&output);
         let asset = data.world.read_resource::<AssetStorage<Source>>();
-        let name = format!("level_{}", self.level_manager.level_index + 1);
+        let name = self
+            .level_manager
+            .settings
+            .song_names
+            .get(self.level_manager.level_index)
+            .expect(&format!(
+                "Song name at index {} doesn't exist",
+                self.level_manager.level_index
+            ));
         let handle = data
             .world
             .read_resource::<AudioHandles>()

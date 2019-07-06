@@ -76,6 +76,7 @@ Settings(
     level_manager: (
         levels_dir:  "levels",
         level_names: ("one.json", "two.json", "three.json", "four.json"),
+        song_names:  ("level_1.ogg", "level_2.ogg", "level_3.ogg", "level_4.ogg", "level_5.ogg"),
         tile_size:   (32.0, 32.0),
     ),
 

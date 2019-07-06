@@ -8,7 +8,7 @@ pub mod prelude {
 }
 
 pub struct LevelManager {
-    settings:              SettingsLevelManager,
+    pub settings:          SettingsLevelManager,
     pub level_index:       usize,
     player_checkpoint_opt: Option<Player>,
 }

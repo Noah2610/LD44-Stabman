@@ -73,6 +73,7 @@ pub struct SettingsLoadingText {
 pub struct SettingsLevelManager {
     pub levels_dir:  String,
     pub level_names: Vec<String>,
+    pub song_names:  Vec<String>,
     pub tile_size:   Vector,
 }
 
