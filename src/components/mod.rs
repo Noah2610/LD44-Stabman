@@ -1,6 +1,7 @@
 mod bullet;
 mod enemy;
 mod goal;
+mod harmful;
 mod heart;
 mod item;
 mod player;
@@ -12,6 +13,7 @@ pub mod prelude {
     pub use super::bullet::prelude::*;
     pub use super::enemy::prelude::*;
     pub use super::goal::Goal;
+    pub use super::harmful::Harmful;
     pub use super::heart::Heart;
     pub use super::item::prelude::*;
     pub use super::player::Player;
