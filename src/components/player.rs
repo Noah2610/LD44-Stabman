@@ -95,3 +95,17 @@ impl Player {
 impl Component for Player {
     type Storage = HashMapStorage<Self>;
 }
+
+impl Health for Player {
+    fn health(&self) -> u32 {
+        self.health
+    }
+
+    fn health_mut(&mut self) -> &mut u32 {
+        &mut self.health
+    }
+
+    fn take_damage(&mut self, damage: u32) {
+        self.take_damage(damage);
+    }
+}

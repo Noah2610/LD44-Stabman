@@ -31,6 +31,7 @@ mod system_prelude {
 
     pub use super::helpers::*;
     pub use crate::bullet_creator::prelude::*;
+    pub use crate::components::helpers as component_helpers;
     pub use crate::components::prelude::*;
     pub use crate::solid_tag::SolidTag;
 }

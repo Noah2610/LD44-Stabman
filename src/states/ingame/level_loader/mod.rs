@@ -350,6 +350,7 @@ impl LevelLoader {
                         .build(),
                 )
                 .with(Flipped::None)
+                .with(Harmable)
                 .build();
             self.player_id = Some(player.id());
 
@@ -500,6 +501,12 @@ impl LevelLoader {
                         .with(Solid::new(SolidTag::default()))
                         .with(Collision::new());
                 }
+            }
+
+            if let Some(harmful_damage) = properties["harmful"].as_u32() {
+                entity = entity
+                    .with(Collision::new())
+                    .with(Harmful::with_damage(harmful_damage));
             }
 
             entity.build();
@@ -658,7 +665,8 @@ impl LevelLoader {
                 .with(flipped_opt.unwrap_or(Flipped::None))
                 .with(animations_container)
                 .with(Transparent)
-                .with(enemy_ai);
+                .with(enemy_ai)
+                .with(Harmable);
 
             if enemy_type != EnemyType::Flying
                 && enemy_type != EnemyType::Turret

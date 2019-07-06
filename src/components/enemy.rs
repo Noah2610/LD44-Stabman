@@ -146,3 +146,17 @@ impl Enemy {
 impl Component for Enemy {
     type Storage = DenseVecStorage<Self>;
 }
+
+impl Health for Enemy {
+    fn health(&self) -> u32 {
+        self.health
+    }
+
+    fn health_mut(&mut self) -> &mut u32 {
+        &mut self.health
+    }
+
+    fn take_damage(&mut self, damage: u32) {
+        self.take_damage(damage);
+    }
+}
