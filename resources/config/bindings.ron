@@ -6,10 +6,13 @@
     "quit":                   [ [Key(Escape)], [Key(Q)]],
     "pause":                  [ [Key(P)]],
     "player_jump":            [ [Key(Space)], [Key(K)], [Key(Up)] ],
-    "player_attack":          [ [Key(J)] ],
+    "player_attack":          [ ],
     "player_attack_left":     [ [Key(Left)], [Key(H)] ],
     "player_attack_right":    [ [Key(Right)], [Key(L)] ],
     "player_buy_item":        [ [Key(E)] ],
+
+    // DASHES
+    "player_dash_trigger":    [ [Key(J)] ],
     "player_dash_up_left":    [ [Key(W), Key(A)] ],
     "player_dash_up_right":   [ [Key(W), Key(D)] ],
     "player_dash_down_left":  [ [Key(S), Key(A)] ],

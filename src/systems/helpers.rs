@@ -5,14 +5,15 @@ pub use direction::*;
 mod direction {
     use std::convert::TryFrom;
 
-    const ACTION_DASH_UP_LEFT: &str = "player_dash_up_left";
-    const ACTION_DASH_UP_RIGHT: &str = "player_dash_up_right";
-    const ACTION_DASH_DOWN_LEFT: &str = "player_dash_down_left";
-    const ACTION_DASH_DOWN_RIGHT: &str = "player_dash_down_right";
-    const ACTION_DASH_UP: &str = "player_dash_up";
-    const ACTION_DASH_DOWN: &str = "player_dash_down";
-    const ACTION_DASH_LEFT: &str = "player_dash_left";
-    const ACTION_DASH_RIGHT: &str = "player_dash_right";
+    pub const ACTION_DASH_TRIGGER: &str = "player_dash_trigger";
+    pub const ACTION_DASH_UP_LEFT: &str = "player_dash_up_left";
+    pub const ACTION_DASH_UP_RIGHT: &str = "player_dash_up_right";
+    pub const ACTION_DASH_DOWN_LEFT: &str = "player_dash_down_left";
+    pub const ACTION_DASH_DOWN_RIGHT: &str = "player_dash_down_right";
+    pub const ACTION_DASH_UP: &str = "player_dash_up";
+    pub const ACTION_DASH_DOWN: &str = "player_dash_down";
+    pub const ACTION_DASH_LEFT: &str = "player_dash_left";
+    pub const ACTION_DASH_RIGHT: &str = "player_dash_right";
 
     #[derive(Clone, Copy, PartialEq, Debug)]
     pub enum Direction {

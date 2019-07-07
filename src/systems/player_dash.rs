@@ -2,6 +2,8 @@ use std::time::{Duration, Instant};
 
 use super::system_prelude::*;
 
+const DOUBLE_TAP_DASH: bool = false;
+
 struct ActiveDash {
     dash_time:      u64,
     dash_direction: Direction,
@@ -108,27 +110,43 @@ impl PlayerDashSystem {
         for check_direction in Direction::iter() {
             let action_name = check_direction.action();
 
-            if input_manager.is_down(action_name) {
-                if let Some((last_direction, last_action_at)) = self.last_action
-                {
-                    let delay_duration = Duration::from_millis(
-                        player.items_data.dash.dash_input_delay_ms,
-                    );
-                    if now < last_action_at + delay_duration {
-                        if check_direction == last_direction {
-                            self.start_dash(
-                                &mut player,
-                                &mut player_velocity,
-                                player_gravity_opt,
-                                check_direction,
-                            );
-                            break;
+            if input_manager.is_down(ACTION_DASH_TRIGGER)
+                && input_manager.is_pressed(action_name)
+            {
+                // With double-tap dashing
+                if DOUBLE_TAP_DASH {
+                    if let Some((last_direction, last_action_at)) =
+                        self.last_action
+                    {
+                        let delay_duration = Duration::from_millis(
+                            player.items_data.dash.dash_input_delay_ms,
+                        );
+                        if now < last_action_at + delay_duration {
+                            if check_direction == last_direction {
+                                self.start_dash(
+                                    &mut player,
+                                    &mut player_velocity,
+                                    player_gravity_opt,
+                                    check_direction,
+                                );
+                                break;
+                            }
                         }
                     }
-                }
 
-                self.last_action = Some((check_direction, now));
-                break;
+                    self.last_action = Some((check_direction, now));
+                    break;
+
+                // Without double-tap dashing
+                } else {
+                    self.start_dash(
+                        &mut player,
+                        &mut player_velocity,
+                        player_gravity_opt,
+                        check_direction,
+                    );
+                    break;
+                }
             }
         }
     }
@@ -140,6 +158,14 @@ impl PlayerDashSystem {
         player_gravity_opt: &mut Option<&mut Gravity>,
         dashing_direction: Direction,
     ) {
+        // If player has used up all their dashes, we don't need to bother checking.
+        if !player.has_dash() {
+            if self.last_action.is_some() {
+                self.last_action = None;
+            }
+            return;
+        }
+
         self.active_dashes.push(ActiveDash {
             dash_time:      0,
             dash_direction: dashing_direction,
