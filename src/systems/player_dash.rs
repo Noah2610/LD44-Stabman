@@ -2,11 +2,15 @@ use std::time::{Duration, Instant};
 
 use super::system_prelude::*;
 
+struct ActiveDash {
+    dash_time:      u64,
+    dash_direction: Direction,
+}
+
 #[derive(Default)]
 pub struct PlayerDashSystem {
-    current_dash_time: u64,
-    dashing_direction: Option<Direction>,
-    last_action:       Option<(Direction, Instant)>,
+    active_dashes: Vec<ActiveDash>,
+    last_action:   Option<(Direction, Instant)>,
 }
 
 impl<'a> System<'a> for PlayerDashSystem {
@@ -22,27 +26,25 @@ impl<'a> System<'a> for PlayerDashSystem {
         &mut self,
         (time, input_manager, mut players, mut velocities, mut gravities): Self::SystemData,
     ) {
-        if let Some((mut player, mut player_velocity, player_gravity_opt)) =
+        if let Some((mut player, mut player_velocity, mut player_gravity_opt)) =
             (&mut players, &mut velocities, (&mut gravities).maybe())
                 .join()
                 .next()
         {
-            if let Some(dashing_direction) = self.dashing_direction {
-                self.handle_is_dashing(
-                    &time,
-                    &mut player,
-                    &mut player_velocity,
-                    player_gravity_opt,
-                    dashing_direction,
-                );
-            } else {
-                self.handle_is_not_dashing(
-                    &input_manager,
-                    &mut player,
-                    &mut player_velocity,
-                    player_gravity_opt,
-                );
-            }
+            self.handle_is_dashing(
+                &time,
+                &mut player,
+                &mut player_velocity,
+                &mut player_gravity_opt,
+            );
+            // NOTE: It's more fun if the player can activate another dash, while they are already
+            // dashing. So this `handle_is_not_dashing` method should always run.
+            self.handle_is_not_dashing(
+                &input_manager,
+                &mut player,
+                &mut player_velocity,
+                &mut player_gravity_opt,
+            );
         }
     }
 }
@@ -53,20 +55,38 @@ impl PlayerDashSystem {
         time: &Read<Time>,
         mut player: &mut Player,
         mut player_velocity: &mut Velocity,
-        player_gravity_opt: Option<&mut Gravity>,
-        dashing_direction: Direction,
+        player_gravity_opt: &mut Option<&mut Gravity>,
     ) {
         let dash_duration_ms = player.items_data.dash.dash_duration_ms;
         let dt_ms = time.delta_time().as_millis() as u64;
-        self.current_dash_time += dt_ms;
-        if self.current_dash_time > dash_duration_ms {
-            self.stop_dashing(player_gravity_opt);
-        } else {
-            self.apply_dash_velocity(
-                &mut player,
-                &mut player_velocity,
-                dashing_direction,
-            )
+        let mut dashes_to_remove = Vec::new();
+
+        for (index, active_dash) in
+            (&mut self.active_dashes).iter_mut().enumerate()
+        {
+            // self.current_dash_time += dt_ms;
+            active_dash.dash_time += dt_ms;
+            // if self.current_dash_time > dash_duration_ms {
+            if active_dash.dash_time > dash_duration_ms {
+                // Stop dash
+                dashes_to_remove.push(index);
+            } else {
+                apply_dash_velocity(
+                    &mut player,
+                    &mut player_velocity,
+                    active_dash.dash_direction,
+                )
+            }
+        }
+
+        for index in dashes_to_remove {
+            self.active_dashes.remove(index);
+        }
+
+        if self.active_dashes.is_empty() {
+            if let Some(gravity) = player_gravity_opt {
+                gravity.enable();
+            }
         }
     }
 
@@ -75,7 +95,7 @@ impl PlayerDashSystem {
         input_manager: &InputManager,
         mut player: &mut Player,
         mut player_velocity: &mut Velocity,
-        player_gravity_opt: Option<&mut Gravity>,
+        player_gravity_opt: &mut Option<&mut Gravity>,
     ) {
         // If player has used up all their dashes, we don't need to bother checking.
         if !player.has_dash() {
@@ -98,7 +118,7 @@ impl PlayerDashSystem {
                     );
                     if now < last_action_at + delay_duration {
                         if check_direction == last_direction {
-                            self.start_dashing(
+                            self.start_dash(
                                 &mut player,
                                 &mut player_velocity,
                                 player_gravity_opt,
@@ -115,51 +135,51 @@ impl PlayerDashSystem {
         }
     }
 
-    fn start_dashing(
+    fn start_dash(
         &mut self,
         mut player: &mut Player,
         mut player_velocity: &mut Velocity,
-        player_gravity_opt: Option<&mut Gravity>,
+        player_gravity_opt: &mut Option<&mut Gravity>,
         dashing_direction: Direction,
     ) {
-        self.last_action = None;
-        self.current_dash_time = 0;
-        self.dashing_direction = Some(dashing_direction);
+        // self.last_action = None;
+        // self.current_dash_time = 0;
+        // self.dashing_direction = Some(dashing_direction);
+        self.active_dashes.push(ActiveDash {
+            dash_time:      0,
+            dash_direction: dashing_direction,
+        });
         player.items_data.dash.used_dashes += 1;
         if let Some(gravity) = player_gravity_opt {
             gravity.disable();
         }
-        self.apply_dash_velocity(
+        // Completely kill all velocity when dashing starts
+        player_velocity.clear();
+        apply_dash_velocity(
             &mut player,
             &mut player_velocity,
             dashing_direction,
         );
     }
+}
 
-    fn stop_dashing(&mut self, player_gravity_opt: Option<&mut Gravity>) {
-        self.last_action = None;
-        self.dashing_direction = None;
-        self.current_dash_time = 0;
-        if let Some(gravity) = player_gravity_opt {
-            gravity.enable();
-        }
-    }
-
-    fn apply_dash_velocity(
-        &self,
-        player: &mut Player,
-        player_velocity: &mut Velocity,
-        dashing_direction: Direction,
-    ) {
-        // Apply a constant velocity
-        let dash_velocity = player.items_data.dash.dash_velocity;
-        let velocity = match dashing_direction {
-            Direction::Up => (None, Some(dash_velocity.1)),
-            Direction::Down => (None, Some(-dash_velocity.1)),
-            Direction::Left => (Some(-dash_velocity.0), None),
-            Direction::Right => (Some(dash_velocity.0), None),
-        };
-        velocity.0.map(|velx| player_velocity.x = velx);
-        velocity.1.map(|vely| player_velocity.y = vely);
-    }
+fn apply_dash_velocity(
+    player: &mut Player,
+    player_velocity: &mut Velocity,
+    dashing_direction: Direction,
+) {
+    // Apply a constant velocity
+    let dash_velocity = player.items_data.dash.dash_velocity;
+    let velocity = match dashing_direction {
+        Direction::UpLeft => (Some(-dash_velocity.0), Some(dash_velocity.1)),
+        Direction::UpRight => (Some(dash_velocity.0), Some(dash_velocity.1)),
+        Direction::DownLeft => (Some(-dash_velocity.0), Some(-dash_velocity.1)),
+        Direction::DownRight => (Some(dash_velocity.0), Some(-dash_velocity.1)),
+        Direction::Up => (None, Some(dash_velocity.1)),
+        Direction::Down => (None, Some(-dash_velocity.1)),
+        Direction::Left => (Some(-dash_velocity.0), None),
+        Direction::Right => (Some(dash_velocity.0), None),
+    };
+    velocity.0.map(|velx| player_velocity.x = velx);
+    velocity.1.map(|vely| player_velocity.y = vely);
 }

@@ -5,6 +5,10 @@ pub use direction::*;
 mod direction {
     use std::convert::TryFrom;
 
+    const ACTION_DASH_UP_LEFT: &str = "player_dash_up_left";
+    const ACTION_DASH_UP_RIGHT: &str = "player_dash_up_right";
+    const ACTION_DASH_DOWN_LEFT: &str = "player_dash_down_left";
+    const ACTION_DASH_DOWN_RIGHT: &str = "player_dash_down_right";
     const ACTION_DASH_UP: &str = "player_dash_up";
     const ACTION_DASH_DOWN: &str = "player_dash_down";
     const ACTION_DASH_LEFT: &str = "player_dash_left";
@@ -12,6 +16,10 @@ mod direction {
 
     #[derive(Clone, Copy, PartialEq, Debug)]
     pub enum Direction {
+        UpLeft,
+        UpRight,
+        DownLeft,
+        DownRight,
         Up,
         Down,
         Left,
@@ -21,6 +29,10 @@ mod direction {
     impl Direction {
         pub fn action(&self) -> &'static str {
             match self {
+                Direction::UpLeft => ACTION_DASH_UP_LEFT,
+                Direction::UpRight => ACTION_DASH_UP_RIGHT,
+                Direction::DownLeft => ACTION_DASH_DOWN_LEFT,
+                Direction::DownRight => ACTION_DASH_DOWN_RIGHT,
                 Direction::Up => ACTION_DASH_UP,
                 Direction::Down => ACTION_DASH_DOWN,
                 Direction::Left => ACTION_DASH_LEFT,
@@ -30,6 +42,10 @@ mod direction {
 
         pub fn iter() -> std::vec::IntoIter<Self> {
             vec![
+                Direction::UpLeft,
+                Direction::UpRight,
+                Direction::DownLeft,
+                Direction::DownRight,
                 Direction::Up,
                 Direction::Down,
                 Direction::Left,
@@ -44,6 +60,10 @@ mod direction {
 
         fn try_from(string: &str) -> Result<Self, Self::Error> {
             match string {
+                ACTION_DASH_UP_LEFT => Ok(Direction::UpLeft),
+                ACTION_DASH_UP_RIGHT => Ok(Direction::UpRight),
+                ACTION_DASH_DOWN_LEFT => Ok(Direction::DownLeft),
+                ACTION_DASH_DOWN_RIGHT => Ok(Direction::DownRight),
                 ACTION_DASH_UP => Ok(Direction::Up),
                 ACTION_DASH_DOWN => Ok(Direction::Down),
                 ACTION_DASH_LEFT => Ok(Direction::Left),
