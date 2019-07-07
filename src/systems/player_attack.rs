@@ -144,16 +144,23 @@ impl<'a> System<'a> for PlayerAttackSystem {
                                 {
                                     player.deal_damage_to(enemy);
                                     // Knockback
-                                    if player.items_data.has_knockback {
-                                        enemy_velocity.x =
-                                            player.items_data.knockback.0
-                                                * match player_flipped {
-                                                    Flipped::None => 1.0,
-                                                    Flipped::Horizontal => -1.0,
-                                                    _ => 1.0,
-                                                };
-                                        enemy_velocity.y =
-                                            player.items_data.knockback.1;
+                                    if player.items_data.knockback.has_knockback
+                                    {
+                                        enemy_velocity.x = player
+                                            .items_data
+                                            .knockback
+                                            .knockback
+                                            .0
+                                            * match player_flipped {
+                                                Flipped::None => 1.0,
+                                                Flipped::Horizontal => -1.0,
+                                                _ => 1.0,
+                                            };
+                                        enemy_velocity.y = player
+                                            .items_data
+                                            .knockback
+                                            .knockback
+                                            .1;
                                     }
                                 }
                             }

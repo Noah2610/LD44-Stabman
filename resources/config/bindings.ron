@@ -10,5 +10,9 @@
     "player_attack_left":  [ [Key(Left),], [Key(H)], ],
     "player_attack_right": [ [Key(Right),], [Key(L)], ],
     "player_buy_item":     [ [Key(E),], ],
+    "player_dash_up":      [ [Key(W),], ],
+    "player_dash_down":    [ [Key(S),], ],
+    "player_dash_left":    [ [Key(A),], ],
+    "player_dash_right":   [ [Key(D),], ],
   },
 )

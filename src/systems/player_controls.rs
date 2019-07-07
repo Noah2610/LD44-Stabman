@@ -173,8 +173,8 @@ fn handle_wall_cling(
                 velocity.y = slide_strength;
             }
             // Reset ExtraJumps
-            if player.items_data.used_extra_jumps != 0 {
-                player.items_data.used_extra_jumps = 0;
+            if player.items_data.extra_jump.used_extra_jumps != 0 {
+                player.items_data.extra_jump.used_extra_jumps = 0;
             }
         }
     }
@@ -271,7 +271,7 @@ fn handle_jump(
     sides_touching: &SidesTouching,
 ) {
     let jump_btn_down = input_manager.is_down("player_jump");
-    let can_wall_jump = player.items_data.can_wall_jump
+    let can_wall_jump = player.items_data.wall_jump.can_wall_jump
         && jump_btn_down
         && sides_touching.is_touching_horizontally()
         && !sides_touching.is_touching_bottom;
@@ -287,7 +287,7 @@ fn handle_jump(
         velocity.y += player.jump_strength;
         // Was an extra jump
         if !sides_touching.is_touching_bottom {
-            player.items_data.used_extra_jumps += 1;
+            player.items_data.extra_jump.used_extra_jumps += 1;
         }
         jumped = true;
     } else if can_wall_jump {
@@ -339,10 +339,13 @@ fn handle_on_ground_and_in_air(
     {
         decr_velocity.dont_decrease_x();
     }
-    // Recharge double jump
+    // Recharge double jump and dashes
     if sides_touching.is_touching_bottom {
-        if player.items_data.used_extra_jumps != 0 {
-            player.items_data.used_extra_jumps = 0;
+        if player.items_data.extra_jump.used_extra_jumps != 0 {
+            player.items_data.extra_jump.used_extra_jumps = 0;
+        }
+        if player.items_data.dash.used_dashes != 0 {
+            player.items_data.dash.used_dashes = 0;
         }
     }
 }
@@ -378,15 +381,16 @@ fn handle_attack<'a>(
         animations_container.play("attack");
     }
 
-    let should_shoot_bullet = is_attacking && player.items_data.can_shoot;
+    let should_shoot_bullet =
+        is_attacking && player.items_data.bullet_shoot.can_shoot;
 
     if should_shoot_bullet {
         bullet_creator.push(BulletComponents {
             bullet:    Bullet::new()
                 .owner(BulletOwner::Player)
-                .damage(player.items_data.bullet_damage)
-                .lifetime(player.items_data.bullet_lifetime)
-                .knockback(player.items_data.knockback)
+                .damage(player.items_data.bullet_shoot.bullet_damage)
+                .lifetime(player.items_data.bullet_shoot.bullet_lifetime)
+                .knockback(player.items_data.knockback.knockback)
                 .facing(match flipped {
                     Flipped::None => Facing::Right,
                     Flipped::Horizontal => Facing::Left,
@@ -400,15 +404,15 @@ fn handle_attack<'a>(
                 transform
             },
             velocity:  Velocity::new(
-                player.items_data.bullet_velocity.0
+                player.items_data.bullet_shoot.bullet_velocity.0
                     * match flipped {
                         Flipped::None => 1.0,
                         Flipped::Horizontal => -1.0,
                         _ => 1.0,
                     },
-                player.items_data.bullet_velocity.1,
+                player.items_data.bullet_shoot.bullet_velocity.1,
             ),
-            size:      Size::from(player.items_data.bullet_size),
+            size:      Size::from(player.items_data.bullet_shoot.bullet_size),
         });
     }
 }

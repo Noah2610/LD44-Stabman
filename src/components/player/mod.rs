@@ -1,21 +1,9 @@
-use std::time::Duration;
+mod items_data;
 
 use super::component_prelude::*;
 use super::Enemy;
 
-#[derive(Clone, Default, Serialize, Deserialize)]
-pub struct ItemsData {
-    pub extra_jumps:      u32,
-    pub used_extra_jumps: u32,
-    pub can_wall_jump:    bool,
-    pub knockback:        Vector,
-    pub has_knockback:    bool,
-    pub can_shoot:        bool,
-    pub bullet_damage:    u32,
-    pub bullet_velocity:  Vector,
-    pub bullet_size:      Vector,
-    pub bullet_lifetime:  Duration,
-}
+pub use items_data::prelude::*;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Player {
@@ -88,7 +76,12 @@ impl Player {
     }
 
     pub fn has_extra_jump(&self) -> bool {
-        self.items_data.used_extra_jumps < self.items_data.extra_jumps
+        self.items_data.extra_jump.used_extra_jumps
+            < self.items_data.extra_jump.extra_jumps
+    }
+
+    pub fn has_dash(&self) -> bool {
+        self.items_data.dash.used_dashes < self.items_data.dash.dashes
     }
 }
 

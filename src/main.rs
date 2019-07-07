@@ -191,7 +191,13 @@ fn build_game_data<'a, 'b>(
         ])?
         .with("ingame", HarmfulSystem, "harmful_system", &[
             "collision_system",
-        ])?;
+        ])?
+        .with(
+            "ingame",
+            PlayerDashSystem::default(),
+            "player_dash_system",
+            &["move_entities_system"],
+        )?;
     Ok(game_data)
 }
 
