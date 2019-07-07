@@ -38,12 +38,8 @@ impl Ingame {
             ));
         let handle = data
             .world
-            .read_resource::<AudioHandles>()
-            .get(&name)
-            .expect(&format!(
-                "Audio SourceHandle with the given name doesn't exist: {}",
-                name
-            ));
+            .write_resource::<AudioHandles>()
+            .get_or_load(resource(format!("audio/{}", name)), &data.world);
         if let Some(sound) = asset.get(&handle) {
             sink.append(sound).unwrap();
         }

@@ -78,9 +78,6 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Startup {
             sink.set_volume(settings.music_volume);
         }
         let mut audio_handles = AudioHandles::default();
-        audio_handles.load(resource("audio/level_1.ogg"), &mut data.world);
-        audio_handles.load(resource("audio/level_2.ogg"), &mut data.world);
-        audio_handles.load(resource("audio/level_3.ogg"), &mut data.world);
         data.world.add_resource(sprite_sheet_handles);
         data.world.add_resource(audio_handles);
         data.world.add_resource(TextureHandles::default());
