@@ -174,4 +174,9 @@ Settings(
             damage_up:                1,
         )
     ),
+
+    /// Settings for harmful tiles (spikes).
+    harmful: (
+      knockback_strength: (500.0, 500.0),
+    ),
 )

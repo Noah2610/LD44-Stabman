@@ -7,6 +7,7 @@ use serde::{Deserialize, Deserializer, Serialize};
 pub mod prelude {
     pub use super::Settings;
     pub use super::SettingsCamera;
+    pub use super::SettingsHarmful;
     pub use super::SettingsItem;
     pub use super::SettingsItems;
     pub use super::SettingsLevelManager;
@@ -25,6 +26,7 @@ pub struct Settings {
     pub items:         SettingsItems,
     pub music_volume:  f32,
     pub death_floor:   f32,
+    pub harmful:       SettingsHarmful,
 }
 
 #[derive(Clone, Deserialize)]
@@ -135,6 +137,11 @@ pub struct SettingsItemSettings {
     pub speed_up_acceleration_up: f32,
     pub jump_up:                  f32,
     pub damage_up:                u32,
+}
+
+#[derive(Clone, Deserialize)]
+pub struct SettingsHarmful {
+    pub knockback_strength: (f32, f32),
 }
 
 struct QTAVisitor;
