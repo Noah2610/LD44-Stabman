@@ -83,6 +83,17 @@ impl Player {
     pub fn has_dash(&self) -> bool {
         self.items_data.dash.used_dashes < self.items_data.dash.dashes
     }
+
+    // Reset ExtraJumps and Dashes
+    pub fn reset_jumps(&mut self) {
+        // Reset Dashes
+        if self.items_data.extra_jump.used_extra_jumps != 0 {
+            self.items_data.extra_jump.used_extra_jumps = 0;
+        }
+        if self.items_data.dash.used_dashes != 0 {
+            self.items_data.dash.used_dashes = 0;
+        }
+    }
 }
 
 impl Component for Player {

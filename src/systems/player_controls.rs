@@ -172,10 +172,8 @@ fn handle_wall_cling(
             if velocity.y < slide_strength {
                 velocity.y = slide_strength;
             }
-            // Reset ExtraJumps
-            if player.items_data.extra_jump.used_extra_jumps != 0 {
-                player.items_data.extra_jump.used_extra_jumps = 0;
-            }
+            // Reset ExtraJumps and Dashes
+            player.reset_jumps();
         }
     }
 }
@@ -339,14 +337,9 @@ fn handle_on_ground_and_in_air(
     {
         decr_velocity.dont_decrease_x();
     }
-    // Recharge double jump and dashes
     if sides_touching.is_touching_bottom {
-        if player.items_data.extra_jump.used_extra_jumps != 0 {
-            player.items_data.extra_jump.used_extra_jumps = 0;
-        }
-        if player.items_data.dash.used_dashes != 0 {
-            player.items_data.dash.used_dashes = 0;
-        }
+        // Reset ExtraJumps and Dashes
+        player.reset_jumps();
     }
 }
 
