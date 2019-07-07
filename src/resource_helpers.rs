@@ -25,3 +25,12 @@ where
     file.read_to_string(&mut content)?;
     Ok(content)
 }
+
+pub fn write_file<P, S>(path: P, data: S) -> Result<(), io::Error>
+where
+    P: AsRef<Path> + Display,
+    S: ToString,
+{
+    let mut file = File::create(path)?;
+    write!(&mut file, "{}", data.to_string())
+}

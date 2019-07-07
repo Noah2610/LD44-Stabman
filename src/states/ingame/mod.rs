@@ -82,8 +82,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
                     .join()
                     .find_map(|(player, animations_container)| {
                         Some(
-                            player.is_dead()
-                                // && animations_container.play_once.is_none(),
+                            player.is_dead(), // && animations_container.play_once.is_none(),
                         )
                     })
                     .unwrap_or(false);
@@ -93,7 +92,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
         if next_level {
             if self.level_manager.has_next_level() {
                 self.level_manager.set_player_checkpoint(&mut data);
-                self.level_manager.load_next_level(&mut data);
+                self.level_manager.load_next_level(&mut data, true);
                 self.play_current_song(&mut data);
             } else {
                 // TODO: Beat game!

@@ -3,7 +3,7 @@ use std::time::Duration;
 use super::component_prelude::*;
 use super::Enemy;
 
-#[derive(Clone, Default)]
+#[derive(Clone, Default, Serialize, Deserialize)]
 pub struct ItemsData {
     pub extra_jumps:      u32,
     pub used_extra_jumps: u32,
@@ -17,7 +17,7 @@ pub struct ItemsData {
     pub bullet_lifetime:  Duration,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Player {
     pub acceleration:               Vector,
     pub air_acceleration:           Vector,

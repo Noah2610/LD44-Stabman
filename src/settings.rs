@@ -2,7 +2,7 @@ use std::fmt;
 
 use deathframe::geo::Vector;
 use serde::de::{self, Visitor};
-use serde::{Deserialize, Deserializer, Serialize};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 pub mod prelude {
     pub use super::Settings;
@@ -59,9 +59,9 @@ pub struct SettingsPlayer {
 
 #[derive(Clone)]
 pub enum SettingsPlayerQuickTurnaround {
-    No,             // 0
-    ResetVelocity,  // 1
-    InvertVelocity, // 2
+    No             = 0,
+    ResetVelocity  = 1,
+    InvertVelocity = 2,
 }
 
 #[derive(Clone, Deserialize)]
@@ -73,10 +73,11 @@ pub struct SettingsLoadingText {
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsLevelManager {
-    pub levels_dir:  String,
-    pub level_names: Vec<String>,
-    pub song_names:  Vec<String>,
-    pub tile_size:   Vector,
+    pub levels_dir:    String,
+    pub level_names:   Vec<String>,
+    pub song_names:    Vec<String>,
+    pub tile_size:     Vector,
+    pub savefile_path: String,
 }
 
 #[derive(Clone, Deserialize)]
@@ -144,55 +145,31 @@ pub struct SettingsHarmful {
     pub knockback_strength: (f32, f32),
 }
 
-struct QTAVisitor;
-
-impl<'de> Visitor<'de> for QTAVisitor {
-    type Value = SettingsPlayerQuickTurnaround;
-
-    fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "an integer between 0 and 2 (inclusive)")
-    }
-
-    fn visit_i8<E>(self, value: i8) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        use SettingsPlayerQuickTurnaround as QTA;
-        match value {
-            0 => Ok(QTA::No),
-            1 => Ok(QTA::ResetVelocity),
-            2 => Ok(QTA::InvertVelocity),
-            _ => Err(E::custom(format!("Value out of range: {}", value))),
-        }
-    }
-
-    fn visit_i16<E>(self, value: i16) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        self.visit_i8(value as i8)
-    }
-
-    fn visit_i32<E>(self, value: i32) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        self.visit_i8(value as i8)
-    }
-
-    fn visit_i64<E>(self, value: i64) -> Result<Self::Value, E>
-    where
-        E: de::Error,
-    {
-        self.visit_i8(value as i8)
-    }
-}
-
 impl<'de> Deserialize<'de> for SettingsPlayerQuickTurnaround {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
-        deserializer.deserialize_i32(QTAVisitor)
+        use serde::de::Error;
+        use SettingsPlayerQuickTurnaround as QTA;
+
+        let value = i32::deserialize(deserializer)?;
+        match value {
+            0 => Ok(QTA::No),
+            1 => Ok(QTA::ResetVelocity),
+            2 => Ok(QTA::InvertVelocity),
+            _ => {
+                Err(D::Error::custom(format!("Value out of range: {}", value)))
+            }
+        }
+    }
+}
+
+impl Serialize for SettingsPlayerQuickTurnaround {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_u8(self.clone() as u8)
     }
 }
