@@ -64,9 +64,7 @@ impl PlayerDashSystem {
         for (index, active_dash) in
             (&mut self.active_dashes).iter_mut().enumerate()
         {
-            // self.current_dash_time += dt_ms;
             active_dash.dash_time += dt_ms;
-            // if self.current_dash_time > dash_duration_ms {
             if active_dash.dash_time > dash_duration_ms {
                 // Stop dash
                 dashes_to_remove.push(index);
@@ -142,9 +140,6 @@ impl PlayerDashSystem {
         player_gravity_opt: &mut Option<&mut Gravity>,
         dashing_direction: Direction,
     ) {
-        // self.last_action = None;
-        // self.current_dash_time = 0;
-        // self.dashing_direction = Some(dashing_direction);
         self.active_dashes.push(ActiveDash {
             dash_time:      0,
             dash_direction: dashing_direction,
