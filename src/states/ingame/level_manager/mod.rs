@@ -107,10 +107,8 @@ impl LevelManager {
 
             match serde_json::to_string(&savefile_data) {
                 Ok(serialized) => {
-                    println!("SAVING:\n{:#?}", serialized.to_string());
                     write_file(savefile_path, serialized).unwrap()
                 }
-
                 Err(err) => eprintln!(
                     "Couldn't save savefile data to file, an error occured \
                      while serializing save data:\n{:#?}",
@@ -127,7 +125,6 @@ impl LevelManager {
                 Ok(deserialized) => {
                     self.player_checkpoint_opt = Some(deserialized.player);
                     self.level_index = deserialized.level_index;
-                    dbg!(self.level_index);
                 }
                 Err(err) => eprintln!(
                     "Couldn't load savefile data from file, an error occured \
