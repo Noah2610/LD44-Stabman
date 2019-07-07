@@ -137,7 +137,6 @@ impl<'a> System<'a> for PlayerAttackSystem {
                             // Attack enemy
                             if attack.active {
                                 if let Some(collision::Data {
-                                    side: Side::Inner,
                                     state: collision::State::Enter,
                                     ..
                                 }) =

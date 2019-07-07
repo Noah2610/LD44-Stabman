@@ -158,21 +158,16 @@ fn build_game_data<'a, 'b>(
         )?
         .with("ingame", AnimationSystem, "animation_system", &[])?
         .with("ingame", PlayerAttackSystem, "player_attack_system", &[
+            "player_controls_system",
             "decrease_velocities_system",
             "limit_velocities_system",
-            "move_entities_system",
             "collision_system",
-            "player_controls_system",
         ])?
         .with(
             "ingame",
             PlayerTakeDamageSystem,
             "player_take_damage_system",
-            &[
-                "move_entities_system",
-                "collision_system",
-                "player_controls_system",
-            ],
+            &["player_controls_system", "collision_system"],
         )?
         .with(
             "ingame",
@@ -180,24 +175,21 @@ fn build_game_data<'a, 'b>(
             "health_display_system",
             &["player_take_damage_system"],
         )?
-        .with("ingame", GoalSystem, "goal_system", &[
-            "move_entities_system",
-            "collision_system",
-        ])?
+        .with("ingame", GoalSystem, "goal_system", &["collision_system"])?
         .with("ingame", EnemyAiSystem, "enemy_ai_system", &[
             "decrease_velocities_system",
             "limit_velocities_system",
             "player_attack_system",
+            "collision_system",
         ])?
         .with("ingame", BulletSystem, "bullet_system", &[
-            "move_entities_system",
+            "collision_system",
         ])?
         .with("ingame", BulletCreatorSystem, "bullet_creator_system", &[
             "player_controls_system",
             "enemy_ai_system",
         ])?
         .with("ingame", HarmfulSystem, "harmful_system", &[
-            "move_entities_system",
             "collision_system",
         ])?;
     Ok(game_data)
