@@ -2,6 +2,7 @@
 # Build the project in release mode.
 # The generated release directory and zip file name is in the for of:
 #   "${RELEASE_FILE_PREFIX}${<target-name>}${RELEASE_FILE_SUFFIX}-${RELEASE_VERSION}"
+# All command-line arguments are passed to the executed `cargo` command.
 # Optional environment variables:
 #   $RELEASE_TARGETS
 #     A space-separated list of build target identifiers;
@@ -89,11 +90,11 @@ function build_release {
 
     case "$target" in
       "linux" | "default")
-        build_release_for_linux
+        build_release_for_linux "$@"
         ;;
 
       "windows")
-        build_release_for_windows
+        build_release_for_windows "$@"
         ;;
 
       *)
@@ -111,7 +112,7 @@ function build_release {
 #   local target
 function build_release_for_linux {
   msg "Compiling..."
-  try_run "cargo +stable build --release"
+  try_run "cargo +stable build --release $*"
   cd "$RELEASE_DIR"
   mkdir "$filename"
 
@@ -128,7 +129,7 @@ function build_release_for_linux {
 #   local target
 function build_release_for_windows {
   msg "Compiling..."
-  try_run "cargo +stable build --release --target $WINDOWS_TARGET"
+  try_run "cargo +stable build --release --target $WINDOWS_TARGET $*"
   cd "$RELEASE_DIR"
   mkdir "$filename"
 
@@ -150,4 +151,4 @@ RELEASE_TARGETS=($RELEASE_TARGETS)
 [ -z "$RELEASE_EXE_NAME" ] && RELEASE_EXE_NAME="LD44"
 [ -z "$RELEASE_RESOURCES_DIR" ] && RELEASE_RESOURCES_DIR="${ROOT}/resources"
 
-build_release
+build_release "$@"

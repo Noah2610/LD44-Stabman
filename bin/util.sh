@@ -2,6 +2,7 @@ LOGFILE="$ROOT/logs/$( basename "$0" ).log"
 logfile_dir="$( dirname "$LOGFILE" )"
 ! [ -d "$logfile_dir" ] && mkdir -p "$logfile_dir"
 unset logfile_dir
+TERMINAL="termite"
 
 COLOR_ERR="1;31"
 COLOR_MSG="0;33"
@@ -81,9 +82,15 @@ function try_run {
 function run_terminal {
   local cmd="$1"
   local cmd_bash="bash -c '$cmd || (echo -e \"----------\n[CONTINUE]\"; read')"
-  ([ -n "$cmd" ] || err "No command given to function \`$0\`.") &&
-    check "cargo" &&
-    check "termite" &&
-    termite -d "$ROOT" -e "$cmd_bash" & \
-    disown
+  [ -n "$cmd" ] || err "No command given to function \`$0\`."
+  check "$TERMINAL"
+  case "$TERMINAL" in
+    "termite")
+      termite -d "$ROOT" -e "$cmd_bash" & \
+      disown
+      ;;
+    *)
+      err "Function \`$0\` is not configured for terminal '$TERMINAL'"
+      ;;
+  esac
 }
