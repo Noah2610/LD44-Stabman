@@ -79,6 +79,10 @@ function try_run {
   fi
 }
 
+function should_run_in_terminal {
+  [ -n "$RUN_NEW_TERMINAL" ] && [ "$RUN_NEW_TERMINAL" != "0" ]
+}
+
 function run_terminal {
   local cmd="$1"
   local cmd_bash="bash -c '$cmd || (echo -e \"----------\n[CONTINUE]\"; read')"

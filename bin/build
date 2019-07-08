@@ -1,6 +1,11 @@
 #!/bin/bash
 # Build the project for development.
 # All command-line arguments are passed to the executed `cargo` command.
+# Optional environment variables:
+#   $RUN_NEW_TERMINAL
+#     If this variable is not `0` or empty,
+#     then the cargo command is executed in a new terminal.
+#     DEFAULT: ""
 
 ROOT="$( cd $(dirname $0)/..; pwd )"
 source "$ROOT/bin/util.sh"
@@ -8,7 +13,7 @@ source "$ROOT/bin/util.sh"
 function build {
   check "cargo"
   local cmd="cargo +nightly-2019-03-01 build --features amethyst/nightly $*"
-  if is_available "$TERMINAL"; then
+  if should_run_in_terminal && is_available "$TERMINAL"; then
     run_terminal "$cmd"
   else
     $cmd
