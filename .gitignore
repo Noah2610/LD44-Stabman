@@ -1,6 +1,9 @@
 /target
 **/*.rs.bk
 /_ignore
+# /bin/util.sh is downloaded by bin/download-util.sh
+/bin/util.sh
 /releases
 /logs
+*.log
 /savefile.json

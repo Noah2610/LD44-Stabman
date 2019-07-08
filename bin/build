@@ -7,7 +7,8 @@
 #     then the cargo command is executed in a new terminal.
 #     DEFAULT: ""
 
-ROOT="$( cd $(dirname $0)/..; pwd )"
+ROOT="$( cd "$(dirname "$0")/.." || exit 1; pwd )"
+[ -f "$ROOT/bin/util.sh" ] || ./bin/download-util.sh || exit 1
 source "$ROOT/bin/util.sh"
 
 function build {
