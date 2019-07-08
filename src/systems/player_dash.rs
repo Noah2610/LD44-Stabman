@@ -109,11 +109,10 @@ impl PlayerDashSystem {
         for check_direction in Direction::iter() {
             let action_name = check_direction.action();
 
-            if input_manager.is_down(ACTION_DASH_TRIGGER)
-                && input_manager.is_pressed(action_name)
-            {
-                // With double-tap dashing
-                if player.items_data.dash.double_tap {
+            // With double-tap dashing
+            if player.items_data.dash.double_tap {
+                if input_manager.is_down(action_name) {
+                    println!("HERE");
                     if let Some((last_direction, last_action_at)) =
                         self.last_action
                     {
@@ -135,9 +134,13 @@ impl PlayerDashSystem {
 
                     self.last_action = Some((check_direction, now));
                     break;
+                }
 
-                // Without double-tap dashing
-                } else {
+            // Without double-tap dashing
+            } else {
+                if input_manager.is_down(ACTION_DASH_TRIGGER)
+                    && input_manager.is_pressed(action_name)
+                {
                     self.start_dash(
                         &mut player,
                         &mut player_velocity,

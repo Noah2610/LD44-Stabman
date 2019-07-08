@@ -66,6 +66,8 @@ impl Item {
                     settings.settings.dash_velocity;
                 player.items_data.dash.input_delay_ms =
                     settings.settings.dash_input_delay_ms;
+                player.items_data.dash.double_tap =
+                    settings.settings.dash_double_tap;
             }
             ItemType::SpeedUp => {
                 player
