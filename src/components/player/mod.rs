@@ -86,11 +86,12 @@ impl Player {
 
     // Reset ExtraJumps and Dashes
     pub fn reset_jumps(&mut self) {
-        // Reset Dashes
         if self.items_data.extra_jump.used_extra_jumps != 0 {
             self.items_data.extra_jump.used_extra_jumps = 0;
         }
-        if self.items_data.dash.used_dashes != 0 {
+        if self.items_data.dash.used_dashes != 0
+            && !self.items_data.dash.is_dashing
+        {
             self.items_data.dash.used_dashes = 0;
         }
     }

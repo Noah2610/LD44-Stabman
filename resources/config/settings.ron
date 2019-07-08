@@ -176,6 +176,7 @@ Settings(
             dash_duration_ms:         150,
             dash_velocity:            (750.0, 500.0),
             dash_input_delay_ms:      250,
+            dash_double_tap:          false,
             speed_up_max_velocity_up: 100.0,
             speed_up_acceleration_up: 300.0,
             jump_up:                  50.0,

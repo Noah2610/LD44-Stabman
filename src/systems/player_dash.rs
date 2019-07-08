@@ -2,8 +2,6 @@ use std::time::{Duration, Instant};
 
 use super::system_prelude::*;
 
-const DOUBLE_TAP_DASH: bool = false;
-
 struct ActiveDash {
     dash_time:      u64,
     dash_direction: Direction,
@@ -59,7 +57,7 @@ impl PlayerDashSystem {
         mut player_velocity: &mut Velocity,
         player_gravity_opt: &mut Option<&mut Gravity>,
     ) {
-        let dash_duration_ms = player.items_data.dash.dash_duration_ms;
+        let dash_duration_ms = player.items_data.dash.duration_ms;
         let dt_ms = time.delta_time().as_millis() as u64;
         let mut dashes_to_remove = Vec::new();
 
@@ -84,6 +82,7 @@ impl PlayerDashSystem {
         }
 
         if self.active_dashes.is_empty() {
+            player.items_data.dash.is_dashing = false;
             if let Some(gravity) = player_gravity_opt {
                 gravity.enable();
             }
@@ -114,12 +113,12 @@ impl PlayerDashSystem {
                 && input_manager.is_pressed(action_name)
             {
                 // With double-tap dashing
-                if DOUBLE_TAP_DASH {
+                if player.items_data.dash.double_tap {
                     if let Some((last_direction, last_action_at)) =
                         self.last_action
                     {
                         let delay_duration = Duration::from_millis(
-                            player.items_data.dash.dash_input_delay_ms,
+                            player.items_data.dash.input_delay_ms,
                         );
                         if now < last_action_at + delay_duration {
                             if check_direction == last_direction {
@@ -166,11 +165,12 @@ impl PlayerDashSystem {
             return;
         }
 
+        player.items_data.dash.is_dashing = true;
+        player.items_data.dash.used_dashes += 1;
         self.active_dashes.push(ActiveDash {
             dash_time:      0,
             dash_direction: dashing_direction,
         });
-        player.items_data.dash.used_dashes += 1;
         if let Some(gravity) = player_gravity_opt {
             gravity.disable();
         }
@@ -190,7 +190,7 @@ fn apply_dash_velocity(
     dashing_direction: Direction,
 ) {
     // Apply a constant velocity
-    let dash_velocity = player.items_data.dash.dash_velocity;
+    let dash_velocity = player.items_data.dash.velocity;
     let velocity = match dashing_direction {
         Direction::UpLeft => (Some(-dash_velocity.0), Some(dash_velocity.1)),
         Direction::UpRight => (Some(dash_velocity.0), Some(dash_velocity.1)),

@@ -138,6 +138,7 @@ pub struct SettingsItemSettings {
     pub dash_duration_ms:         u64,
     pub dash_velocity:            Vector,
     pub dash_input_delay_ms:      u64,
+    pub dash_double_tap:          bool,
     pub speed_up_max_velocity_up: f32,
     pub speed_up_acceleration_up: f32,
     pub jump_up:                  f32,

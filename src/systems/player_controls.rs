@@ -381,9 +381,9 @@ fn handle_attack<'a>(
         bullet_creator.push(BulletComponents {
             bullet:    Bullet::new()
                 .owner(BulletOwner::Player)
-                .damage(player.items_data.bullet_shoot.bullet_damage)
-                .lifetime(player.items_data.bullet_shoot.bullet_lifetime)
-                .knockback(player.items_data.knockback.knockback)
+                .damage(player.items_data.bullet_shoot.damage)
+                .lifetime(player.items_data.bullet_shoot.lifetime)
+                .knockback(player.items_data.knockback.velocity)
                 .facing(match flipped {
                     Flipped::None => Facing::Right,
                     Flipped::Horizontal => Facing::Left,
@@ -397,15 +397,15 @@ fn handle_attack<'a>(
                 transform
             },
             velocity:  Velocity::new(
-                player.items_data.bullet_shoot.bullet_velocity.0
+                player.items_data.bullet_shoot.velocity.0
                     * match flipped {
                         Flipped::None => 1.0,
                         Flipped::Horizontal => -1.0,
                         _ => 1.0,
                     },
-                player.items_data.bullet_shoot.bullet_velocity.1,
+                player.items_data.bullet_shoot.velocity.1,
             ),
-            size:      Size::from(player.items_data.bullet_shoot.bullet_size),
+            size:      Size::from(player.items_data.bullet_shoot.size),
         });
     }
 }

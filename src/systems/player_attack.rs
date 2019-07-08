@@ -149,7 +149,7 @@ impl<'a> System<'a> for PlayerAttackSystem {
                                         enemy_velocity.x = player
                                             .items_data
                                             .knockback
-                                            .knockback
+                                            .velocity
                                             .0
                                             * match player_flipped {
                                                 Flipped::None => 1.0,
@@ -159,7 +159,7 @@ impl<'a> System<'a> for PlayerAttackSystem {
                                         enemy_velocity.y = player
                                             .items_data
                                             .knockback
-                                            .knockback
+                                            .velocity
                                             .1;
                                     }
                                 }

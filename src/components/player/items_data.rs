@@ -33,24 +33,26 @@ pub struct ItemsDataWallJump {
 
 #[derive(Clone, Default, Serialize, Deserialize)]
 pub struct ItemsDataKnockback {
-    pub knockback:     Vector,
+    pub velocity:      Vector,
     pub has_knockback: bool,
 }
 
 #[derive(Clone, Default, Serialize, Deserialize)]
 pub struct ItemsDataBulletShoot {
-    pub can_shoot:       bool,
-    pub bullet_damage:   u32,
-    pub bullet_velocity: Vector,
-    pub bullet_size:     Vector,
-    pub bullet_lifetime: Duration,
+    pub can_shoot: bool,
+    pub damage:    u32,
+    pub velocity:  Vector,
+    pub size:      Vector,
+    pub lifetime:  Duration,
 }
 
 #[derive(Clone, Default, Serialize, Deserialize)]
 pub struct ItemsDataDash {
-    pub dashes:              u32,
-    pub used_dashes:         u32,
-    pub dash_duration_ms:    u64,
-    pub dash_velocity:       Vector,
-    pub dash_input_delay_ms: u64,
+    pub dashes:         u32,
+    pub used_dashes:    u32,
+    pub duration_ms:    u64,
+    pub velocity:       Vector,
+    pub input_delay_ms: u64,
+    pub double_tap:     bool,
+    pub is_dashing:     bool,
 }
