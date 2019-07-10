@@ -197,7 +197,10 @@ fn build_game_data<'a, 'b>(
             PlayerDashSystem::default(),
             "player_dash_system",
             &["move_entities_system"],
-        )?;
+        )?
+        .with("ingame", LoaderSystem, "loader_system", &[
+            "move_entities_system",
+        ])?;
     Ok(game_data)
 }
 

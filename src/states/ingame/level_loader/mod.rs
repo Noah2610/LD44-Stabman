@@ -472,7 +472,8 @@ impl LevelLoader {
                 .with(transform)
                 .with(Size::from(*size))
                 .with(ScaleOnce)
-                .with(Transparent);
+                .with(Transparent)
+                .with(Loadable);
 
             if let Some(sprite_render) = sprite_render_opt {
                 entity = entity.with(sprite_render);
@@ -666,7 +667,8 @@ impl LevelLoader {
                 .with(animations_container)
                 .with(Transparent)
                 .with(enemy_ai)
-                .with(Harmable);
+                .with(Harmable)
+                .with(Loadable);
 
             if enemy_type != EnemyType::Flying
                 && enemy_type != EnemyType::Turret
@@ -743,6 +745,7 @@ impl LevelLoader {
                 .with(Collision::new())
                 .with(sprite_render)
                 .with(Transparent)
+                .with(Loadable)
                 .build();
         }
     }

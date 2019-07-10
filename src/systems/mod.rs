@@ -5,6 +5,7 @@ mod enemy_ai;
 mod goal;
 mod harmful;
 mod health_display;
+mod loader;
 mod player_attack;
 mod player_controls;
 mod player_dash;
@@ -20,6 +21,7 @@ pub mod prelude {
     pub use super::goal::GoalSystem;
     pub use super::harmful::HarmfulSystem;
     pub use super::health_display::HealthDisplaySystem;
+    pub use super::loader::LoaderSystem;
     pub use super::player_attack::PlayerAttackSystem;
     pub use super::player_controls::PlayerControlsSystem;
     pub use super::player_dash::PlayerDashSystem;
