@@ -7,6 +7,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 pub mod prelude {
     pub use super::Settings;
     pub use super::SettingsCamera;
+    pub use super::SettingsEntityLoader;
     pub use super::SettingsHarmful;
     pub use super::SettingsItem;
     pub use super::SettingsItems;
@@ -27,6 +28,7 @@ pub struct Settings {
     pub music_volume:  f32,
     pub death_floor:   f32,
     pub harmful:       SettingsHarmful,
+    pub entity_loader: SettingsEntityLoader,
 }
 
 #[derive(Clone, Deserialize)]
@@ -148,6 +150,12 @@ pub struct SettingsItemSettings {
 #[derive(Clone, Deserialize)]
 pub struct SettingsHarmful {
     pub knockback_strength: (f32, f32),
+}
+
+#[derive(Clone, Deserialize)]
+pub struct SettingsEntityLoader {
+    pub load_distance:                    (f32, f32),
+    pub enemy_load_distance_substraction: (f32, f32),
 }
 
 impl<'de> Deserialize<'de> for SettingsPlayerQuickTurnaround {

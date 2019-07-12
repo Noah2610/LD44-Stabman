@@ -188,4 +188,17 @@ Settings(
     harmful: (
       knockback_strength: (500.0, 500.0),
     ),
+
+    /// Settings for the entity loader system.
+    entity_loader: (
+      /// Anything beyond this distance to the player will be unloaded,
+      /// anything within this distance to the player will be loaded.
+      load_distance:                    (200.0, 200.0),
+      /// The `load_distance` minus the `enemy_load_distance_substraction`,
+      /// is the load_distance for enemies.
+      /// We load enemies from less far away, because if they are loaded
+      /// and moving into unloaded solid tiles, then they will get stuck
+      /// once the tiles become loaded.
+      enemy_load_distance_substraction: (72.0, 72.0),
+    )
 )
