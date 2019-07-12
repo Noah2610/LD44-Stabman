@@ -13,7 +13,10 @@ mod states;
 mod systems;
 mod world_helpers;
 
+use std::time::Duration;
+
 use amethyst::audio::AudioBundle;
+use amethyst::core::frame_limiter::FrameRateLimitStrategy;
 use amethyst::core::transform::TransformBundle;
 use amethyst::input::InputBundle;
 use amethyst::prelude::*;
@@ -37,13 +40,24 @@ use deathframe::handlers::AudioHandles;
 use resource_helpers::*;
 use systems::prelude::*;
 
+const FPS: u32 = 60;
+const SLEEP_AND_YIELD_MS: u64 = 2;
+
 fn main() -> amethyst::Result<()> {
     start_logger();
 
     let game_data = build_game_data()?;
 
     let mut game: amethyst::CoreApplication<CustomGameData<CustomData>> =
-        Application::new("./", states::Startup::default(), game_data)?;
+        Application::build("./", states::Startup::default())?
+            // https://docs-src.amethyst.rs/stable/amethyst_core/frame_limiter
+            .with_frame_limit(
+                FrameRateLimitStrategy::SleepAndYield(Duration::from_millis(
+                    SLEEP_AND_YIELD_MS,
+                )),
+                FPS,
+            )
+            .build(game_data)?;
     game.run();
 
     Ok(())
