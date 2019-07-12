@@ -1,8 +1,8 @@
 (
   title:          "Ludum Dare 44",
-  dimensions:     Some((1200, 800)),
-  max_dimensions: Some((1200, 800)),
-  min_dimensions: Some((1200, 800)),
+  dimensions:     Some((1280, 720)),
+  max_dimensions: Some((1280, 720)),
+  min_dimensions: Some((1280, 720)),
   fullscreen:     false,
   multisampling:  0,
   visibility:     true,
