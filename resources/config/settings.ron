@@ -193,7 +193,7 @@ Settings(
     entity_loader: (
       /// Anything beyond this distance to the player will be unloaded,
       /// anything within this distance to the player will be loaded.
-      load_distance:                    (200.0, 200.0),
+      load_distance:                    (416.0, 416.0),
       /// The `load_distance` minus the `enemy_load_distance_substraction`,
       /// is the load_distance for enemies.
       /// We load enemies from less far away, because if they are loaded
