@@ -6,15 +6,20 @@ import json
 import re
 from tiled import *
 
+ORIGIN_TOP_LEFT = "top-left"
+ORIGIN_BOTTOM_LEFT = "bottom-left"
+# Map origin point used in-game; used when exporting data to manipulate positions.
+ORIGIN_AT = ORIGIN_BOTTOM_LEFT
+
 class Tile:
     def __init__(self, tile_map, layer, x, y, cell):
         self.cell = cell
         self.layer = layer
         ts = self.tileset()
-        # ORIGIN at TOP-LEFT
-        # self.pos = { "x": x * ts.tileWidth(), "y": y * ts.tileHeight() }
-        # ORIGIN at BOTTOM-LEFT
-        self.pos = { "x": x * ts.tileWidth(), "y": (tile_map.height() * tile_map.tileHeight()) - (y * ts.tileHeight()) }
+        if ORIGIN_AT == ORIGIN_TOP_LEFT:
+            self.pos = { "x": x * ts.tileWidth(), "y": y * ts.tileHeight() }
+        elif ORIGIN_AT == ORIGIN_BOTTOM_LEFT:
+            self.pos = { "x": x * ts.tileWidth(), "y": (tile_map.height() * tile_map.tileHeight()) - (y * ts.tileHeight()) }
 
     def tile(self):
         return self.cell.tile()
@@ -101,10 +106,10 @@ class Tileset:
 class Object:
     def __init__(self, tile_map, layer, obj):
         self.layer = layer
-        # ORIGIN at TOP-LEFT
-        # self.pos  = { "x": obj.x(), "y": obj.y() }
-        # ORIGIN at BOTTOM-LEFT
-        self.pos = { "x": obj.x(), "y": (tile_map.height() * tile_map.tileHeight()) - obj.y() }
+        if ORIGIN_AT == ORIGIN_TOP_LEFT:
+            self.pos  = { "x": obj.x(), "y": obj.y() }
+        elif ORIGIN_AT == ORIGIN_BOTTOM_LEFT:
+            self.pos = { "x": obj.x(), "y": (tile_map.height() * tile_map.tileHeight()) - obj.y() }
 
         self.size = { "w": obj.width(), "h": obj.height() }
         self.name = obj.name()
@@ -183,12 +188,15 @@ class Export(Plugin):
             if obj.is_visible():
                 json_data["map"]["objects"].append(obj.data())
 
+        # Export map data (*.json)
         with open(filepath_map, "w") as file_handle:
             print(json.dumps(json_data["map"]), file=file_handle)
 
-        with open(filepath_tileset, "w") as file_handle:
-            print(json.dumps(json_data["tilesets"]), file=file_handle)
+        # Export tileset data (*.ts.json) (UNUSED)
+        # with open(filepath_tileset, "w") as file_handle:
+        #     print(json.dumps(json_data["tilesets"]), file=file_handle)
 
+        # Export spritesheet ron data (*.ron)
         for tileset in tilesets:
             filepath = filepath_base_spritesheet + "/" + ".".join(tileset.filename().split(".")[0 : -1]) + ".ron"
             content = tileset.ron_data()
