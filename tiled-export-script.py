@@ -64,13 +64,14 @@ class Tileset:
         tileset = self.tileset
         tile_size = { 'w': tileset.tileWidth(), 'h': tileset.tileHeight() }
         spritesheet_size = { 'w': tileset.imageWidth(), 'h': tileset.imageHeight() }
-        content = '('
-        # content += '\n  filename: "' + self.filename() + '",'
-        content += '\n  spritesheet_width:  ' + str(spritesheet_size['w']) + ','
-        content += '\n  spritesheet_height: ' + str(spritesheet_size['h']) + ','
-        content += '\n  sprites: ['
         spritesheet_size['w'] = spritesheet_size['w'] - spritesheet_size['w'] % tile_size['w']
         spritesheet_size['h'] = spritesheet_size['h'] - spritesheet_size['h'] % tile_size['h']
+        content = '('
+        # content += '\n  filename: "' + self.filename() + '",'
+        # NOTE: We want to use the actual size of the image for these values
+        content += '\n  spritesheet_width:  ' + str(tileset.imageWidth()) + ','
+        content += '\n  spritesheet_height: ' + str(tileset.imageHeight()) + ','
+        content += '\n  sprites: ['
         tiles_per_row = spritesheet_size['w'] / tile_size['w']
         tiles_per_col = spritesheet_size['h'] / tile_size['h']
         tiles_count = tiles_per_row * tiles_per_col
