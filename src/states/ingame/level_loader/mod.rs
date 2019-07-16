@@ -548,52 +548,83 @@ impl LevelLoader {
                 let mut parallax = Parallax::new()
                     .follow(camera_id)
                     .follow_anchor(Anchor::BottomLeft);
+                let mut parallax_repeat_opt = None;
 
                 let mut has_set_offset = false;
 
                 for (key, val) in properties.entries() {
-                    match (key, &texture_handle_opt) {
-                        ("speed_mult", _) => {
+                    match key {
+                        "speed_mult" => {
                             parallax = parallax.speed_mult(
                                 parse_string_to_vector(val.as_str().expect(
-                                    "Couldn't parse JsonValue as string",
+                                    "Couldn't parse JsonValue as string \
+                                     (speed_mult)",
                                 )),
                             );
                         }
-                        ("speed_mult_x", _) => {
-                            parallax = parallax.speed_mult_x(
-                                val.as_f32()
-                                    .expect("Couldn't parse JsonValue as f32"),
-                            );
+                        "speed_mult_x" => {
+                            parallax =
+                                parallax.speed_mult_x(val.as_f32().expect(
+                                    "Couldn't parse JsonValue as f32 \
+                                     (speed_mult_x)",
+                                ));
                         }
-                        ("speed_mult_y", _) => {
-                            parallax = parallax.speed_mult_y(
-                                val.as_f32()
-                                    .expect("Couldn't parse JsonValue as f32"),
-                            );
+                        "speed_mult_y" => {
+                            parallax =
+                                parallax.speed_mult_y(val.as_f32().expect(
+                                    "Couldn't parse JsonValue as f32 \
+                                     (speed_mult_y)",
+                                ));
                         }
-                        ("offset", _) => {
+                        "offset" => {
                             has_set_offset = true;
                             parallax = parallax.offset(parse_string_to_vector(
                                 val.as_str().expect(
-                                    "Couldn't parse JsonValue as string",
+                                    "Couldn't parse JsonValue as string \
+                                     (offset)",
                                 ),
                             ));
                         }
-                        ("offset_x", _) => {
-                            parallax = parallax.offset_x(
-                                val.as_f32()
-                                    .expect("Couldn't parse JsonValue as f32"),
-                            );
+                        "offset_x" => {
+                            parallax = parallax.offset_x(val.as_f32().expect(
+                                "Couldn't parse JsonValue as f32 (offset_x)",
+                            ));
                         }
-                        ("offset_y", _) => {
-                            parallax = parallax.offset_y(
-                                val.as_f32()
-                                    .expect("Couldn't parse JsonValue as f32"),
-                            );
+                        "offset_y" => {
+                            parallax = parallax.offset_y(val.as_f32().expect(
+                                "Couldn't parse JsonValue as f32 (offset_y)",
+                            ));
                         }
-                        ("image", Some(texture_handle)) => {
-                            entity = entity.with(texture_handle.clone());
+                        "image" => {
+                            if let Some(texture_handle) = &texture_handle_opt {
+                                entity = entity.with(texture_handle.clone());
+                            }
+                        }
+                        "repeat_x" => {
+                            if val.as_bool().expect(
+                                "Couldn't parse JsonValue as bool (repeat_x)",
+                            ) {
+                                parallax_repeat_opt
+                                    .get_or_insert(ParallaxRepeat::default())
+                                    .repeat_x = true;
+                            } else {
+                                parallax_repeat_opt
+                                    .get_or_insert(ParallaxRepeat::default())
+                                    .repeat_x = false;
+                            }
+                        }
+                        "repeat_y" => {
+                            if val.as_bool().expect(
+                                "Couldn't parse JsonValue as bool (repeat_y)",
+                            ) {
+                                parallax_repeat_opt
+                                    .get_or_insert(ParallaxRepeat::default())
+                                    .repeat_y = true;
+                            } else {
+                                parallax_repeat_opt
+                                    .get_or_insert(ParallaxRepeat::default())
+                                    .repeat_y = false;
+                            }
                         }
                         _ => (),
                     }
@@ -618,6 +649,10 @@ impl LevelLoader {
                     .with(ScaleOnce)
                     .with(Transparent)
                     .with(parallax.build());
+
+                if let Some(parallax_repeat) = parallax_repeat_opt {
+                    entity = entity.with(parallax_repeat);
+                }
 
                 entity.build();
             }
