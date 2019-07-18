@@ -273,7 +273,6 @@ impl LevelLoader {
                 .with(Collision::new())
                 .with(CheckCollision)
                 .with(Push)
-                // .with(animations::player::new(spritesheet_handle.clone()))
                 .with(animations_container_from_file(
                     resource("animations/player.ron"),
                     spritesheet_handle.clone(),
@@ -294,18 +293,10 @@ impl LevelLoader {
                 .with(ScaleOnce)
                 .with(Collision::new())
                 .with(CheckCollision)
-                .with(
-                    AnimationsContainer::new()
-                        .insert(
-                            "attack_default",
-                            Animation::new()
-                                .default_sprite_sheet_handle(spritesheet_handle)
-                                .delays_ms(vec![50, 50, 100, 75, 100])
-                                .sprite_ids(vec![12, 10, 14, 10, 12])
-                                .build(),
-                        )
-                        .build(),
-                )
+                .with(animations_container_from_file(
+                    resource("animations/player_attack.ron"),
+                    spritesheet_handle,
+                ))
                 .with(Flipped::None)
                 .with(Hidden)
                 .build();
