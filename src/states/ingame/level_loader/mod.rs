@@ -273,82 +273,11 @@ impl LevelLoader {
                 .with(Collision::new())
                 .with(CheckCollision)
                 .with(Push)
-                .with(
-                    AnimationsContainer::new()
-                        .insert(
-                            "idle",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(500)
-                                .sprite_ids(vec![0, 1])
-                                .build(),
-                        )
-                        .insert(
-                            "walking",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(100)
-                                .sprite_ids(vec![2, 3, 4, 5, 6, 7])
-                                .build(),
-                        )
-                        .insert(
-                            "falling",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(1000)
-                                .sprite_ids(vec![8])
-                                .build(),
-                        )
-                        .insert(
-                            "attack",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .delays_ms(vec![50, 50, 100, 75, 100])
-                                .sprite_ids(vec![11, 9, 13, 9, 11])
-                                .build(),
-                        )
-                        // TODO: Un-nused
-                        .insert(
-                            "level_start",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(500)
-                                .sprite_ids(vec![0, 2, 10, 5])
-                                .build(),
-                        )
-                        .insert(
-                            "level_end",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(500)
-                                .sprite_ids(vec![5, 10, 2, 12])
-                                .build(),
-                        )
-                        .insert(
-                            "death",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(500)
-                                .sprite_ids(vec![5, 10, 2, 12])
-                                .build(),
-                        )
-                        .current("idle")
-                        .build(),
-                )
+                // .with(animations::player::new(spritesheet_handle.clone()))
+                .with(animations_container_from_file(
+                    resource("animations/player.ron"),
+                    spritesheet_handle.clone(),
+                ))
                 .with(Flipped::None)
                 .with(Harmable)
                 .build();
@@ -475,8 +404,7 @@ impl LevelLoader {
                 .with(transform)
                 .with(Size::from(*size))
                 .with(ScaleOnce)
-                .with(Transparent)
-                .with(Loadable);
+                .with(Transparent);
 
             if let Some(sprite_render) = sprite_render_opt {
                 entity = entity.with(sprite_render);
@@ -501,6 +429,11 @@ impl LevelLoader {
                 //         entity,
                 //         component_name_str,
                 //     );
+            }
+
+            // Only add the `Loadable` component if `always_loaded` is ommited or `false`.
+            if let Some(false) | None = properties["always_loaded"].as_bool() {
+                entity = entity.with(Loadable);
             }
 
             if let Some(is_solid) = properties["solid"].as_bool() {

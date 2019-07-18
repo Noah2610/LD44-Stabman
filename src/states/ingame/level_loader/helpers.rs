@@ -352,3 +352,62 @@ pub fn animation_from(
         (None, None) => None,
     }
 }
+
+/// Generate a AnimationsContainer from the the given animations ron file.
+pub fn animations_container_from_file<T>(
+    file: T,
+    spritesheet_handle: SpriteSheetHandle,
+) -> AnimationsContainer
+where
+    T: ToString,
+{
+    let animations_container_config = load_animations_container_config(file);
+    let mut animations_container = AnimationsContainer::new();
+
+    for animation_config in animations_container_config.animations {
+        let mut animation = Animation::new()
+            .default_sprite_sheet_handle(spritesheet_handle.clone());
+        if let Some(default_delay_ms) = animation_config.default_delay_ms {
+            animation = animation.default_delay_ms(default_delay_ms);
+        }
+        if let Some(delays_ms) = animation_config.delays_ms {
+            animation = animation.delays_ms(delays_ms);
+        }
+        animation = animation.sprite_ids(animation_config.sprite_ids);
+
+        animations_container = animations_container
+            .insert(animation_config.name, animation.build());
+    }
+
+    if let Some(current) = animations_container_config.current {
+        animations_container = animations_container.current(current);
+    }
+
+    animations_container.build()
+}
+
+#[derive(Deserialize)]
+struct AnimationConfig {
+    pub name:             String,
+    pub sprite_ids:       Vec<usize>,
+    pub delays_ms:        Option<Vec<u64>>,
+    pub default_delay_ms: Option<u64>,
+}
+
+#[derive(Deserialize)]
+struct AnimationsContainerConfig {
+    pub animations: Vec<AnimationConfig>,
+    pub current:    Option<String>,
+}
+
+fn load_animations_container_config<T>(file: T) -> AnimationsContainerConfig
+where
+    T: ToString,
+{
+    let settings_raw = read_file(file.to_string())
+        .expect(&format!("Couldn't read file {}", file.to_string()));
+    ron::Value::from_str(&settings_raw)
+        .unwrap()
+        .into_rust()
+        .unwrap()
+}
