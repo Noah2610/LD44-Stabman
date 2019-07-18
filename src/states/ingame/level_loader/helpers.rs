@@ -53,39 +53,10 @@ pub fn enemy_components_from(
                     settings.enemies.normal.clone(),
                     EnemyAi::Tracer,
                     (spritesheet_handle.clone(), sprite_render),
-                    AnimationsContainer::new()
-                        .insert(
-                            "idle",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(150)
-                                .sprite_ids(vec![0, 1, 2, 3, 4])
-                                .build(),
-                        )
-                        .insert(
-                            "walking",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(150)
-                                .sprite_ids(vec![2, 3, 4, 3])
-                                .build(),
-                        )
-                        .insert(
-                            "hit",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(50)
-                                .sprite_ids(vec![3, 4])
-                                .build(),
-                        )
-                        .current("idle")
-                        .build(),
+                    animations_container_from_file(
+                        resource("animations/enemy_normal.ron"),
+                        spritesheet_handle,
+                    ),
                     None,
                 )
             }
@@ -114,29 +85,10 @@ pub fn enemy_components_from(
                         ..Default::default()
                     }),
                     (spritesheet_handle.clone(), sprite_render),
-                    AnimationsContainer::new()
-                        .insert(
-                            "idle",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(100)
-                                .sprite_ids(vec![0, 1, 0, 7])
-                                .build(),
-                        )
-                        .insert(
-                            "walking",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(50)
-                                .sprite_ids(vec![0, 1, 2, 3, 4, 5, 6, 7])
-                                .build(),
-                        )
-                        .current("idle")
-                        .build(),
+                    animations_container_from_file(
+                        resource("animations/enemy_charger.ron"),
+                        spritesheet_handle,
+                    ),
                     None,
                 )
             }
@@ -159,29 +111,10 @@ pub fn enemy_components_from(
                     settings.enemies.flying.clone(),
                     EnemyAi::Tracer,
                     (spritesheet_handle.clone(), sprite_render),
-                    AnimationsContainer::new()
-                        .insert(
-                            "idle",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(100)
-                                .sprite_ids(vec![0, 1, 2, 1])
-                                .build(),
-                        )
-                        .insert(
-                            "walking",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(100)
-                                .sprite_ids(vec![0, 1, 2, 1])
-                                .build(),
-                        )
-                        .current("idle")
-                        .build(),
+                    animations_container_from_file(
+                        resource("animations/enemy_flying.ron"),
+                        spritesheet_handle,
+                    ),
                     None,
                 )
             }
@@ -204,29 +137,10 @@ pub fn enemy_components_from(
                     settings.enemies.reaper.clone(),
                     EnemyAi::Tracer,
                     (spritesheet_handle.clone(), sprite_render),
-                    AnimationsContainer::new()
-                        .insert(
-                            "idle",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(250)
-                                .sprite_ids(vec![0, 1])
-                                .build(),
-                        )
-                        .insert(
-                            "walking",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(1000)
-                                .sprite_ids(vec![2])
-                                .build(),
-                        )
-                        .current("idle")
-                        .build(),
+                    animations_container_from_file(
+                        resource("animations/enemy_reaper.ron"),
+                        spritesheet_handle,
+                    ),
                     None,
                 )
             }
@@ -276,29 +190,10 @@ pub fn enemy_components_from(
                         ..Default::default()
                     }),
                     (spritesheet_handle.clone(), sprite_render),
-                    AnimationsContainer::new()
-                        .insert(
-                            "idle",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(250)
-                                .sprite_ids(vec![0, 1])
-                                .build(),
-                        )
-                        .insert(
-                            "shooting",
-                            Animation::new()
-                                .default_sprite_sheet_handle(
-                                    spritesheet_handle.clone(),
-                                )
-                                .default_delay_ms(500)
-                                .sprite_ids(vec![2, 0, 1])
-                                .build(),
-                        )
-                        .current("idle")
-                        .build(),
+                    animations_container_from_file(
+                        resource("animations/enemy_turret.ron"),
+                        spritesheet_handle,
+                    ),
                     Some(flipped),
                 )
             }
