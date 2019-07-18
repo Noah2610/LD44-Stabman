@@ -63,8 +63,6 @@ impl Startup {
 
 impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Startup {
     fn on_start(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
-        register_components(&mut data.world);
-
         // Resources
         data.world.add_resource(load_settings());
         let settings = data.world.settings();
@@ -77,7 +75,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Startup {
             let mut sink = data.world.write_resource::<AudioSink>();
             sink.set_volume(settings.music_volume);
         }
-        let mut audio_handles = AudioHandles::default();
+        let audio_handles = AudioHandles::default();
         data.world.add_resource(sprite_sheet_handles);
         data.world.add_resource(audio_handles);
         data.world.add_resource(TextureHandles::default());
@@ -115,10 +113,6 @@ impl Default for Startup {
             loading_text_entity: None,
         }
     }
-}
-
-// TODO
-fn register_components(world: &mut World) {
 }
 
 fn load_settings() -> Settings {

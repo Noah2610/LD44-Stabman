@@ -15,7 +15,7 @@ const ENEMY_FLYING_SPRITESHEET_FILENAME: &str = "enemy_flying.png";
 const ENEMY_REAPER_SPRITESHEET_FILENAME: &str = "enemy_reaper.png";
 const ENEMY_TURRET_SPRITESHEET_FILENAME: &str = "enemy_turret.png";
 
-pub fn enemy_components_for(
+pub fn enemy_components_from(
     world: &mut World,
     properties: &JsonValue,
 ) -> (
@@ -304,5 +304,51 @@ pub fn enemy_components_for(
             }
             t => panic!(format!("EnemyType '{}' does not exist", t)),
         }
+    }
+}
+
+/// Generate an Animation from the given properties.
+pub fn animation_from(
+    spritesheet_handle: SpriteSheetHandle,
+    properties: &JsonValue,
+) -> Option<Animation> {
+    match (
+        properties["animation_sprite_ids"].as_str(),
+        properties["animation_delays_ms"].as_str(),
+    ) {
+        (Some(str_sprite_ids), Some(str_delays_ms)) => {
+            let sprite_ids = str_sprite_ids
+                .split(",")
+                .map(|str_id| {
+                    str_id.trim().parse::<usize>().expect(&format!(
+                        "Couldn't parse string to usize '{}' in '{}' \
+                         (animation_sprite_ids)",
+                        str_id, str_sprite_ids
+                    ))
+                })
+                .collect();
+            let delays_ms = str_delays_ms
+                .split(",")
+                .map(|str_ms| {
+                    str_ms.trim().parse::<u64>().expect(&format!(
+                        "Couldn't parse string to u64 '{}' in '{}' \
+                         (animation_delays_ms)",
+                        str_ms, str_delays_ms
+                    ))
+                })
+                .collect();
+            Some(
+                Animation::new()
+                    .default_sprite_sheet_handle(spritesheet_handle)
+                    .sprite_ids(sprite_ids)
+                    .delays_ms(delays_ms)
+                    .build(),
+            )
+        }
+        (Some(_), None) | (None, Some(_)) => panic!(
+            "Tile with animation needs both properties `animation_sprite_ids` \
+             and `animation_delays_ms`"
+        ),
+        (None, None) => None,
     }
 }

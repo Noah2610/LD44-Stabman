@@ -446,9 +446,9 @@ impl LevelLoader {
                 properties[PROPERTY_Z_KEY].as_f32().unwrap_or(TILE_Z),
             );
 
-            let sprite_render_opt =
+            let (sprite_render_opt, animation_opt) =
                 if let Some(Graphic::Sprite(sprite_data)) = graphic {
-                    let sprite_render = {
+                    let (sprite_render, animation_opt) = {
                         let spritesheet_handle = data
                             .world
                             .write_resource::<SpriteSheetHandles>()
@@ -456,14 +456,17 @@ impl LevelLoader {
                                 &sprite_data.spritesheet_path,
                                 &data.world,
                             );
-                        SpriteRender {
-                            sprite_sheet:  spritesheet_handle,
-                            sprite_number: sprite_data.sprite_id,
-                        }
+                        (
+                            SpriteRender {
+                                sprite_sheet:  spritesheet_handle.clone(),
+                                sprite_number: sprite_data.sprite_id,
+                            },
+                            animation_from(spritesheet_handle, &properties),
+                        )
                     };
-                    Some(sprite_render)
+                    (Some(sprite_render), animation_opt)
                 } else {
-                    None
+                    (None, None)
                 };
 
             let mut entity = data
@@ -477,6 +480,10 @@ impl LevelLoader {
 
             if let Some(sprite_render) = sprite_render_opt {
                 entity = entity.with(sprite_render);
+            }
+
+            if let Some(animation) = animation_opt {
+                entity = entity.with(animation);
             }
 
             for component_name in properties["components"].members() {
@@ -676,7 +683,7 @@ impl LevelLoader {
                 (spritesheet_handle, sprite_render),
                 animations_container,
                 flipped_opt,
-            ) = enemy_components_for(&mut data.world, properties);
+            ) = enemy_components_from(&mut data.world, properties);
 
             let mut transform = Transform::default();
             transform.set_xyz(
