@@ -173,7 +173,7 @@ fn handle_wall_cling(
                 velocity.y = slide_strength;
             }
             // Reset ExtraJumps and Dashes
-            player.reset_jumps();
+            player.reset_jumps_touching_vertically();
         }
     }
 }

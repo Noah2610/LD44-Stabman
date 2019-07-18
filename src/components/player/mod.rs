@@ -95,6 +95,13 @@ impl Player {
             self.items_data.dash.used_dashes = 0;
         }
     }
+
+    // Reset ExtraJumps and Dashes when sliding on wall
+    pub fn reset_jumps_touching_vertically(&mut self) {
+        if self.items_data.wall_jump.can_wall_jump {
+            self.reset_jumps();
+        }
+    }
 }
 
 impl Component for Player {
