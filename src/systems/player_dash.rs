@@ -9,8 +9,8 @@ struct ActiveDash {
 
 #[derive(Default)]
 pub struct PlayerDashSystem {
-    active_dashes: Vec<ActiveDash>,
-    last_action:   Option<(Direction, Instant)>,
+    active_dash: Option<ActiveDash>,
+    last_action: Option<(Direction, Instant)>,
 }
 
 impl<'a> System<'a> for PlayerDashSystem {
@@ -59,15 +59,14 @@ impl PlayerDashSystem {
     ) {
         let dash_duration_ms = player.items_data.dash.duration_ms;
         let dt_ms = time.delta_time().as_millis() as u64;
-        let mut dashes_to_remove = Vec::new();
+        let mut remove_active_dash = false;
 
-        for (index, active_dash) in
-            (&mut self.active_dashes).iter_mut().enumerate()
-        {
+        if let Some(active_dash) = self.active_dash.as_mut() {
             active_dash.dash_time += dt_ms;
             if active_dash.dash_time > dash_duration_ms {
                 // Stop dash
-                dashes_to_remove.push(index);
+                // dashes_to_remove.push(index);
+                remove_active_dash = true;
             } else {
                 apply_dash_velocity(
                     &mut player,
@@ -77,11 +76,11 @@ impl PlayerDashSystem {
             }
         }
 
-        for index in dashes_to_remove {
-            self.active_dashes.remove(index);
+        if remove_active_dash {
+            self.active_dash = None;
         }
 
-        if self.active_dashes.is_empty() {
+        if self.active_dash.is_none() {
             player.items_data.dash.is_dashing = false;
             if let Some(gravity) = player_gravity_opt {
                 gravity.enable();
@@ -170,7 +169,7 @@ impl PlayerDashSystem {
 
         player.items_data.dash.is_dashing = true;
         player.items_data.dash.used_dashes += 1;
-        self.active_dashes.push(ActiveDash {
+        self.active_dash = Some(ActiveDash {
             dash_time:      0,
             dash_direction: dashing_direction,
         });
