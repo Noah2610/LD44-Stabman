@@ -88,6 +88,7 @@ impl<'a> System<'a> for PlayerControlsSystem {
                 player,
                 velocity,
                 decr_velocity,
+                animations_container,
                 &sides_touching,
             );
 
@@ -244,8 +245,12 @@ fn handle_move(
                 decr_velocity.dont_decrease_x_when_neg();
             }
 
-            // Set walking animation
-            animations_container.set("walking");
+            // Is standing on solid
+            if sides_touching.is_touching_bottom {
+                // Set walking animation
+                animations_container.set("walking");
+            }
+
             // Flip animation
             if !player.is_attacking {
                 if flipped == &Flipped::Horizontal && x > 0.0 {
@@ -255,8 +260,11 @@ fn handle_move(
                 }
             }
         } else {
-            // Standing still - set idle animation
-            animations_container.set("idle");
+            // Is standing on solid
+            if sides_touching.is_touching_bottom {
+                // Standing still - set idle animation
+                animations_container.set("idle");
+            }
         }
     }
 }
@@ -323,6 +331,7 @@ fn handle_on_ground_and_in_air(
     player: &mut Player,
     velocity: &mut Velocity,
     decr_velocity: &mut DecreaseVelocity,
+    animations_container: &mut AnimationsContainer,
     sides_touching: &SidesTouching,
 ) {
     // Reset y velocity to 0 when standing on solid ground
@@ -332,10 +341,14 @@ fn handle_on_ground_and_in_air(
     {
         velocity.y = 0.0;
     }
-    // Don't decrease velocity when in air.
-    if !player.decrease_x_velocity_in_air && !sides_touching.is_touching_bottom
-    {
-        decr_velocity.dont_decrease_x();
+    // Player is mid-air
+    if !sides_touching.is_touching_bottom {
+        // Switch to mid-air animation
+        animations_container.set("mid_air");
+        // Don't decrease velocity when in air.
+        if !player.decrease_x_velocity_in_air {
+            decr_velocity.dont_decrease_x();
+        }
     }
     if sides_touching.is_touching_bottom {
         // Reset ExtraJumps and Dashes

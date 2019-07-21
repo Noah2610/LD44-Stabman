@@ -11,9 +11,9 @@
       sprite_ids: [2, 3, 4, 5, 6, 7],
     ),
     (
-      name: "falling",
-      default_delay_ms: Some(1000),
-      sprite_ids: [8],
+      name: "mid_air",
+      default_delay_ms: Some(200),
+      sprite_ids: [8, 1, 0, 1],
     ),
     (
       name: "attack",

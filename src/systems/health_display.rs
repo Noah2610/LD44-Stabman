@@ -3,11 +3,12 @@ use deathframe::handlers::SpriteSheetHandles;
 
 use super::system_prelude::*;
 
+// TODO: Put these values into settings.ron
 const FULL_HEART_SPRITE_ID: usize = 0;
 const HALF_HEART_SPRITE_ID: usize = 1;
-const HEART_SIZE: (f32, f32) = (8.0, 8.0);
-const MARGIN: (f32, f32) = (8.0, 8.0);
-const PADDING: f32 = 2.0;
+const HEART_SIZE: (f32, f32) = (16.0, 16.0);
+const MARGIN: (f32, f32) = (16.0, 14.0);
+const PADDING: f32 = 4.0;
 const Z: f32 = 5.0;
 
 #[derive(Default)]

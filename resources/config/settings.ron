@@ -62,7 +62,7 @@ Settings(
         /// If the x velocity should be decreased when in air.
         decrease_x_velocity_in_air: true,
         /// Player starting health (there is no max health)
-        health:                     100,
+        health:                     6,
         /// Player damage
         damage:                     1,
     ),
@@ -75,8 +75,8 @@ Settings(
 
     level_manager: (
         levels_dir:  "levels",
-        level_names: ("dev.json", "one.json", "four.json", "two.json", "three.json", "four.json"),
-        song_names:  ("level_3.ogg", "level_4.ogg", "level_5.ogg", "level_2.ogg"),
+        level_names: ("overworld_1.json", "overworld_2.json", "overworld_3.json", "graveyard_1.json", "graveyard_2.json", "graveyard_3.json"),
+        song_names:  ("level_1.ogg", "level_2.ogg", "level_3.ogg", "level_4.ogg", "level_5.ogg", "level_6.ogg"),
         tile_size:   (32.0, 32.0),
         /// Relative path to the save file
         savefile_path: "savefile.json",
@@ -85,9 +85,9 @@ Settings(
     enemies: (
         gravity: (0.0, -500.0),
         normal:  (
-            health:                10,
+            health:                4,
             damage:                2,
-            reward:                2,
+            reward:                4,
             knockback:             (500.0, 200.0),
             trigger_distance:      (192.0, 128.0),
             acceleration:          (200.0, 0.0),
@@ -96,7 +96,7 @@ Settings(
         ),
         charger:  (
             health:                2,
-            damage:                4,
+            damage:                2,
             reward:                2,
             knockback:             (1000.0, 200.0),
             trigger_distance:      (256.0, 32.0),
@@ -106,8 +106,8 @@ Settings(
         ),
         flying:  (
             health:                2,
-            damage:                5,
-            reward:                3,
+            damage:                3,
+            reward:                2,
             knockback:             (500.0, 200.0),
             trigger_distance:      (256.0, 192.0),
             acceleration:          (500.0, 100.0),
@@ -125,9 +125,9 @@ Settings(
             decr_velocity:         (1000.0, 1000.0),
         ),
         turret:  (
-            health:                3,
+            health:                4,
             damage:                1,
-            reward:                3,
+            reward:                4,
             knockback:             (500.0, 150.0),
             trigger_distance:      (256.0, 192.0),
             acceleration:          (0.0, 0.0),
@@ -193,7 +193,7 @@ Settings(
     entity_loader: (
       /// Anything beyond this distance to the player will be unloaded,
       /// anything within this distance to the player will be loaded.
-      load_distance:                    (416.0, 416.0),
+      load_distance:                    (544.0, 544.0),
       /// The `load_distance` minus the `enemy_load_distance_substraction`,
       /// is the load_distance for enemies.
       /// We load enemies from less far away, because if they are loaded
