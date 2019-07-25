@@ -3,6 +3,7 @@ use amethyst::renderer::{SpriteRender, SpriteSheetHandle};
 use deathframe::geo::prelude::*;
 use deathframe::handlers::SpriteSheetHandles;
 use json::JsonValue;
+use std::time::Duration;
 
 use crate::components::prelude::*;
 use crate::resource_helpers::*;
@@ -187,6 +188,9 @@ pub fn enemy_components_from(
                             .turret_data
                             .bullet_velocity,
                         bullet_size: settings.enemies.turret_data.bullet_size,
+                        bullet_lifetime: Duration::from_millis(
+                            settings.enemies.turret_data.bullet_lifetime_ms,
+                        ),
                         ..Default::default()
                     }),
                     (spritesheet_handle.clone(), sprite_render),

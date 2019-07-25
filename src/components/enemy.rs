@@ -55,7 +55,7 @@ impl Default for EnemyAiTurretData {
             shot_interval_ms: Default::default(),
             bullet_velocity:  Default::default(),
             bullet_size:      Default::default(),
-            bullet_lifetime:  Duration::new(5, 0), // TODO load from settings
+            bullet_lifetime:  Duration::new(5, 0),
             last_shot_at:     Instant::now(),
         }
     }

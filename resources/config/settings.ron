@@ -135,9 +135,10 @@ Settings(
             decr_velocity:         (0.0, 0.0),
         ),
         turret_data: (
-          bullet_velocity:  (200.0, 0.0),
-          bullet_size:      (16.0, 16.0),
-          shot_interval_ms: 1000,
+          shot_interval_ms:   1000,
+          bullet_velocity:    (200.0, 0.0),
+          bullet_size:        (16.0, 16.0),
+          bullet_lifetime_ms: 10_000,
         )
     ),
 

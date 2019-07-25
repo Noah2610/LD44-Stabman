@@ -107,9 +107,10 @@ pub struct SettingsEnemy {
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsEnemyTurret {
-    pub shot_interval_ms: u64,
-    pub bullet_velocity:  Vector,
-    pub bullet_size:      Vector,
+    pub shot_interval_ms:   u64,
+    pub bullet_velocity:    Vector,
+    pub bullet_size:        Vector,
+    pub bullet_lifetime_ms: u64,
 }
 
 #[derive(Clone, Deserialize)]
