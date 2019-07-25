@@ -141,8 +141,9 @@ impl LevelLoader {
                 ),
                 &object_data["properties"],
             ) {
-                let pos = (x, y).into();
-                let size = (w, h).into();
+                let size = Vector::new(w, h);
+                let pos = Vector::new(x + size.0 * 0.5, y - size.1 * 0.5);
+
                 match obj_type {
                     "Player" => {
                         self.player_data = Some(EntityData {
@@ -203,11 +204,14 @@ impl LevelLoader {
                 let spritesheet_path =
                     resource(format!("spritesheets/{}.png", tileset_name));
 
+                let size = self.settings.tile_size;
+                let pos = Vector::new(x + size.0 * 0.5, y - size.1 * 0.5);
+
                 self.tiles_data.push(EntityData {
-                    pos:        (x, y).into(),
-                    size:       self.settings.tile_size,
+                    pos,
+                    size,
                     properties: properties.clone(),
-                    graphic:    Some(Graphic::Sprite(SpriteData {
+                    graphic: Some(Graphic::Sprite(SpriteData {
                         spritesheet_path: spritesheet_path,
                         sprite_id:        id,
                     })),
@@ -563,7 +567,11 @@ impl LevelLoader {
 
                 // Set offset as parallax object position, unless 'offset' property was given
                 if !has_set_offset {
-                    parallax = parallax.offset(*pos);
+                    // The offset should be the position seen in tiled;
+                    // `pos` is the center of the object, but we want the top-left corner
+                    let offset =
+                        Vector::new(pos.0 - size.0 * 0.5, pos.1 + size.1 * 0.5);
+                    parallax = parallax.offset(offset);
                 }
 
                 // Add transform and size to entity

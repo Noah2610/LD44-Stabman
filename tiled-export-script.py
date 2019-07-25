@@ -43,6 +43,8 @@ class Tile:
         out += "\nsolid: "            + str(self.tile().propertyAsString("solid"))
         out += "\ntileset name: "     + str(self.tileset().name())
         out += "\ntileset filename: " + str(self.tileset().fileName())
+        out += "\nmethods tile: "     + str(methods_of(self.tile()))
+        out += "\nmethods cell: "     + str(methods_of(self.cell))
         out += "\n---"
         return out
 
@@ -133,7 +135,7 @@ class Object:
         out  = "\nOBJECT"
         out += "\nname: "    + str(self.obj.name())
         out += "\ntype: "    + str(self.obj.type())
-        #out += "\nmethods: " + str(methods_of(self.obj))
+        out += "\nmethods: " + str(methods_of(self.obj))
         return out
 
 class Export(Plugin):
@@ -182,10 +184,12 @@ class Export(Plugin):
             json_data["tilesets"][tileset.name()] = tileset.data()
 
         for tile in tiles:
+            # print(tile.display())
             json_data["map"]["tiles"].append(tile.data())
 
         for obj in objects:
             if obj.is_visible():
+                print(obj.display())
                 json_data["map"]["objects"].append(obj.data())
 
         # Export map data (*.json)
