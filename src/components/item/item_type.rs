@@ -37,9 +37,9 @@ impl ItemType {
         match self {
             ItemType::ExtraJump => 0,
             ItemType::WallJump => 1,
-            ItemType::Knockback => 0, // TODO
+            ItemType::Knockback => 9,
             ItemType::BulletShoot => 7,
-            ItemType::Dash => 0, // TODO
+            ItemType::Dash => 8,
             ItemType::SpeedUp => 5,
             ItemType::JumpUp => 6,
             ItemType::DamageUp => 4,

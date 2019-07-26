@@ -8,22 +8,22 @@
     (
       name: "walking",
       default_delay_ms: Some(100),
-      sprite_ids: [2, 3, 4, 5, 6, 7],
+      sprite_ids: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     ),
     (
       name: "mid_air",
       default_delay_ms: Some(200),
-      sprite_ids: [8, 1, 0, 1],
+      sprite_ids: [12, 1, 0, 1],
     ),
     (
       name: "attack",
       delays_ms: Some([50, 50, 100, 75, 100]),
-      sprite_ids: [11, 9, 13, 9, 11],
+      sprite_ids: [15, 13, 17, 13, 15],
     ),
     (
       name: "death",
       default_delay_ms: Some(500),
-      sprite_ids: [5, 10, 2, 12],
+      sprite_ids: [5, 14, 2, 16],
     ),
   ],
   current: Some("idle"),
