@@ -44,6 +44,19 @@ impl Ingame {
             sink.append(sound).unwrap();
         }
     }
+
+    fn handle_keys<'a, 'b>(
+        &self,
+        data: &StateData<CustomGameData<CustomData>>,
+    ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
+        let input_manager = data.world.input_manager();
+
+        if input_manager.is_up("quit") {
+            Some(Trans::Quit)
+        } else {
+            None
+        }
+    }
 }
 
 impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
@@ -51,11 +64,31 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
         self.level_manager.load_current_level(&mut data);
     }
 
+    fn handle_event(
+        &mut self,
+        data: StateData<CustomGameData<CustomData>>,
+        event: StateEvent,
+    ) -> Trans<CustomGameData<'a, 'b, CustomData>, StateEvent> {
+        if let StateEvent::Window(event) = &event {
+            if is_close_requested(&event) {
+                Trans::Quit
+            } else {
+                Trans::None
+            }
+        } else {
+            Trans::None
+        }
+    }
+
     fn update(
         &mut self,
         mut data: StateData<CustomGameData<CustomData>>,
     ) -> Trans<CustomGameData<'a, 'b, CustomData>, StateEvent> {
         data.data.update(&data.world, "ingame").unwrap();
+
+        if let Some(trans) = self.handle_keys(&data) {
+            return trans;
+        }
 
         // Check if the level was beaten
         let (next_level, player_dead) = data.world.exec(
