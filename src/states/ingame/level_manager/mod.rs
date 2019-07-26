@@ -1,5 +1,6 @@
 mod savefile;
 
+use amethyst::audio::{output::Output, AudioSink, Source};
 use amethyst::ecs::{Join, ReadStorage, WriteStorage};
 
 use super::super::state_prelude::*;
@@ -58,7 +59,81 @@ impl LevelManager {
         }
     }
 
-    pub fn set_player_checkpoint(
+    pub fn update(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
+        // Check if the level was beaten
+        let (next_level, player_dead) = data.world.exec(
+            |(goals, players, animations_containers): (
+                ReadStorage<Goal>,
+                ReadStorage<Player>,
+                ReadStorage<AnimationsContainer>,
+            )| {
+                let next_level = (&goals)
+                    .join()
+                    .find_map(|goal| Some(goal.next_level))
+                    .unwrap_or(false);
+                // && (&players, &animations_containers)
+                //     .join()
+                //     .find_map(|(_, animations_container)| {
+                //         Some(animations_container.play_once.is_none())
+                //     })
+                // .unwrap_or(false);
+                let player_dead = (&players, &animations_containers)
+                    .join()
+                    .find_map(|(player, animations_container)| {
+                        Some(
+                            player.is_dead(), // && animations_container.play_once.is_none(),
+                        )
+                    })
+                    .unwrap_or(false);
+                (next_level, player_dead)
+            },
+        );
+        if next_level {
+            if self.has_next_level() {
+                self.set_player_checkpoint(data);
+                self.load_next_level(data, true);
+                self.play_current_song(data);
+            } else {
+                // TODO: Beat game!
+                println!("You win!");
+            }
+        } else if player_dead {
+            // Restart level and load player from checkoint
+            self.restart_level(data);
+        } else {
+            if data.world.read_resource::<AudioSink>().empty() {
+                self.play_current_song(data);
+            }
+        }
+    }
+
+    fn play_current_song(
+        &self,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
+        let output = data.world.read_resource::<Output>();
+        let mut sink = data.world.write_resource::<AudioSink>();
+        sink.stop();
+        *sink = AudioSink::new(&output);
+        let asset = data.world.read_resource::<AssetStorage<Source>>();
+        let name =
+            self.settings
+                .song_names
+                .get(self.level_index)
+                .expect(&format!(
+                    "Song name at index {} doesn't exist",
+                    self.level_index
+                ));
+        let handle = data
+            .world
+            .write_resource::<AudioHandles>()
+            .get_or_load(resource(format!("audio/{}", name)), &data.world);
+        if let Some(sound) = asset.get(&handle) {
+            sink.append(sound).unwrap();
+        }
+    }
+
+    fn set_player_checkpoint(
         &mut self,
         data: &mut StateData<CustomGameData<CustomData>>,
     ) {
@@ -68,7 +143,7 @@ impl LevelManager {
             });
     }
 
-    pub fn load_next_level(
+    fn load_next_level(
         &mut self,
         data: &mut StateData<CustomGameData<CustomData>>,
         should_save: bool,
@@ -85,18 +160,18 @@ impl LevelManager {
         }
     }
 
-    pub fn has_next_level(&self) -> bool {
+    fn has_next_level(&self) -> bool {
         self.level_index + 1 < self.settings.level_names.len()
     }
 
-    pub fn restart_level(
+    fn restart_level(
         &mut self,
         data: &mut StateData<CustomGameData<CustomData>>,
     ) {
         self.load_current_level(data);
     }
 
-    pub fn save_to_savefile(&self) {
+    fn save_to_savefile(&self) {
         let savefile_path = self.savefile_path();
 
         if let Some(player) = &self.player_checkpoint_opt {
