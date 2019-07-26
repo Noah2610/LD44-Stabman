@@ -39,14 +39,15 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
         _data: StateData<CustomGameData<CustomData>>,
         event: StateEvent,
     ) -> Trans<CustomGameData<'a, 'b, CustomData>, StateEvent> {
-        if let StateEvent::Window(event) = &event {
-            if is_close_requested(&event) {
-                Trans::Quit
-            } else {
-                Trans::None
+        match &event {
+            StateEvent::Window(event) => {
+                if is_close_requested(&event) {
+                    Trans::Quit
+                } else {
+                    Trans::None
+                }
             }
-        } else {
-            Trans::None
+            _ => Trans::None,
         }
     }
 
