@@ -1,7 +1,7 @@
 mod savefile;
 
 use amethyst::audio::{output::Output, AudioSink, Source};
-use amethyst::ecs::{Join, ReadStorage, WriteStorage};
+use amethyst::ecs::{Entities, Join, ReadStorage, WriteStorage};
 
 use super::super::state_prelude::*;
 use super::level_loader::LevelLoader;
@@ -31,7 +31,18 @@ impl LevelManager {
         &mut self,
         data: &mut StateData<CustomGameData<CustomData>>,
     ) {
-        data.world.delete_all(); // Remove _ALL_ existing entities first
+        // First, remove all existing entities, which do not have `DontDeleteOnNextLevel`.
+        data.world.exec(
+            |(entities, dont_deletes): (
+                Entities,
+                ReadStorage<DontDeleteOnNextLevel>,
+            )| {
+                for (entity, _) in (&entities, !&dont_deletes).join() {
+                    entities.delete(entity).unwrap();
+                }
+            },
+        );
+
         let current_level_name = self
             .settings
             .level_names

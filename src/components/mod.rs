@@ -1,4 +1,5 @@
 mod bullet;
+mod dont_delete_on_next_level;
 mod enemy;
 mod goal;
 mod harmable;
@@ -12,6 +13,7 @@ pub mod prelude {
     pub use deathframe::components::prelude::*;
 
     pub use super::bullet::prelude::*;
+    pub use super::dont_delete_on_next_level::DontDeleteOnNextLevel;
     pub use super::enemy::prelude::*;
     pub use super::goal::Goal;
     pub use super::harmable::Harmable;

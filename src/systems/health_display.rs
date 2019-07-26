@@ -28,6 +28,7 @@ impl<'a> System<'a> for HealthDisplaySystem {
         WriteStorage<'a, Heart>,
         WriteStorage<'a, SpriteRender>,
         WriteStorage<'a, Transparent>,
+        WriteStorage<'a, DontDeleteOnNextLevel>,
     );
 
     fn run(
@@ -43,6 +44,7 @@ impl<'a> System<'a> for HealthDisplaySystem {
             mut hearts,
             mut sprite_renders,
             mut transparents,
+            mut dont_deletes,
         ): Self::SystemData,
     ) {
         let health_opt =
@@ -80,6 +82,7 @@ impl<'a> System<'a> for HealthDisplaySystem {
                         &mut hearts,
                         &mut sprite_renders,
                         &mut transparents,
+                        &mut dont_deletes,
                         i,
                         offset,
                         FULL_HEART_SPRITE_ID,
@@ -97,6 +100,7 @@ impl<'a> System<'a> for HealthDisplaySystem {
                         &mut hearts,
                         &mut sprite_renders,
                         &mut transparents,
+                        &mut dont_deletes,
                         i,
                         offset,
                         HALF_HEART_SPRITE_ID,
@@ -116,6 +120,7 @@ fn create_heart<'a>(
     hearts: &mut WriteStorage<'a, Heart>,
     sprite_renders: &mut WriteStorage<'a, SpriteRender>,
     transparents: &mut WriteStorage<'a, Transparent>,
+    dont_deletes: &mut WriteStorage<'a, DontDeleteOnNextLevel>,
     i: u32,
     offset: Vector,
     sprite_id: usize,
@@ -139,6 +144,9 @@ fn create_heart<'a>(
         })
         .unwrap();
     transparents.insert(entity, Transparent).unwrap();
+    dont_deletes
+        .insert(entity, DontDeleteOnNextLevel::default())
+        .unwrap();
 }
 
 fn transform_xyz_for(i: u32, offset: Vector) -> (f32, f32, f32) {
