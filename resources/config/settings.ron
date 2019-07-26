@@ -22,18 +22,18 @@ Settings(
     player: (
         /// This is not used currently. Size is read from map.json, so it is defined with Tiled.
         size:                       (16.0,        32.0),
-        /// Player velocity acceleration when _not running_.
+        /// Player velocity acceleration.
         acceleration:               (1000.0,      0.0),
         /// Jump velocity boost.
         jump_strength:              400.0,
         /// Wall jump velocity boost (x, y).
-        wall_jump_strength:         (500.0, 500.0),
+        wall_jump_strength:         (400.0, 500.0),
         /// Amount of velocity to kill when releasing the jump button.
         decr_jump_strength:         200.0,
         /// The minimum amount of y velocity, after killing the jump.
         min_jump_velocity:          50.0,
-        /// Max velocity when _not running_.
-        max_velocity:               (Some(250.0), None),
+        /// Max velocity when.
+        max_velocity:               (Some(200.0), None),
         /// Decrease velocity by this amount, every frame.
         /// x value has no effect when moving, y value has no effect when falling/jumping.
         decr_velocity:              (2000.0,      1000.0),
@@ -62,7 +62,7 @@ Settings(
         /// If the x velocity should be decreased when in air.
         decrease_x_velocity_in_air: true,
         /// Player starting health (there is no max health)
-        health:                     6,
+        health:                     50, // 6,
         /// Player damage
         damage:                     1,
     ),
@@ -76,6 +76,7 @@ Settings(
     level_manager: (
         levels_dir:  "levels",
         level_names: (
+            "dev.json",
             "overworld_1.json", "overworld_2.json", "overworld_3.json",
             "graveyard_1.json", "graveyard_2.json", "graveyard_3.json",
         ),
@@ -184,7 +185,7 @@ Settings(
             dash_velocity:            (750.0, 500.0),
             dash_input_delay_ms:      250,
             dash_double_tap:          false,
-            speed_up_max_velocity_up: 100.0,
+            speed_up_max_velocity_up: 50.0,
             speed_up_acceleration_up: 300.0,
             jump_up:                  50.0,
             damage_up:                1,
