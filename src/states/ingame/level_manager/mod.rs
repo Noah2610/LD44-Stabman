@@ -33,15 +33,17 @@ impl LevelManager {
     ) {
         // First, remove all existing entities, which do not have `DontDeleteOnNextLevel`.
         data.world.exec(
-            |(entities, dont_deletes): (
+            |(entities, dont_deletes, players): (
                 Entities,
                 ReadStorage<DontDeleteOnNextLevel>,
+                ReadStorage<Player>,
             )| {
                 for (entity, _) in (&entities, !&dont_deletes).join() {
                     entities.delete(entity).unwrap();
                 }
             },
         );
+        data.world.maintain();
 
         let current_level_name = self
             .settings
