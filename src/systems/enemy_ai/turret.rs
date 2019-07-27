@@ -9,6 +9,7 @@ pub(super) fn run(
     enemy: &Enemy,
     ai_data: &mut EnemyAiTurretData,
     transform: &Transform,
+    animations_container: &mut AnimationsContainer,
     bullet_creator: &mut BulletCreator,
 ) {
     let enemy_pos = transform.translation();
@@ -16,11 +17,14 @@ pub(super) fn run(
         enemy_pos.x - player_data.pos.0,
         enemy_pos.y - player_data.pos.1,
     );
+
     if enemy.in_trigger_distance(distance_to_player) {
         let now = Instant::now();
         if now - ai_data.last_shot_at
             >= Duration::from_millis(ai_data.shot_interval_ms)
         {
+            // Shoot bullet
+            animations_container.play("shooting");
             ai_data.last_shot_at = now;
             bullet_creator.push(BulletComponents {
                 bullet:    Bullet::new()

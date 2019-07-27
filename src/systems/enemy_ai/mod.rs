@@ -136,6 +136,7 @@ impl<'a> System<'a> for EnemyAiSystem {
                         enemy,
                         data,
                         enemy_transform,
+                        enemy_animations_container,
                         &mut bullet_creator,
                     ),
                 }
