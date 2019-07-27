@@ -62,7 +62,7 @@ Settings(
         /// If the x velocity should be decreased when in air.
         decrease_x_velocity_in_air: true,
         /// Player starting health (there is no max health)
-        health:                     50, // 6,
+        health:                     6,
         /// Player damage
         damage:                     1,
     ),
@@ -138,7 +138,7 @@ Settings(
             knockback:             (500.0, 150.0),
             trigger_distance:      (1536.0, 256.0),
             acceleration:          (0.0, 0.0),
-            max_velocity:          (None, None),
+            max_velocity:         (None, None),
             decr_velocity:         (0.0, 0.0),
         ),
         turret_data: (
@@ -176,7 +176,7 @@ Settings(
         ),
 
         settings: (
-            knockback_strength:       (100.0, 75.0),
+            knockback_strength:       (200.0, 75.0),
             bullet_shoot_damage:      1,
             bullet_shoot_velocity:    (500.0, 0.0),
             bullet_shoot_size:        (16.0, 16.0),
