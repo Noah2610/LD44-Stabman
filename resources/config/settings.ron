@@ -62,7 +62,7 @@ Settings(
         /// If the x velocity should be decreased when in air.
         decrease_x_velocity_in_air: true,
         /// Player starting health (there is no max health)
-        health:                     6,
+        health:                     50, // 6,
         /// Player damage
         damage:                     1,
     ),
@@ -76,6 +76,7 @@ Settings(
     level_manager: (
         levels_dir:  "levels",
         level_names: (
+            "dev.json",
             "overworld_1.json", "overworld_2.json", "overworld_3.json",
             "graveyard_1.json", "graveyard_2.json", "graveyard_3.json",
         ),
@@ -135,7 +136,7 @@ Settings(
             damage:                4,
             reward:                0,
             knockback:             (500.0, 150.0),
-            trigger_distance:      (256.0, 192.0),
+            trigger_distance:      (1536.0, 256.0),
             acceleration:          (0.0, 0.0),
             max_velocity:          (None, None),
             decr_velocity:         (0.0, 0.0),
