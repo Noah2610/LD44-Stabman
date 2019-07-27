@@ -170,7 +170,7 @@ impl<'a> System<'a> for EnemyAiSystem {
 
                 // Handle enemy death
                 if enemy.is_dead() {
-                    player_data.player.gain_reward(enemy.reward);
+                    player_data.player.add_health(enemy.reward);
                     entities.delete(enemy_entity).unwrap();
                 }
             }

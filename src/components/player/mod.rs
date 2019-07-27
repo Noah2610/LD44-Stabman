@@ -21,6 +21,7 @@ pub struct Player {
     pub air_quick_turnaround:       SettingsPlayerQuickTurnaround,
     pub decrease_x_velocity_in_air: bool,
     pub health:                     u32,
+    pub max_health:                 u32,
     pub damage:                     u32,
     pub is_attacking:               bool,
     pub in_control:                 bool,
@@ -44,6 +45,7 @@ impl Player {
             air_quick_turnaround:       settings.air_quick_turnaround,
             decrease_x_velocity_in_air: settings.decrease_x_velocity_in_air,
             health:                     settings.health,
+            max_health:                 settings.max_health,
             damage:                     settings.damage,
             is_attacking:               false,
             in_control:                 false,
@@ -63,8 +65,8 @@ impl Player {
         }
     }
 
-    pub fn gain_reward(&mut self, reward: u32) {
-        self.health += reward;
+    pub fn add_health(&mut self, health: u32) {
+        self.health = (self.max_health).min(self.health + health);
     }
 
     pub fn is_alive(&self) -> bool {

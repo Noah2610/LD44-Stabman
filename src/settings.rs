@@ -56,6 +56,7 @@ pub struct SettingsPlayer {
     pub air_quick_turnaround:       SettingsPlayerQuickTurnaround,
     pub decrease_x_velocity_in_air: bool,
     pub health:                     u32,
+    pub max_health:                 u32,
     pub damage:                     u32,
 }
 
@@ -75,11 +76,12 @@ pub struct SettingsLoadingText {
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsLevelManager {
-    pub levels_dir:    String,
-    pub level_names:   Vec<String>,
-    pub song_names:    Vec<String>,
-    pub tile_size:     Vector,
-    pub savefile_path: String,
+    pub levels_dir:               String,
+    pub level_names:              Vec<String>,
+    pub song_names:               Vec<String>,
+    pub tile_size:                Vector,
+    pub savefile_path:            String,
+    pub health_increase_on_death: u32,
 }
 
 #[derive(Clone, Deserialize)]

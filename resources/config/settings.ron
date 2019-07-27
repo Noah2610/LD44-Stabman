@@ -61,10 +61,12 @@ Settings(
         air_quick_turnaround:       0,
         /// If the x velocity should be decreased when in air.
         decrease_x_velocity_in_air: true,
-        /// Player starting health (there is no max health)
-        health:                     6,
+        /// Player starting health
+        health:                     1, // 6,
+        /// Player max health
+        max_health:                 30,
         /// Player damage
-        damage:                     1,
+        damage:                     1, // 1,
     ),
 
     loading_text: (
@@ -87,6 +89,8 @@ Settings(
         tile_size:   (32.0, 32.0),
         /// Relative path to the save file
         savefile_path: "savefile.json",
+        /// Health to replenish on death
+        health_increase_on_death: 2,
     ),
 
     enemies: (

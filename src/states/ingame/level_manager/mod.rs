@@ -90,6 +90,7 @@ impl LevelManager {
                 //         Some(animations_container.play_once.is_none())
                 //     })
                 // .unwrap_or(false);
+
                 let player_dead = (&players, &animations_containers)
                     .join()
                     .find_map(|(player, animations_container)| {
@@ -98,6 +99,7 @@ impl LevelManager {
                         )
                     })
                     .unwrap_or(false);
+
                 (next_level, player_dead)
             },
         );
@@ -113,10 +115,25 @@ impl LevelManager {
         } else if player_dead {
             // Restart level and load player from checkoint
             self.restart_level(data);
-        } else {
-            if data.world.read_resource::<AudioSink>().empty() {
-                self.play_current_song(data);
+            data.world.maintain();
+
+            let health_increase = self.settings.health_increase_on_death;
+            if health_increase > 0 {
+                data.world.exec(|mut players: WriteStorage<Player>| {
+                    if let Some(player) = (&mut players).join().next() {
+                        // Increase player's health
+                        player.add_health(health_increase);
+                        // Set player checkpoint
+                        self.player_checkpoint_opt = Some(player.clone());
+                    }
+                });
             }
+
+            data.world.maintain();
+            self.save_to_savefile();
+        }
+        if data.world.read_resource::<AudioSink>().empty() {
+            self.play_current_song(data);
         }
     }
 
