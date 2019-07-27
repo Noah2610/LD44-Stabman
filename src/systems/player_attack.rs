@@ -144,7 +144,11 @@ impl<'a> System<'a> for PlayerAttackSystem {
                                 {
                                     player.deal_damage_to(enemy);
                                     // Knockback
-                                    if player.items_data.knockback.has_knockback
+                                    if enemy.affected_by_knockback
+                                        && player
+                                            .items_data
+                                            .knockback
+                                            .has_knockback
                                     {
                                         enemy_velocity.x = player
                                             .items_data
