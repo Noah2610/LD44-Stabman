@@ -124,10 +124,13 @@ impl LevelManager {
         &self,
         data: &mut StateData<CustomGameData<CustomData>>,
     ) {
+        let music_volume = data.world.settings().music_volume;
         let output = data.world.read_resource::<Output>();
         let mut sink = data.world.write_resource::<AudioSink>();
         sink.stop();
         *sink = AudioSink::new(&output);
+        sink.set_volume(music_volume);
+
         let asset = data.world.read_resource::<AssetStorage<Source>>();
         let name =
             self.settings
