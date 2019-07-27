@@ -78,7 +78,7 @@ function mk_archive {
   local dir="$( dirname "$path" )"
   [ -n "$dir" ] && cd "$dir"
   local filename="$( basename "$path" )"
-  msg "Zipping directory..."
+  msg "${spacing}Zipping directory..."
   try_run "zip -r ${filename}.zip $filename"
   try_run "rm -rf $filename"
 }
@@ -88,19 +88,26 @@ function build_release {
   local target_display
   local filename
   local target
+  local spacing
+
+  msg_strong "Building release version $( colored "$COLOR_CODE" "$RELEASE_VERSION" )"
 
   for target in "${RELEASE_TARGETS[@]}"; do
+    echo  # Empty line
+
+    spacing_strong="  "
     target_display="$( colored "$COLOR_CODE" "$target" )"
-    msg_strong "Building release for $target_display"
+    msg_strong "${spacing_strong}Building release for $target_display"
     filename="$( get_filename_for_target "$target" )"
+    spacing="${spacing_strong}${spacing_strong}"
 
     case "$target" in
       "linux" | "default")
-        build_release_for_linux "$@"
+        spacing="$spacing" build_release_for_linux "$@"
         ;;
 
       "windows")
-        build_release_for_windows "$@"
+        spacing="$spacing" build_release_for_windows "$@"
         ;;
 
       *)
@@ -108,7 +115,7 @@ function build_release {
         ;;
     esac
 
-    msg_strong "Created release for $target_display - $( colored "$COLOR_CODE" "${RELEASE_DIR}/${filename}.zip" )"
+    msg_strong "${spacing_strong}Created release for ${target_display}\n${spacing_strong}$( colored "$COLOR_CODE" "${RELEASE_DIR}/${filename}.zip" )"
   done
 }
 
@@ -117,16 +124,16 @@ function build_release {
 #   local filename
 #   local target
 function build_release_for_linux {
-  msg "Compiling..."
-  try_run "cargo +$RELEASE_RUST_VERSION build --release $*"
+  msg "${spacing}Compiling..."
+  spacing="$spacing" try_run "cargo +$RELEASE_RUST_VERSION build --release $*"
   cd "$RELEASE_DIR"
   mkdir "$filename"
 
-  msg "Copying executable and resources..."
-  try_run "cp ../target/release/${RELEASE_EXE_NAME} ./${filename}"
-  try_run "cp -r $RELEASE_RESOURCES_DIR ./${filename}"
+  msg "${spacing}Copying executable and resources..."
+  spacing="$spacing" try_run "cp ../target/release/${RELEASE_EXE_NAME} ./${filename}"
+  spacing="$spacing" try_run "cp -r $RELEASE_RESOURCES_DIR ./${filename}"
 
-  mk_archive "$filename"
+  spacing="$spacing" mk_archive "$filename"
 }
 
 # Pre-set local variables:
@@ -134,12 +141,12 @@ function build_release_for_linux {
 #   local filename
 #   local target
 function build_release_for_windows {
-  msg "Compiling..."
+  msg "${spacing}Compiling..."
   try_run "cargo +$RELEASE_RUST_VERSION build --release --target $WINDOWS_TARGET $*"
   cd "$RELEASE_DIR"
   mkdir "$filename"
 
-  msg "Copying executable and resources..."
+  msg "${spacing}Copying executable and resources..."
   try_run "cp ../target/${WINDOWS_TARGET}/release/${RELEASE_EXE_NAME}.exe ./${filename}"
   try_run "cp -r $RELEASE_RESOURCES_DIR ./${filename}"
 
