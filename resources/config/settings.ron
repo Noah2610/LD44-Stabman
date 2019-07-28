@@ -62,7 +62,7 @@ Settings(
         /// If the x velocity should be decreased when in air.
         decrease_x_velocity_in_air: true,
         /// Player starting health
-        health:                     1, // 6,
+        health:                     6,
         /// Player max health
         max_health:                 30,
         /// Player damage
