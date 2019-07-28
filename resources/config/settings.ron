@@ -1,5 +1,5 @@
 Settings(
-    music_volume: 0.5,
+    music_volume: 0.4,
 
     /// Y level, at which to kill entities, when they dip below it.
     death_floor: -200.0,
