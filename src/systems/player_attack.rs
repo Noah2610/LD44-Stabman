@@ -19,6 +19,7 @@ impl<'a> System<'a> for PlayerAttackSystem {
         WriteStorage<'a, Flipped>,
         WriteStorage<'a, Hidden>,
         WriteStorage<'a, Enemy>,
+        WriteStorage<'a, Bullet>,
     );
 
     fn run(
@@ -35,6 +36,7 @@ impl<'a> System<'a> for PlayerAttackSystem {
             mut flippeds,
             mut hiddens,
             mut enemies,
+            mut bullets,
         ): Self::SystemData,
     ) {
         // Get some player data
@@ -120,22 +122,22 @@ impl<'a> System<'a> for PlayerAttackSystem {
                     for (attack, attack_collision, player_flipped) in
                         (&player_attacks, &collisions, &flippeds).join()
                     {
-                        for (
-                            enemy_entity,
-                            enemy,
-                            enemy_velocity,
-                            enemy_animations_container,
-                        ) in (
-                            &entities,
-                            &mut enemies,
-                            &mut velocities,
-                            &mut animations_containers,
-                        )
-                            .join()
-                        {
-                            let enemy_id = enemy_entity.id();
-                            // Attack enemy
-                            if attack.active {
+                        if attack.active {
+                            for (
+                                enemy_entity,
+                                enemy,
+                                enemy_velocity,
+                                enemy_animations_container,
+                            ) in (
+                                &entities,
+                                &mut enemies,
+                                &mut velocities,
+                                &mut animations_containers,
+                            )
+                                .join()
+                            {
+                                let enemy_id = enemy_entity.id();
+                                // Attack enemy
                                 if let Some(collision::Data {
                                     state: collision::State::Enter,
                                     ..
@@ -165,6 +167,39 @@ impl<'a> System<'a> for PlayerAttackSystem {
                                             .knockback
                                             .velocity
                                             .1;
+                                    }
+                                }
+                            }
+
+                            // BulletDeflect
+                            if player.items_data.bullet_deflect.can_deflect {
+                                for (bullet_entity, bullet, bullet_velocity) in
+                                    (&entities, &mut bullets, &mut velocities)
+                                        .join()
+                                {
+                                    let bullet_id = bullet_entity.id();
+                                    if let (
+                                        &BulletOwner::Enemy,
+                                        Some(collision::Data {
+                                            state: collision::State::Enter,
+                                            ..
+                                        }),
+                                    ) = (
+                                        &bullet.owner,
+                                        attack_collision
+                                            .collision_with(bullet_id),
+                                    ) {
+                                        // Deflect bullet
+                                        let bullet_data =
+                                            &player.items_data.bullet_deflect;
+                                        bullet.owner = BulletOwner::Player;
+                                        bullet.damage = bullet_data.damage;
+                                        bullet_velocity.x = bullet_velocity.x
+                                            * bullet_data.velocity_mult.0;
+                                        bullet_velocity.y = bullet_velocity.y
+                                            * bullet_data.velocity_mult.1;
+                                        bullet.lifetime = bullet_data.lifetime;
+                                        bullet.created_at = now;
                                     }
                                 }
                             }

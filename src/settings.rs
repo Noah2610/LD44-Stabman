@@ -118,15 +118,16 @@ pub struct SettingsEnemyTurret {
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsItems {
-    pub extra_jump:   SettingsItem,
-    pub wall_jump:    SettingsItem,
-    pub knockback:    SettingsItem,
-    pub bullet_shoot: SettingsItem,
-    pub dash:         SettingsItem,
-    pub speed_up:     SettingsItem,
-    pub jump_up:      SettingsItem,
-    pub damage_up:    SettingsItem,
-    pub settings:     SettingsItemSettings,
+    pub extra_jump:     SettingsItem,
+    pub wall_jump:      SettingsItem,
+    pub knockback:      SettingsItem,
+    pub bullet_shoot:   SettingsItem,
+    pub dash:           SettingsItem,
+    pub bullet_deflect: SettingsItem,
+    pub speed_up:       SettingsItem,
+    pub jump_up:        SettingsItem,
+    pub damage_up:      SettingsItem,
+    pub settings:       SettingsItemSettings,
 }
 
 #[derive(Clone, Deserialize)]
@@ -136,19 +137,22 @@ pub struct SettingsItem {
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsItemSettings {
-    pub knockback_strength:       Vector,
-    pub bullet_shoot_damage:      u32,
-    pub bullet_shoot_velocity:    Vector,
-    pub bullet_shoot_size:        Vector,
-    pub bullet_shoot_lifetime_ms: u64,
-    pub dash_duration_ms:         u64,
-    pub dash_velocity:            Vector,
-    pub dash_input_delay_ms:      u64,
-    pub dash_double_tap:          bool,
-    pub speed_up_max_velocity_up: f32,
-    pub speed_up_acceleration_up: f32,
-    pub jump_up:                  f32,
-    pub damage_up:                u32,
+    pub knockback_strength:           Vector,
+    pub bullet_shoot_damage:          u32,
+    pub bullet_shoot_velocity:        Vector,
+    pub bullet_shoot_size:            Vector,
+    pub bullet_shoot_lifetime_ms:     u64,
+    pub dash_duration_ms:             u64,
+    pub dash_velocity:                Vector,
+    pub dash_input_delay_ms:          u64,
+    pub dash_double_tap:              bool,
+    pub bullet_deflect_damage:        u32,
+    pub bullet_deflect_velocity_mult: Vector,
+    pub bullet_deflect_lifetime_ms:   u64,
+    pub speed_up_max_velocity_up:     f32,
+    pub speed_up_acceleration_up:     f32,
+    pub jump_up:                      f32,
+    pub damage_up:                    u32,
 }
 
 #[derive(Clone, Deserialize)]

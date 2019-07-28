@@ -78,6 +78,7 @@ Settings(
     level_manager: (
         levels_dir:  "levels",
         level_names: (
+            "dev.json",
             "overworld_1.json", "overworld_2.json", "overworld_3.json",
             "graveyard_1.json", "graveyard_2.json", "graveyard_3.json",
         ),
@@ -173,6 +174,9 @@ Settings(
         dash: (
             cost: 12,
         ),
+        bullet_deflect: (
+            cost: 10,
+        ),
         speed_up: (
             cost: 6,
         ),
@@ -183,20 +187,23 @@ Settings(
             cost: 12,
         ),
 
-        settings: (
-            knockback_strength:       (200.0, 75.0),
-            bullet_shoot_damage:      1,
-            bullet_shoot_velocity:    (500.0, 0.0),
-            bullet_shoot_size:        (16.0, 16.0),
-            bullet_shoot_lifetime_ms: 2_500,
-            dash_duration_ms:         150,
-            dash_velocity:            (550.0, 250.0),
-            dash_input_delay_ms:      250,
-            dash_double_tap:          false,
-            speed_up_max_velocity_up: 50.0,
-            speed_up_acceleration_up: 300.0,
-            jump_up:                  50.0,
-            damage_up:                1,
+        settings:                         (
+            knockback_strength:           (200.0, 75.0),
+            bullet_shoot_damage:          1,
+            bullet_shoot_velocity:        (500.0, 0.0),
+            bullet_shoot_size:            (16.0, 16.0),
+            bullet_shoot_lifetime_ms:     2_500,
+            dash_duration_ms:             150,
+            dash_velocity:                (550.0, 250.0),
+            dash_input_delay_ms:          250,
+            dash_double_tap:              false,
+            bullet_deflect_damage:        1,
+            bullet_deflect_velocity_mult: (-1.0, 1.0),
+            bullet_deflect_lifetime_ms:   2_500,
+            speed_up_max_velocity_up:     50.0,
+            speed_up_acceleration_up:     300.0,
+            jump_up:                      50.0,
+            damage_up:                    1,
         )
     ),
 

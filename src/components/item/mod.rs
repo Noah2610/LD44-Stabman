@@ -69,6 +69,17 @@ impl Item {
                 player.items_data.dash.double_tap =
                     settings.settings.dash_double_tap;
             }
+            ItemType::BulletDeflect => {
+                player.items_data.bullet_deflect.can_deflect = true;
+                player.items_data.bullet_deflect.damage =
+                    settings.settings.bullet_deflect_damage;
+                player.items_data.bullet_deflect.velocity_mult =
+                    settings.settings.bullet_deflect_velocity_mult;
+                player.items_data.bullet_deflect.lifetime =
+                    Duration::from_millis(
+                        settings.settings.bullet_deflect_lifetime_ms,
+                    );
+            }
             ItemType::SpeedUp => {
                 player
                     .max_velocity

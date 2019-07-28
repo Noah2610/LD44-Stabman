@@ -1,5 +1,6 @@
 pub mod prelude {
     pub use super::ItemsData;
+    pub use super::ItemsDataBulletDeflect;
     pub use super::ItemsDataBulletShoot;
     pub use super::ItemsDataDash;
     pub use super::ItemsDataExtraJump;
@@ -13,11 +14,12 @@ use deathframe::geo::Vector;
 
 #[derive(Clone, Default, Serialize, Deserialize)]
 pub struct ItemsData {
-    pub extra_jump:   ItemsDataExtraJump,
-    pub wall_jump:    ItemsDataWallJump,
-    pub knockback:    ItemsDataKnockback,
-    pub bullet_shoot: ItemsDataBulletShoot,
-    pub dash:         ItemsDataDash,
+    pub extra_jump:     ItemsDataExtraJump,
+    pub wall_jump:      ItemsDataWallJump,
+    pub knockback:      ItemsDataKnockback,
+    pub bullet_shoot:   ItemsDataBulletShoot,
+    pub dash:           ItemsDataDash,
+    pub bullet_deflect: ItemsDataBulletDeflect,
 }
 
 #[derive(Clone, Default, Serialize, Deserialize)]
@@ -55,4 +57,12 @@ pub struct ItemsDataDash {
     pub input_delay_ms: u64,
     pub double_tap:     bool,
     pub is_dashing:     bool,
+}
+
+#[derive(Clone, Default, Serialize, Deserialize)]
+pub struct ItemsDataBulletDeflect {
+    pub can_deflect:   bool,
+    pub damage:        u32,
+    pub velocity_mult: Vector,
+    pub lifetime:      Duration,
 }
