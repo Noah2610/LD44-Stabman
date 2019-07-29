@@ -16,12 +16,14 @@ impl<'a> System<'a> for PlayerControlsSystem {
         ReadStorage<'a, Solid<SolidTag>>,
         ReadStorage<'a, Goal>,
         ReadStorage<'a, Item>,
+        ReadStorage<'a, HeartsContainer>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, DecreaseVelocity>,
         WriteStorage<'a, Gravity>,
         WriteStorage<'a, AnimationsContainer>,
         WriteStorage<'a, Flipped>,
+        WriteStorage<'a, Heart>,
     );
 
     fn run(
@@ -38,12 +40,14 @@ impl<'a> System<'a> for PlayerControlsSystem {
             solids,
             goals,
             items,
+            hearts_containers,
             mut players,
             mut velocities,
             mut decr_velocities,
             mut gravities,
             mut animations_containers,
             mut flippeds,
+            mut hearts,
         ): Self::SystemData,
     ) {
         let dt = time.delta_seconds();
@@ -135,6 +139,8 @@ impl<'a> System<'a> for PlayerControlsSystem {
                     player_collision,
                     &items,
                     &collisions,
+                    &hearts_containers,
+                    &mut hearts,
                 );
             } else if !player.in_control && !goal_next_level {
                 // Start of a level
@@ -447,9 +453,11 @@ fn handle_item_purchase<'a>(
     player_collision: &Collision,
     items: &ReadStorage<'a, Item>,
     collisions: &ReadStorage<'a, Collision>,
+    hearts_containers: &ReadStorage<'a, HeartsContainer>,
+    hearts: &mut WriteStorage<'a, Heart>,
 ) {
-    for (item_entity, item, item_collision) in
-        (entities, items, collisions).join()
+    for (item_entity, item, item_collision, hearts_container_opt) in
+        (entities, items, collisions, hearts_containers.maybe()).join()
     {
         let item_id = item_entity.id();
         if let Some(collision::Data {
@@ -462,6 +470,12 @@ fn handle_item_purchase<'a>(
                 item.apply(player, settings);
                 entities.delete(item_entity).unwrap();
                 player.take_damage(item.cost);
+                // Remove hearts
+                if let Some(hearts_container) = hearts_container_opt {
+                    for id in hearts_container.heart_ids.iter() {
+                        entities.delete(entities.entity(*id));
+                    }
+                }
             }
         }
     }
