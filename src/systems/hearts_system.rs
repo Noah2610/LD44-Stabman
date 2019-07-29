@@ -5,7 +5,6 @@ use super::system_prelude::*;
 // TODO
 const FULL_HEART_SPRITE_ID: usize = 0;
 const HALF_HEART_SPRITE_ID: usize = 1;
-const Z: f32 = 5.0;
 
 struct HeartsContainerData {
     pub hp:  u32,

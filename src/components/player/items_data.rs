@@ -5,6 +5,7 @@ pub mod prelude {
     pub use super::ItemsDataDash;
     pub use super::ItemsDataExtraJump;
     pub use super::ItemsDataKnockback;
+    pub use super::ItemsDataThrust;
     pub use super::ItemsDataWallJump;
 }
 
@@ -20,6 +21,7 @@ pub struct ItemsData {
     pub bullet_shoot:   ItemsDataBulletShoot,
     pub dash:           ItemsDataDash,
     pub bullet_deflect: ItemsDataBulletDeflect,
+    pub thrust:         ItemsDataThrust,
 }
 
 #[derive(Clone, Default, Serialize, Deserialize)]
@@ -65,4 +67,10 @@ pub struct ItemsDataBulletDeflect {
     pub damage:        u32,
     pub velocity_mult: Vector,
     pub lifetime:      Duration,
+}
+
+#[derive(Clone, Default, Serialize, Deserialize)]
+pub struct ItemsDataThrust {
+    pub can_thrust: bool,
+    pub strength:   Vector,
 }

@@ -66,7 +66,7 @@ Settings(
         /// Player max health
         max_health:                 30,
         /// Player damage
-        damage:                     1, // 1,
+        damage:                     1,
     ),
 
     loading_text: (
@@ -176,6 +176,9 @@ Settings(
         bullet_deflect: (
             cost: 10,
         ),
+        thrust: (
+            cost: 10,
+        ),
         speed_up: (
             cost: 6,
         ),
@@ -186,7 +189,7 @@ Settings(
             cost: 12,
         ),
 
-        settings:                         (
+        settings: (
             knockback_strength:           (200.0, 75.0),
             bullet_shoot_damage:          1,
             bullet_shoot_velocity:        (500.0, 0.0),
@@ -199,6 +202,7 @@ Settings(
             bullet_deflect_damage:        1,
             bullet_deflect_velocity_mult: (-1.0, 1.0),
             bullet_deflect_lifetime_ms:   2_500,
+            thrust_strength:              (400.0, 200.0),
             speed_up_max_velocity_up:     50.0,
             speed_up_acceleration_up:     300.0,
             jump_up:                      50.0,

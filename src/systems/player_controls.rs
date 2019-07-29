@@ -120,7 +120,8 @@ impl<'a> System<'a> for PlayerControlsSystem {
                 handle_attack(
                     &input_manager,
                     player,
-                    &transform,
+                    transform,
+                    velocity,
                     animations_container,
                     flipped,
                     &mut bullet_creator,
@@ -361,6 +362,7 @@ fn handle_attack<'a>(
     input_manager: &InputManager,
     player: &mut Player,
     player_transform: &Transform,
+    player_velocity: &mut Velocity,
     animations_container: &mut AnimationsContainer,
     flipped: &mut Flipped,
     bullet_creator: &mut BulletCreator,
@@ -385,6 +387,20 @@ fn handle_attack<'a>(
         player.is_attacking = true;
         // Play attack animation
         animations_container.play("attack");
+        // Thrust
+        if player.items_data.thrust.can_thrust {
+            let thrust = (
+                player.items_data.thrust.strength.0
+                    * match flipped {
+                        Flipped::None => 1.0,
+                        Flipped::Horizontal => -1.0,
+                        _ => 1.0,
+                    },
+                player.items_data.thrust.strength.1,
+            );
+            player_velocity.x += thrust.0;
+            player_velocity.y += thrust.1;
+        }
     }
 
     let should_shoot_bullet =

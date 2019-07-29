@@ -80,6 +80,13 @@ impl Item {
                         settings.settings.bullet_deflect_lifetime_ms,
                     );
             }
+            ItemType::Thrust => {
+                player.items_data.thrust.can_thrust = true;
+                player.items_data.thrust.strength.0 +=
+                    settings.settings.thrust_strength.0;
+                player.items_data.thrust.strength.1 +=
+                    settings.settings.thrust_strength.1;
+            }
             ItemType::SpeedUp => {
                 player
                     .max_velocity
