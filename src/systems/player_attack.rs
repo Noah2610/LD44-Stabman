@@ -20,7 +20,6 @@ impl<'a> System<'a> for PlayerAttackSystem {
         WriteStorage<'a, Hidden>,
         WriteStorage<'a, Enemy>,
         WriteStorage<'a, Bullet>,
-        WriteStorage<'a, HeartsContainer>,
     );
 
     fn run(
@@ -38,7 +37,6 @@ impl<'a> System<'a> for PlayerAttackSystem {
             mut hiddens,
             mut enemies,
             mut bullets,
-            mut hearts_containers,
         ): Self::SystemData,
     ) {
         // Get some player data
@@ -130,13 +128,11 @@ impl<'a> System<'a> for PlayerAttackSystem {
                                 enemy,
                                 enemy_velocity,
                                 enemy_animations_container,
-                                enemy_hearts_container_opt,
                             ) in (
                                 &entities,
                                 &mut enemies,
                                 &mut velocities,
                                 &mut animations_containers,
-                                (&mut hearts_containers).maybe(),
                             )
                                 .join()
                             {
@@ -171,13 +167,6 @@ impl<'a> System<'a> for PlayerAttackSystem {
                                             .knockback
                                             .velocity
                                             .1;
-                                    }
-
-                                    // Update HeartsContainer
-                                    if let Some(hearts_container) =
-                                        enemy_hearts_container_opt
-                                    {
-                                        hearts_container.health = enemy.health;
                                     }
                                 }
                             }

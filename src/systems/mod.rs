@@ -11,6 +11,7 @@ mod player_attack;
 mod player_controls;
 mod player_dash;
 mod player_take_damage;
+mod sync_hearts_containers_with_health;
 
 pub mod prelude {
     pub use deathframe::systems::prelude::*;
@@ -28,6 +29,7 @@ pub mod prelude {
     pub use super::player_controls::PlayerControlsSystem;
     pub use super::player_dash::PlayerDashSystem;
     pub use super::player_take_damage::PlayerTakeDamageSystem;
+    pub use super::sync_hearts_containers_with_health::SyncHeartsContainersWithHealthSystem;
 }
 
 mod system_prelude {

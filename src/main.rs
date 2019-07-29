@@ -218,7 +218,18 @@ fn build_game_data<'a, 'b>(
         .with("ingame", HeartsSystem::default(), "hearts_system", &[
             "move_entities_system",
             "player_attack_system",
-        ])?;
+        ])?
+        .with(
+            "ingame",
+            SyncHeartsContainersWithHealthSystem,
+            "sync_hearts_containers_with_health",
+            &[
+                "collision_system",
+                "player_attack_system",
+                "player_take_damage_system",
+                "bullet_system",
+            ],
+        )?;
     Ok(game_data)
 }
 
