@@ -162,7 +162,7 @@ pub fn create_heart<'a, 'b>(
     (x, y, z): (f32, f32, f32),
     size: Vector,
     sprite_id: usize,
-) {
+) -> Entity {
     let entity = entities.create();
 
     let mut transform = Transform::default();
@@ -193,4 +193,6 @@ pub fn create_heart<'a, 'b>(
             .insert(entity, DontDeleteOnNextLevel::default())
             .unwrap();
     }
+
+    entity
 }

@@ -9,7 +9,7 @@ const Z: f32 = 5.0;
 
 struct HeartsContainerData {
     pub hp:  u32,
-    pub pos: Vector,
+    pub pos: (f32, f32),
 }
 
 #[derive(Default)]
@@ -54,15 +54,19 @@ impl<'a> System<'a> for HeartsSystem {
         ) in (&entities, &hearts_containers, &transforms).join()
         {
             let hearts_container_id = hearts_container_entity.id();
-            let hearts_container_pos = Vector::from(hearts_container_transform);
+            let hearts_container_pos = {
+                let pos = hearts_container_transform.translation();
+                (pos.x, pos.y, pos.z)
+            };
 
             if let Some(hearts_container_data) =
-                self.hearts_containers_data.get(&hearts_container_id)
+                self.hearts_containers_data.get_mut(&hearts_container_id)
             {
                 let hp_changed =
                     hearts_container.hp != hearts_container_data.hp;
                 let pos_changed =
-                    hearts_container_pos != hearts_container_data.pos;
+                    (hearts_container_pos.0, hearts_container_pos.1)
+                        != hearts_container_data.pos;
 
                 if hp_changed || pos_changed {
                     hearts_containers_to_update.push(
@@ -81,6 +85,10 @@ impl<'a> System<'a> for HeartsSystem {
                         },
                     );
                 }
+
+                hearts_container_data.hp = hearts_container.hp;
+                hearts_container_data.pos =
+                    (hearts_container_pos.0, hearts_container_pos.1);
             } else {
                 hearts_containers_to_update.push(HeartsContainerUpdateData {
                     id:            hearts_container_id,
@@ -91,14 +99,22 @@ impl<'a> System<'a> for HeartsSystem {
                     heart_padding: hearts_container.heart_padding,
                     hearts_action: HeartsUpdateAction::Recreate,
                 });
+
+                self.hearts_containers_data.insert(
+                    hearts_container_id,
+                    HeartsContainerData {
+                        hp:  hearts_container.hp,
+                        pos: (hearts_container_pos.0, hearts_container_pos.1),
+                    },
+                );
             }
         }
 
         // let mut heart_ids_to_remove: Vec<Index> = Vec::new();
-        let mut new_heart_ids_for_hearts_containers: HashMap<
-            Index,
-            Vec<Index>,
-        > = HashMap::new();
+        // let mut new_heart_ids_for_hearts_containers: HashMap<
+        //     Index,
+        //     Vec<Index>,
+        // > = HashMap::new();
 
         // Update necessary hearts_containers
         hearts_containers_to_update
@@ -151,6 +167,7 @@ impl<'a> System<'a> for HeartsSystem {
                         }
 
                         // Create new heart entities
+                        let mut heart_ids = Vec::new();
                         let full_hearts = update_data.hp / 2;
                         let half_hearts = update_data.hp - full_hearts * 2;
 
@@ -159,9 +176,9 @@ impl<'a> System<'a> for HeartsSystem {
                                 hearts_area.left
                                     + len_axis_x / (i as f32 + 1.0),
                                 hearts_area.top, // TODO
-                                Z,               // TODO
+                                update_data.pos.2,
                             );
-                            create_heart(
+                            let entity = create_heart(
                                 &entities,
                                 &sprite_sheet_handles,
                                 &mut transforms,
@@ -176,6 +193,38 @@ impl<'a> System<'a> for HeartsSystem {
                                 update_data.heart_size,
                                 FULL_HEART_SPRITE_ID,
                             );
+                            heart_ids.push(entity.id());
+                        }
+                        for i in 0 .. half_hearts {
+                            let pos = (
+                                hearts_area.left
+                                    + len_axis_x / (i as f32 + 1.0),
+                                hearts_area.top, // TODO
+                                update_data.pos.2,
+                            );
+                            let entity = create_heart(
+                                &entities,
+                                &sprite_sheet_handles,
+                                &mut transforms,
+                                &mut sizes,
+                                &mut scale_onces,
+                                AnyHeart::Normal(&mut hearts),
+                                &mut sprite_renders,
+                                &mut transparents,
+                                None,
+                                i,
+                                pos,
+                                update_data.heart_size,
+                                HALF_HEART_SPRITE_ID,
+                            );
+                            heart_ids.push(entity.id());
+                        }
+
+                        // Update heart_ids on HeartsContainer
+                        if let Some(hearts_container) = hearts_containers
+                            .get_mut(entities.entity(update_data.id))
+                        {
+                            hearts_container.heart_ids = heart_ids;
                         }
                     }
                 }
@@ -185,7 +234,7 @@ impl<'a> System<'a> for HeartsSystem {
 
 struct HeartsContainerUpdateData {
     pub id:            Index,
-    pub pos:           Vector,
+    pub pos:           (f32, f32, f32),
     pub hp:            u32,
     pub heart_ids:     Vec<Index>,
     pub heart_size:    Vector,
