@@ -5,6 +5,7 @@ use super::system_prelude::*;
 // TODO
 const FULL_HEART_SPRITE_ID: usize = 0;
 const HALF_HEART_SPRITE_ID: usize = 1;
+const Z_INCREASE: f32 = 0.001;
 
 struct HeartsContainerData {
     pub hp:  u32,
@@ -20,6 +21,8 @@ impl<'a> System<'a> for HeartsSystem {
     type SystemData = (
         Entities<'a>,
         Read<'a, SpriteSheetHandles>,
+        ReadStorage<'a, Loadable>,
+        ReadStorage<'a, Loaded>,
         WriteStorage<'a, HeartsContainer>,
         WriteStorage<'a, Heart>,
         WriteStorage<'a, Transform>,
@@ -34,6 +37,8 @@ impl<'a> System<'a> for HeartsSystem {
         (
             entities,
             sprite_sheet_handles,
+            loadables,
+            loadeds,
             mut hearts_containers,
             mut hearts,
             mut transforms,
@@ -50,24 +55,57 @@ impl<'a> System<'a> for HeartsSystem {
             hearts_container_entity,
             hearts_container,
             hearts_container_transform,
-        ) in (&entities, &hearts_containers, &transforms).join()
+            loadable,
+            loaded,
+        ) in (
+            &entities,
+            &hearts_containers,
+            &transforms,
+            loadables.maybe(),
+            loadeds.maybe(),
+        )
+            .join()
         {
-            let hearts_container_id = hearts_container_entity.id();
-            let hearts_container_pos = {
-                let pos = hearts_container_transform.translation();
-                (pos.x, pos.y, pos.z)
-            };
+            if let (Some(_), Some(_)) | (None, None) = (loadable, loaded) {
+                let hearts_container_id = hearts_container_entity.id();
+                let hearts_container_pos = {
+                    let pos = hearts_container_transform.translation();
+                    (pos.x, pos.y, pos.z)
+                };
 
-            if let Some(hearts_container_data) =
-                self.hearts_containers_data.get_mut(&hearts_container_id)
-            {
-                let hp_changed =
-                    hearts_container.hp != hearts_container_data.hp;
-                let pos_changed =
-                    (hearts_container_pos.0, hearts_container_pos.1)
-                        != hearts_container_data.pos;
+                if let Some(hearts_container_data) =
+                    self.hearts_containers_data.get_mut(&hearts_container_id)
+                {
+                    let hp_changed =
+                        hearts_container.hp != hearts_container_data.hp;
+                    let pos_changed =
+                        (hearts_container_pos.0, hearts_container_pos.1)
+                            != hearts_container_data.pos;
 
-                if hp_changed || pos_changed {
+                    if hp_changed || pos_changed {
+                        hearts_containers_to_update.push(
+                            HeartsContainerUpdateData {
+                                id:            hearts_container_id,
+                                pos:           hearts_container_pos,
+                                hp:            hearts_container.hp,
+                                heart_ids:     hearts_container
+                                    .heart_ids
+                                    .clone(),
+                                heart_size:    hearts_container.heart_size,
+                                heart_padding: hearts_container.heart_padding,
+                                hearts_action: if hp_changed {
+                                    HeartsUpdateAction::Recreate
+                                } else {
+                                    HeartsUpdateAction::MoveTransforms
+                                },
+                            },
+                        );
+                    }
+
+                    hearts_container_data.hp = hearts_container.hp;
+                    hearts_container_data.pos =
+                        (hearts_container_pos.0, hearts_container_pos.1);
+                } else {
                     hearts_containers_to_update.push(
                         HeartsContainerUpdateData {
                             id:            hearts_container_id,
@@ -76,36 +114,21 @@ impl<'a> System<'a> for HeartsSystem {
                             heart_ids:     hearts_container.heart_ids.clone(),
                             heart_size:    hearts_container.heart_size,
                             heart_padding: hearts_container.heart_padding,
-                            hearts_action: if hp_changed {
-                                HeartsUpdateAction::Recreate
-                            } else {
-                                HeartsUpdateAction::MoveTransforms
-                            },
+                            hearts_action: HeartsUpdateAction::Recreate,
+                        },
+                    );
+
+                    self.hearts_containers_data.insert(
+                        hearts_container_id,
+                        HeartsContainerData {
+                            hp:  hearts_container.hp,
+                            pos: (
+                                hearts_container_pos.0,
+                                hearts_container_pos.1,
+                            ),
                         },
                     );
                 }
-
-                hearts_container_data.hp = hearts_container.hp;
-                hearts_container_data.pos =
-                    (hearts_container_pos.0, hearts_container_pos.1);
-            } else {
-                hearts_containers_to_update.push(HeartsContainerUpdateData {
-                    id:            hearts_container_id,
-                    pos:           hearts_container_pos,
-                    hp:            hearts_container.hp,
-                    heart_ids:     hearts_container.heart_ids.clone(),
-                    heart_size:    hearts_container.heart_size,
-                    heart_padding: hearts_container.heart_padding,
-                    hearts_action: HeartsUpdateAction::Recreate,
-                });
-
-                self.hearts_containers_data.insert(
-                    hearts_container_id,
-                    HeartsContainerData {
-                        hp:  hearts_container.hp,
-                        pos: (hearts_container_pos.0, hearts_container_pos.1),
-                    },
-                );
             }
         }
 
@@ -122,23 +145,26 @@ impl<'a> System<'a> for HeartsSystem {
                 let amount_of_hearts = update_data.hp / 2 + update_data.hp % 2;
                 let amount_of_hearts_halfed = amount_of_hearts as f32 * 0.5;
 
-                let hearts_area = Rect {
-                    top:    update_data.pos.1
-                        + amount_of_hearts_halfed * update_data.heart_padding.1,
-                    bottom: update_data.pos.1
-                        - amount_of_hearts_halfed * update_data.heart_padding.1,
-                    left:   update_data.pos.0
-                        - amount_of_hearts_halfed
-                            * (update_data.heart_size.0
-                                + update_data.heart_padding.0),
-                    right:  update_data.pos.0
-                        + amount_of_hearts_halfed
-                            * (update_data.heart_size.0
-                                + update_data.heart_padding.0),
-                };
+                let hearts_area_left = update_data.pos.0
+                    - amount_of_hearts_halfed
+                        * (update_data.heart_size.0
+                            + update_data.heart_padding.0);
+                let hearts_area_right = update_data.pos.0
+                    + amount_of_hearts_halfed
+                        * (update_data.heart_size.0
+                            + update_data.heart_padding.0);
+                let hearts_area_y = update_data.pos.1;
 
-                let len_axis_x = hearts_area.right - hearts_area.left;
+                let len_axis_x = hearts_area_right - hearts_area_left;
                 // let len_axis_y = hearts_area.top - hearts_area.bottom;
+
+                let pos_for = |i: u32| {
+                    (
+                        hearts_area_left + len_axis_x / (i as f32 + 1.0),
+                        hearts_area_y,
+                        update_data.pos.2 + Z_INCREASE,
+                    )
+                };
 
                 match update_data.hearts_action {
                     HeartsUpdateAction::MoveTransforms => {
@@ -147,12 +173,9 @@ impl<'a> System<'a> for HeartsSystem {
                         {
                             let heart_id = heart_entity.id();
                             if update_data.heart_ids.contains(&heart_id) {
-                                heart_transform.set_x(
-                                    hearts_area.left
-                                        + len_axis_x
-                                            / (heart.index as f32 + 1.0),
-                                );
-                                heart_transform.set_y(hearts_area.top); // TODO
+                                let pos = pos_for(heart.index);
+                                heart_transform.set_x(pos.0);
+                                heart_transform.set_y(pos.1);
                             }
                         }
                     }
@@ -171,12 +194,7 @@ impl<'a> System<'a> for HeartsSystem {
                         let half_hearts = update_data.hp - full_hearts * 2;
 
                         for i in 0 .. full_hearts {
-                            let pos = (
-                                hearts_area.left
-                                    + len_axis_x / (i as f32 + 1.0),
-                                hearts_area.top, // TODO
-                                update_data.pos.2,
-                            );
+                            let pos = pos_for(i);
                             let entity = create_heart(
                                 &entities,
                                 &sprite_sheet_handles,
@@ -195,12 +213,7 @@ impl<'a> System<'a> for HeartsSystem {
                             heart_ids.push(entity.id());
                         }
                         for i in 0 .. half_hearts {
-                            let pos = (
-                                hearts_area.left
-                                    + len_axis_x / (i as f32 + 1.0),
-                                hearts_area.top, // TODO
-                                update_data.pos.2,
-                            );
+                            let pos = pos_for(i);
                             let entity = create_heart(
                                 &entities,
                                 &sprite_sheet_handles,
