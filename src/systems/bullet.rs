@@ -13,6 +13,7 @@ impl<'a> System<'a> for BulletSystem {
         WriteStorage<'a, Player>,
         WriteStorage<'a, Enemy>,
         WriteStorage<'a, Velocity>,
+        WriteStorage<'a, HeartsContainer>,
     );
 
     fn run(
@@ -25,6 +26,7 @@ impl<'a> System<'a> for BulletSystem {
             mut players,
             mut enemies,
             mut velocities,
+            mut hearts_containers,
         ): Self::SystemData,
     ) {
         let now = Instant::now();
@@ -89,7 +91,10 @@ impl<'a> System<'a> for BulletSystem {
             }
             // Collides with enemies?
             else if bullet.owner != BulletOwner::Enemy {
-                for (enemy_entity, enemy) in (&entities, &mut enemies).join() {
+                for (enemy_entity, enemy, enemy_hearts_container_opt) in
+                    (&entities, &mut enemies, (&mut hearts_containers).maybe())
+                        .join()
+                {
                     let enemy_id = enemy_entity.id();
                     if let Some(collision::Data {
                         state: collision::State::Enter,
@@ -100,6 +105,12 @@ impl<'a> System<'a> for BulletSystem {
                         // deal damage to enemy and delete bullet entity.
                         enemy.take_damage(bullet.damage);
                         entities.delete(bullet_entity).unwrap();
+                        // Update HeartsContainer
+                        if let Some(hearts_container) =
+                            enemy_hearts_container_opt
+                        {
+                            hearts_container.health = enemy.health;
+                        }
                     }
                 }
             }

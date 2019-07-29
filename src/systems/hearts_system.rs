@@ -8,8 +8,8 @@ const HALF_HEART_SPRITE_ID: usize = 1;
 const Z_INCREASE: f32 = 0.001;
 
 struct HeartsContainerData {
-    pub hp:  u32,
-    pub pos: (f32, f32),
+    pub health: u32,
+    pub pos:    (f32, f32),
 }
 
 #[derive(Default)]
@@ -77,7 +77,7 @@ impl<'a> System<'a> for HeartsSystem {
                     self.hearts_containers_data.get_mut(&hearts_container_id)
                 {
                     let hp_changed =
-                        hearts_container.hp != hearts_container_data.hp;
+                        hearts_container.health != hearts_container_data.health;
                     let pos_changed =
                         (hearts_container_pos.0, hearts_container_pos.1)
                             != hearts_container_data.pos;
@@ -87,7 +87,7 @@ impl<'a> System<'a> for HeartsSystem {
                             HeartsContainerUpdateData {
                                 id:            hearts_container_id,
                                 pos:           hearts_container_pos,
-                                hp:            hearts_container.hp,
+                                health:        hearts_container.health,
                                 heart_ids:     hearts_container
                                     .heart_ids
                                     .clone(),
@@ -103,7 +103,7 @@ impl<'a> System<'a> for HeartsSystem {
                         );
                     }
 
-                    hearts_container_data.hp = hearts_container.hp;
+                    hearts_container_data.health = hearts_container.health;
                     hearts_container_data.pos =
                         (hearts_container_pos.0, hearts_container_pos.1);
                 } else {
@@ -111,7 +111,7 @@ impl<'a> System<'a> for HeartsSystem {
                         HeartsContainerUpdateData {
                             id:            hearts_container_id,
                             pos:           hearts_container_pos,
-                            hp:            hearts_container.hp,
+                            health:        hearts_container.health,
                             heart_ids:     hearts_container.heart_ids.clone(),
                             heart_size:    hearts_container.heart_size,
                             heart_padding: hearts_container.heart_padding,
@@ -123,8 +123,8 @@ impl<'a> System<'a> for HeartsSystem {
                     self.hearts_containers_data.insert(
                         hearts_container_id,
                         HeartsContainerData {
-                            hp:  hearts_container.hp,
-                            pos: (
+                            health: hearts_container.health,
+                            pos:    (
                                 hearts_container_pos.0,
                                 hearts_container_pos.1,
                             ),
@@ -144,7 +144,8 @@ impl<'a> System<'a> for HeartsSystem {
         hearts_containers_to_update
             .iter_mut()
             .for_each(|update_data| {
-                let amount_of_hearts = update_data.hp / 2 + update_data.hp % 2;
+                let amount_of_hearts =
+                    update_data.health / 2 + update_data.health % 2;
                 let amount_of_hearts_halfed = (amount_of_hearts / 2) as f32; // as f32 * 0.5;
 
                 let hearts_area_left = update_data.pos.0
@@ -199,8 +200,8 @@ impl<'a> System<'a> for HeartsSystem {
 
                         // Create new heart entities
                         let mut heart_ids = Vec::new();
-                        let full_hearts = update_data.hp / 2;
-                        let half_hearts = update_data.hp - full_hearts * 2;
+                        let full_hearts = update_data.health / 2;
+                        let half_hearts = update_data.health - full_hearts * 2;
 
                         for i in 0 .. full_hearts {
                             let pos = pos_for(i);
@@ -256,7 +257,7 @@ impl<'a> System<'a> for HeartsSystem {
 struct HeartsContainerUpdateData {
     pub id:            Index,
     pub pos:           (f32, f32, f32),
-    pub hp:            u32,
+    pub health:        u32,
     pub heart_ids:     Vec<Index>,
     pub heart_size:    Vector,
     pub heart_padding: Vector,

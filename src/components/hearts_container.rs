@@ -13,7 +13,7 @@ mod defaults {
 }
 
 pub struct HeartsContainer {
-    pub hp:            u32,
+    pub health:        u32,
     pub heart_ids:     Vec<Index>,
     pub heart_size:    Vector,
     pub heart_padding: Vector,
@@ -28,15 +28,15 @@ impl HeartsContainer {
 
 #[derive(Default)]
 pub struct HeartsContainerBuilder {
-    hp:            Option<u32>,
+    health:        Option<u32>,
     heart_size:    Option<Vector>,
     heart_padding: Option<Vector>,
     heart_offset:  Option<Vector>,
 }
 
 impl HeartsContainerBuilder {
-    pub fn hp(mut self, hp: u32) -> Self {
-        self.hp = Some(hp);
+    pub fn health(mut self, health: u32) -> Self {
+        self.health = Some(health);
         self
     }
 
@@ -57,7 +57,9 @@ impl HeartsContainerBuilder {
 
     pub fn build(self) -> HeartsContainer {
         HeartsContainer {
-            hp:            self.hp.expect("HeartsContainer needs hp u32"),
+            health:        self
+                .health
+                .expect("HeartsContainer needs health u32"),
             heart_ids:     Vec::new(),
             heart_size:    self
                 .heart_size

@@ -639,7 +639,7 @@ impl LevelLoader {
                 .with(ScaleOnce)
                 .with(
                     HeartsContainer::new()
-                        .hp(enemy_settings.health)
+                        .health(enemy_settings.health)
                         .heart_offset(Vector::new(
                             0.0,
                             size.1 * -0.5 + heart_size.1 * -0.5,
@@ -728,7 +728,7 @@ impl LevelLoader {
                 .create_entity()
                 .with(
                     HeartsContainer::new()
-                        .hp(item.cost)
+                        .health(item.cost)
                         .heart_offset(Vector::new(
                             0.0,
                             size.1 * 0.5 + heart_size.1 * 0.5,
