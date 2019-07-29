@@ -635,6 +635,7 @@ impl LevelLoader {
                 .with(CheckCollision)
                 .with(Solid::new(SolidTag::Enemy))
                 .with(ScaleOnce)
+                .with(HeartsContainer::new(enemy_settings.health))
                 .with(Enemy::new(enemy_type.clone(), enemy_settings))
                 .with(sprite_render)
                 .with(flipped_opt.unwrap_or(Flipped::None))
