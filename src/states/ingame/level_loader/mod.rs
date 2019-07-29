@@ -624,6 +624,8 @@ impl LevelLoader {
                 properties[PROPERTY_Z_KEY].as_f32().unwrap_or(ENEMY_Z),
             );
 
+            let heart_size = Vector::new(16.0, 16.0);
+
             let mut entity = data
                 .world
                 .create_entity()
@@ -635,7 +637,16 @@ impl LevelLoader {
                 .with(CheckCollision)
                 .with(Solid::new(SolidTag::Enemy))
                 .with(ScaleOnce)
-                .with(HeartsContainer::new(enemy_settings.health))
+                .with(
+                    HeartsContainer::new()
+                        .hp(enemy_settings.health)
+                        .heart_offset(Vector::new(
+                            0.0,
+                            size.1 * -0.5 + heart_size.1 * -0.5,
+                        ))
+                        .heart_size(heart_size)
+                        .build(),
+                )
                 .with(Enemy::new(enemy_type.clone(), enemy_settings))
                 .with(sprite_render)
                 .with(flipped_opt.unwrap_or(Flipped::None))
@@ -711,9 +722,20 @@ impl LevelLoader {
                 properties[PROPERTY_Z_KEY].as_f32().unwrap_or(ITEM_Z),
             );
 
+            let heart_size = Vector::new(16.0, 16.0);
+
             data.world
                 .create_entity()
-                .with(HeartsContainer::new(item.cost))
+                .with(
+                    HeartsContainer::new()
+                        .hp(item.cost)
+                        .heart_offset(Vector::new(
+                            0.0,
+                            size.1 * 0.5 + heart_size.1 * 0.5,
+                        ))
+                        .heart_size(heart_size)
+                        .build(),
+                )
                 .with(item)
                 .with(transform)
                 .with(Size::from(*size))

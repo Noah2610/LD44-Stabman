@@ -93,6 +93,7 @@ impl<'a> System<'a> for HeartsSystem {
                                     .clone(),
                                 heart_size:    hearts_container.heart_size,
                                 heart_padding: hearts_container.heart_padding,
+                                heart_offset:  hearts_container.heart_offset,
                                 hearts_action: if hp_changed {
                                     HeartsUpdateAction::Recreate
                                 } else {
@@ -114,6 +115,7 @@ impl<'a> System<'a> for HeartsSystem {
                             heart_ids:     hearts_container.heart_ids.clone(),
                             heart_size:    hearts_container.heart_size,
                             heart_padding: hearts_container.heart_padding,
+                            heart_offset:  hearts_container.heart_offset,
                             hearts_action: HeartsUpdateAction::Recreate,
                         },
                     );
@@ -143,7 +145,7 @@ impl<'a> System<'a> for HeartsSystem {
             .iter_mut()
             .for_each(|update_data| {
                 let amount_of_hearts = update_data.hp / 2 + update_data.hp % 2;
-                let amount_of_hearts_halfed = amount_of_hearts as f32 * 0.5;
+                let amount_of_hearts_halfed = (amount_of_hearts / 2) as f32; // as f32 * 0.5;
 
                 let hearts_area_left = update_data.pos.0
                     - amount_of_hearts_halfed
@@ -159,9 +161,16 @@ impl<'a> System<'a> for HeartsSystem {
                 // let len_axis_y = hearts_area.top - hearts_area.bottom;
 
                 let pos_for = |i: u32| {
+                    let left_offset = if len_axis_x > 0.0 {
+                        len_axis_x / amount_of_hearts as f32 * i as f32
+                    } else {
+                        0.0
+                    };
                     (
-                        hearts_area_left + len_axis_x / (i as f32 + 1.0),
-                        hearts_area_y,
+                        hearts_area_left
+                            + left_offset
+                            + update_data.heart_offset.0,
+                        hearts_area_y + update_data.heart_offset.1,
                         update_data.pos.2 + Z_INCREASE,
                     )
                 };
@@ -251,6 +260,7 @@ struct HeartsContainerUpdateData {
     pub heart_ids:     Vec<Index>,
     pub heart_size:    Vector,
     pub heart_padding: Vector,
+    pub heart_offset:  Vector,
     pub hearts_action: HeartsUpdateAction,
 }
 
