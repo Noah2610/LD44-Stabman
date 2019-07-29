@@ -214,6 +214,10 @@ fn build_game_data<'a, 'b>(
         )?
         .with("ingame", LoaderSystem, "loader_system", &[
             "move_entities_system",
+        ])?
+        .with("ingame", HeartsSystem::default(), "hearts_system", &[
+            "move_entities_system",
+            "player_attack_system",
         ])?;
     Ok(game_data)
 }
