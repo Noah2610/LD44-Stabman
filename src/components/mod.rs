@@ -9,6 +9,7 @@ mod hearts_container;
 mod item;
 mod player;
 mod player_attack;
+mod player_heart;
 
 pub mod prelude {
     pub use deathframe::components::prelude::*;
@@ -24,6 +25,7 @@ pub mod prelude {
     pub use super::item::prelude::*;
     pub use super::player::Player;
     pub use super::player_attack::PlayerAttack;
+    pub use super::player_heart::PlayerHeart;
 }
 
 mod component_prelude {

@@ -25,7 +25,7 @@ impl<'a> System<'a> for HealthDisplaySystem {
         WriteStorage<'a, Transform>,
         WriteStorage<'a, Size>,
         WriteStorage<'a, ScaleOnce>,
-        WriteStorage<'a, Heart>,
+        WriteStorage<'a, PlayerHeart>,
         WriteStorage<'a, SpriteRender>,
         WriteStorage<'a, Transparent>,
         WriteStorage<'a, DontDeleteOnNextLevel>,
@@ -57,7 +57,7 @@ impl<'a> System<'a> for HealthDisplaySystem {
         if let Some(health) = health_opt {
             if health == self.previous_health {
                 for (transform, heart) in (&mut transforms, &hearts).join() {
-                    let (x, y, z) = transform_xyz_for(heart.index, offset);
+                    let (x, y, z) = transform_xyz_for(heart.0.index, offset);
                     transform.set_xyz(x, y, z);
                 }
             } else {
@@ -79,12 +79,13 @@ impl<'a> System<'a> for HealthDisplaySystem {
                         &mut transforms,
                         &mut sizes,
                         &mut scale_onces,
-                        &mut hearts,
+                        AnyHeart::Player(&mut hearts),
                         &mut sprite_renders,
                         &mut transparents,
-                        &mut dont_deletes,
+                        Some(&mut dont_deletes),
                         i,
-                        offset,
+                        transform_xyz_for(i, offset),
+                        HEART_SIZE.into(),
                         FULL_HEART_SPRITE_ID,
                     );
                 }
@@ -97,56 +98,19 @@ impl<'a> System<'a> for HealthDisplaySystem {
                         &mut transforms,
                         &mut sizes,
                         &mut scale_onces,
-                        &mut hearts,
+                        AnyHeart::Player(&mut hearts),
                         &mut sprite_renders,
                         &mut transparents,
-                        &mut dont_deletes,
+                        Some(&mut dont_deletes),
                         i,
-                        offset,
+                        transform_xyz_for(i, offset),
+                        HEART_SIZE.into(),
                         HALF_HEART_SPRITE_ID,
                     );
                 }
             }
         }
     }
-}
-
-fn create_heart<'a>(
-    entities: &Entities<'a>,
-    sprite_sheet_handles: &SpriteSheetHandles,
-    transforms: &mut WriteStorage<'a, Transform>,
-    sizes: &mut WriteStorage<'a, Size>,
-    scale_onces: &mut WriteStorage<'a, ScaleOnce>,
-    hearts: &mut WriteStorage<'a, Heart>,
-    sprite_renders: &mut WriteStorage<'a, SpriteRender>,
-    transparents: &mut WriteStorage<'a, Transparent>,
-    dont_deletes: &mut WriteStorage<'a, DontDeleteOnNextLevel>,
-    i: u32,
-    offset: Vector,
-    sprite_id: usize,
-) {
-    let entity = entities.create();
-
-    let mut transform = Transform::default();
-    let (x, y, z) = transform_xyz_for(i, offset);
-    transform.set_xyz(x, y, z);
-
-    transforms.insert(entity, transform).unwrap();
-    sizes.insert(entity, Size::from(HEART_SIZE)).unwrap();
-    scale_onces.insert(entity, ScaleOnce).unwrap();
-    hearts.insert(entity, Heart::new(i)).unwrap();
-    sprite_renders
-        .insert(entity, SpriteRender {
-            sprite_sheet:  sprite_sheet_handles
-                .get("player_hearts")
-                .expect("Spritesheet 'player_hearts' does not exist"),
-            sprite_number: sprite_id,
-        })
-        .unwrap();
-    transparents.insert(entity, Transparent).unwrap();
-    dont_deletes
-        .insert(entity, DontDeleteOnNextLevel::default())
-        .unwrap();
 }
 
 fn transform_xyz_for(i: u32, offset: Vector) -> (f32, f32, f32) {

@@ -142,3 +142,55 @@ impl SidesTouching {
         self.is_touching_top || self.is_touching_bottom
     }
 }
+
+pub enum AnyHeart<'a, 'b> {
+    Normal(&'b mut WriteStorage<'a, Heart>),
+    Player(&'b mut WriteStorage<'a, PlayerHeart>),
+}
+
+pub fn create_heart<'a, 'b>(
+    entities: &Entities<'a>,
+    sprite_sheet_handles: &SpriteSheetHandles,
+    transforms: &mut WriteStorage<'a, Transform>,
+    sizes: &mut WriteStorage<'a, Size>,
+    scale_onces: &mut WriteStorage<'a, ScaleOnce>,
+    any_hearts: AnyHeart<'a, 'b>,
+    sprite_renders: &mut WriteStorage<'a, SpriteRender>,
+    transparents: &mut WriteStorage<'a, Transparent>,
+    dont_deletes_opt: Option<&mut WriteStorage<'a, DontDeleteOnNextLevel>>,
+    i: u32,
+    (x, y, z): (f32, f32, f32),
+    size: Vector,
+    sprite_id: usize,
+) {
+    let entity = entities.create();
+
+    let mut transform = Transform::default();
+    transform.set_xyz(x, y, z);
+
+    transforms.insert(entity, transform).unwrap();
+    sizes.insert(entity, Size::from(size)).unwrap();
+    scale_onces.insert(entity, ScaleOnce).unwrap();
+    match any_hearts {
+        AnyHeart::Normal(hearts) => {
+            hearts.insert(entity, Heart::new(i)).unwrap();
+        }
+        AnyHeart::Player(hearts) => {
+            hearts.insert(entity, PlayerHeart(Heart::new(i))).unwrap();
+        }
+    }
+    sprite_renders
+        .insert(entity, SpriteRender {
+            sprite_sheet:  sprite_sheet_handles
+                .get("player_hearts")
+                .expect("Spritesheet 'player_hearts' does not exist"),
+            sprite_number: sprite_id,
+        })
+        .unwrap();
+    transparents.insert(entity, Transparent).unwrap();
+    if let Some(dont_deletes) = dont_deletes_opt {
+        dont_deletes
+            .insert(entity, DontDeleteOnNextLevel::default())
+            .unwrap();
+    }
+}
