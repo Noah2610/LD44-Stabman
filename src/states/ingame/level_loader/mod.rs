@@ -712,6 +712,7 @@ impl LevelLoader {
 
             data.world
                 .create_entity()
+                .with(HeartsContainer::new(item.cost))
                 .with(item)
                 .with(transform)
                 .with(Size::from(*size))

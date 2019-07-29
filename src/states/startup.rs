@@ -82,6 +82,9 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Startup {
         data.world.add_resource(InputManager::default());
         data.world.add_resource(BulletCreator::default());
 
+        // TODO: remove
+        data.world.register::<HeartsContainer>();
+
         self.initialize_loading_text(&mut data);
     }
 

@@ -5,6 +5,7 @@ mod goal;
 mod harmable;
 mod harmful;
 mod heart;
+mod hearts_container;
 mod item;
 mod player;
 mod player_attack;
@@ -19,6 +20,7 @@ pub mod prelude {
     pub use super::harmable::Harmable;
     pub use super::harmful::Harmful;
     pub use super::heart::Heart;
+    pub use super::hearts_container::HeartsContainer;
     pub use super::item::prelude::*;
     pub use super::player::Player;
     pub use super::player_attack::PlayerAttack;
