@@ -190,14 +190,26 @@ fn build_game_data<'a, 'b>(
             &["player_take_damage_system"],
         )?
         .with("ingame", GoalSystem, "goal_system", &["collision_system"])?
+        .with("ingame", BulletSystem, "bullet_system", &[
+            "collision_system",
+        ])?
+        .with(
+            "ingame",
+            SyncHeartsContainersWithHealthSystem,
+            "sync_hearts_containers_with_health",
+            &[
+                "collision_system",
+                "player_attack_system",
+                "player_take_damage_system",
+                "bullet_system",
+            ],
+        )?
         .with("ingame", EnemyAiSystem, "enemy_ai_system", &[
             "decrease_velocities_system",
             "limit_velocities_system",
             "player_attack_system",
             "collision_system",
-        ])?
-        .with("ingame", BulletSystem, "bullet_system", &[
-            "collision_system",
+            "sync_hearts_containers_with_health",
         ])?
         .with("ingame", BulletCreatorSystem, "bullet_creator_system", &[
             "player_controls_system",
@@ -218,18 +230,7 @@ fn build_game_data<'a, 'b>(
         .with("ingame", HeartsSystem::default(), "hearts_system", &[
             "move_entities_system",
             "player_attack_system",
-        ])?
-        .with(
-            "ingame",
-            SyncHeartsContainersWithHealthSystem,
-            "sync_hearts_containers_with_health",
-            &[
-                "collision_system",
-                "player_attack_system",
-                "player_take_damage_system",
-                "bullet_system",
-            ],
-        )?;
+        ])?;
     Ok(game_data)
 }
 
