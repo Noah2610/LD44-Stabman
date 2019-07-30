@@ -134,19 +134,13 @@ impl<'a> System<'a> for HeartsSystem {
             }
         }
 
-        // let mut heart_ids_to_remove: Vec<Index> = Vec::new();
-        // let mut new_heart_ids_for_hearts_containers: HashMap<
-        //     Index,
-        //     Vec<Index>,
-        // > = HashMap::new();
-
         // Update necessary hearts_containers
         hearts_containers_to_update
             .iter_mut()
             .for_each(|update_data| {
                 let amount_of_hearts =
                     update_data.health / 2 + update_data.health % 2;
-                let amount_of_hearts_halfed = (amount_of_hearts / 2) as f32; // as f32 * 0.5;
+                let amount_of_hearts_halfed = amount_of_hearts as f32 * 0.5;
 
                 let hearts_area_left = update_data.pos.0
                     - amount_of_hearts_halfed
@@ -163,7 +157,10 @@ impl<'a> System<'a> for HeartsSystem {
 
                 let pos_for = |i: u32| {
                     let left_offset = if len_axis_x > 0.0 {
-                        len_axis_x / amount_of_hearts as f32 * i as f32
+                        // len_axis_x / amount_of_hearts as f32 * i as f32
+                        let heart_w = update_data.heart_size.0
+                            + update_data.heart_padding.0;
+                        heart_w * i as f32 + heart_w * 0.5
                     } else {
                         0.0
                     };
@@ -222,7 +219,7 @@ impl<'a> System<'a> for HeartsSystem {
                             );
                             heart_ids.push(entity.id());
                         }
-                        for i in 0 .. half_hearts {
+                        for i in full_hearts .. full_hearts + half_hearts {
                             let pos = pos_for(i);
                             let entity = create_heart(
                                 &entities,
