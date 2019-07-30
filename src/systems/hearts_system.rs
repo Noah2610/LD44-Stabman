@@ -81,8 +81,12 @@ impl<'a> System<'a> for HeartsSystem {
                     let pos_changed =
                         (hearts_container_pos.0, hearts_container_pos.1)
                             != hearts_container_data.pos;
+                    let incorrect_heart_ids = hearts_container.heart_ids.len()
+                        as u32
+                        != hearts_container.health / 2
+                            + hearts_container.health % 2;
 
-                    if hp_changed || pos_changed {
+                    if hp_changed || pos_changed || incorrect_heart_ids {
                         hearts_containers_to_update.push(
                             HeartsContainerUpdateData {
                                 id:            hearts_container_id,
@@ -94,7 +98,9 @@ impl<'a> System<'a> for HeartsSystem {
                                 heart_size:    hearts_container.heart_size,
                                 heart_padding: hearts_container.heart_padding,
                                 heart_offset:  hearts_container.heart_offset,
-                                hearts_action: if hp_changed {
+                                hearts_action: if hp_changed
+                                    || incorrect_heart_ids
+                                {
                                     HeartsUpdateAction::Recreate
                                 } else {
                                     HeartsUpdateAction::MoveTransforms
