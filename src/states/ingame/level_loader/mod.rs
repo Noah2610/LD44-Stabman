@@ -263,31 +263,134 @@ impl LevelLoader {
                 )
             };
 
-            let player = data
-                .world
-                .create_entity()
-                .with(Player::new(settings.player.clone()))
-                .with(transform.clone())
-                .with(sprite_render)
-                .with(Transparent)
-                .with(Velocity::default())
-                // .with(MaxVelocity::from(settings.player.max_velocity)) // TODO
-                .with(DecreaseVelocity::from(settings.player.decr_velocity))
-                .with(size.clone())
-                .with(ScaleOnce)
-                .with(Gravity::from(settings.player.gravity))
-                .with(Solid::new(SolidTag::Player))
-                .with(Collision::new())
-                .with(CheckCollision)
-                .with(Push)
-                .with(animations_container_from_file(
-                    resource("animations/player.ron"),
-                    spritesheet_handle.clone(),
-                ))
-                .with(Flipped::None)
-                .with(Harmable)
-                .build();
-            self.player_id = Some(player.id());
+            let mut player_id = 0;
+            {
+                // TODO
+                use rand::Rng;
+                let mut rng = rand::thread_rng();
+
+                for i in 1 .. 100 {
+                    let mut transform = transform.clone();
+                    let pos = transform.translation();
+                    transform.set_xyz(
+                        pos.x + 16.0 * i as f32,
+                        pos.y + 128.0,
+                        pos.z - 0.01,
+                    );
+                    let size = Size::new(
+                        rng.gen_range(4.0, 96.0),
+                        rng.gen_range(4.0, 192.0),
+                    );
+
+                    let mut settings = settings.player.clone();
+                    settings.max_velocity.0 = Some(rng.gen_range(
+                        50.0,
+                        settings.max_velocity.0.unwrap_or(500.0) * 4.0,
+                    ));
+                    settings.acceleration.0 =
+                        rng.gen_range(10.0, settings.acceleration.0 * 8.0);
+                    settings.jump_strength =
+                        rng.gen_range(100.0, settings.jump_strength * 6.0);
+
+                    settings.gravity = Vector::new(
+                        rng.gen_range(-10.0, 10.0),
+                        rng.gen_range(settings.gravity.1 * 8.0, 10.0),
+                    );
+                    settings.jump_gravity = Vector::new(
+                        rng.gen_range(settings.jump_gravity.0 * 4.0, 10.0),
+                        rng.gen_range(-100.0, 100.0),
+                    );
+                    settings.slide_strength =
+                        rng.gen_range(2.0, settings.slide_strength * 4.0);
+
+                    let mut player = Player::new(settings.clone());
+                    player.items_data.extra_jump.extra_jumps = 10;
+                    player.items_data.wall_jump.can_wall_jump = true;
+                    player.items_data.knockback.has_knockback = true;
+                    player.items_data.knockback.velocity = (200.0, 75.0).into();
+                    player.items_data.bullet_shoot.can_shoot = true;
+                    player.items_data.bullet_shoot.damage = 1;
+                    player.items_data.bullet_shoot.velocity = (
+                        rng.gen_range(10.0, 500.0 * 4.0),
+                        rng.gen_range(-500.0, 500.0),
+                    )
+                        .into();
+                    player.items_data.bullet_shoot.size = (
+                        rng.gen_range(4.0, 16.0 * 8.0),
+                        rng.gen_range(4.0, 16.0 * 8.0),
+                    )
+                        .into();
+                    player.items_data.bullet_shoot.lifetime =
+                        std::time::Duration::from_millis(2500);
+                    player.items_data.dash.dashes = 10;
+                    player.items_data.dash.duration_ms =
+                        rng.gen_range(50, 150 * 4);
+                    player.items_data.dash.velocity = (
+                        rng.gen_range(10.0, 550.0 * 4.0),
+                        rng.gen_range(10.0, 250.0 * 4.0),
+                    )
+                        .into();
+                    player.items_data.thrust.can_thrust = true;
+                    player.items_data.thrust.strength = (
+                        rng.gen_range(-400.0, 400.0 * 4.0),
+                        rng.gen_range(-200.0, 200.0 * 4.0),
+                    )
+                        .into();
+
+                    player_id = data
+                        .world
+                        .create_entity()
+                        .with(player)
+                        .with(transform)
+                        .with(sprite_render.clone())
+                        .with(Transparent)
+                        .with(Velocity::default())
+                        // .with(MaxVelocity::from(settings.player.max_velocity)) // TODO
+                        .with(DecreaseVelocity::from(settings.decr_velocity))
+                        .with(size)
+                        .with(ScaleOnce)
+                        .with(Gravity::from(settings.gravity))
+                        .with(Solid::new(SolidTag::Player))
+                        .with(Collision::new())
+                        .with(CheckCollision)
+                        .with(Push)
+                        .with(animations_container_from_file(
+                            resource("animations/player.ron"),
+                            spritesheet_handle.clone(),
+                        ))
+                        .with(Flipped::None)
+                        .with(Harmable)
+                        .build()
+                        .id();
+                }
+            }
+
+            // let player = data
+            //     .world
+            //     .create_entity()
+            //     .with(Player::new(settings.player.clone()))
+            //     .with(transform.clone())
+            //     .with(sprite_render)
+            //     .with(Transparent)
+            //     .with(Velocity::default())
+            //     // .with(MaxVelocity::from(settings.player.max_velocity)) // TODO
+            //     .with(DecreaseVelocity::from(settings.player.decr_velocity))
+            //     .with(size.clone())
+            //     .with(ScaleOnce)
+            //     .with(Gravity::from(settings.player.gravity))
+            //     .with(Solid::new(SolidTag::Player))
+            //     .with(Collision::new())
+            //     .with(CheckCollision)
+            //     .with(Push)
+            //     .with(animations_container_from_file(
+            //         resource("animations/player.ron"),
+            //         spritesheet_handle.clone(),
+            //     ))
+            //     .with(Flipped::None)
+            //     .with(Harmable)
+            //     .build();
+            // self.player_id = Some(player.id());
+            self.player_id = Some(player_id);
 
             // Create PlayerAttack entity
             data.world
