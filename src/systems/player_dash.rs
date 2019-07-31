@@ -26,10 +26,8 @@ impl<'a> System<'a> for PlayerDashSystem {
         &mut self,
         (time, input_manager, mut players, mut velocities, mut gravities): Self::SystemData,
     ) {
-        if let Some((mut player, mut player_velocity, mut player_gravity_opt)) =
-            (&mut players, &mut velocities, (&mut gravities).maybe())
-                .join()
-                .next()
+        for (mut player, mut player_velocity, mut player_gravity_opt) in
+            (&mut players, &mut velocities, (&mut gravities).maybe()).join()
         {
             self.handle_is_dashing(
                 &time,
