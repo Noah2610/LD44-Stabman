@@ -5,18 +5,17 @@ Settings(
     death_floor: -200.0,
 
     camera: (
-        /// Window size
-        // size:             (1200.0,      800.0),
-        size:             (840.0,      472.0),
+        /// Camera size (zoom level, relative to window size)
+        size:       (840.0, 472.0),
         /// Rectangle in the center of the window, where the camera smoothly scrolls to player;
         /// Outside of this rectangle, the camera instantly snaps to where player is back inside.
         /// Basically, the player can never be outside of this inner rectangle.
-        inner_size:       (420.0,       236.0),
+        inner_size: (420.0, 236.0),
         /// Camera's smooth scroll speed multiplier.
-        base_speed:       (250.0,       250.0),
+        base_speed: (250.0, 250.0),
         /// Pixel padding, in which camera will stop scrolling to player.
         /// The camera will always center within +- these amounts of pixels, (accuracy kinda).
-        deadzone:         (16.0,        16.0),
+        deadzone:   (16.0, 16.0),
     ),
 
     player: (
