@@ -288,9 +288,9 @@ where
 {
     // Ignore blank lines, or lines starting with a `#`.
     const IGNORE_LINES_PATTERN: &str = r"\A\s*(#.*)?\z";
-    // Resolution string in the format `1200x720` (ignoring whitespace).
+    // Resolution string in the format `1280x720` (ignoring whitespace).
     const RESOLUTION_STRING_PATTERN: &str =
-        r"\A\s*(?P<w>\d+)\s*x\s*(?P<h>\d+)\s*\z";
+        r"\A\s*(?P<w>\d+)\s*x\s*(?P<h>\d+)\s*(#.*)?\z";
 
     let ignore_lines_re = Regex::new(IGNORE_LINES_PATTERN).unwrap();
     let resolution_string_re = Regex::new(RESOLUTION_STRING_PATTERN).unwrap();

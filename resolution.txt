@@ -1,0 +1,9 @@
+# You can specify a custom resolution / window size in this file,
+# in the format `WIDTH x HEIGHT` (whitespace is ignored).
+# Any lines starting with the `#` sign are ignored.
+# Here are some resolution presets; to use a preset,
+# un-comment its line by removing the `#` at the beginning of the line.
+
+1280 x 720  # Default resolution; used when no resolution is specified in this file
+
+# TODO: More presets
