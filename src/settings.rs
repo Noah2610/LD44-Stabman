@@ -33,10 +33,10 @@ pub struct Settings {
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsCamera {
-    pub size:       Vector,
-    pub inner_size: Vector,
-    pub base_speed: Vector,
-    pub deadzone:   Vector,
+    pub size_mult:       Vector,
+    pub inner_size_mult: Vector,
+    pub base_speed:      Vector,
+    pub deadzone:        Vector,
 }
 
 #[derive(Clone, Deserialize)]

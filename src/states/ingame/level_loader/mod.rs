@@ -97,7 +97,7 @@ impl LevelLoader {
     }
 
     /// Builds the loaded data using the given `StateData`.
-    pub fn build<T>(&mut self, data: &mut StateData<CustomGameData<T>>) {
+    pub fn build(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
         self.build_player(data);
         self.build_camera(data);
         self.build_tiles(data);
@@ -220,7 +220,10 @@ impl LevelLoader {
         }
     }
 
-    fn build_player<T>(&mut self, data: &mut StateData<CustomGameData<T>>) {
+    fn build_player(
+        &mut self,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
         if let Some(EntityData {
             pos,
             size,
@@ -307,7 +310,10 @@ impl LevelLoader {
         }
     }
 
-    fn build_camera<T>(&mut self, data: &mut StateData<CustomGameData<T>>) {
+    fn build_camera(
+        &mut self,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
         let settings = data.world.settings();
 
         let mut transform = Transform::default();
@@ -321,32 +327,52 @@ impl LevelLoader {
             camera = camera.follow(player_id);
         }
 
+        let window_size = {
+            let dim = data
+                .data
+                .custom
+                .as_ref()
+                .unwrap()
+                .display_config
+                .dimensions
+                .unwrap();
+            (dim.0 as f32, dim.1 as f32)
+        };
+        let size = Vector::new(
+            window_size.0 * settings.camera.size_mult.0,
+            window_size.1 * settings.camera.size_mult.1,
+        );
+        let inner_size = Vector::new(
+            window_size.0 * settings.camera.inner_size_mult.0,
+            window_size.1 * settings.camera.inner_size_mult.1,
+        );
+
         let mut entity_builder = data
             .world
             .create_entity()
             .with(AmethystCamera::from(Projection::orthographic(
-                0.0,                    // Left
-                settings.camera.size.0, // Right
-                0.0,                    // Bottom (!)
-                settings.camera.size.1, // Top    (!)
+                0.0,    // Left
+                size.0, // Right
+                0.0,    // Bottom (!)
+                size.1, // Top    (!)
             )))
             .with(camera.build())
             .with(transform)
-            .with(Size::from(settings.camera.size))
-            .with(InnerSize(Size::from(settings.camera.inner_size)))
+            .with(Size::from(size))
+            .with(InnerSize(Size::from(inner_size)))
             .with(Velocity::default())
             .with(Collision::new());
 
-        if let Some(size) = self.level_size {
+        if let Some(level_size) = self.level_size {
             // NOTE: Offset the values by half of camera's size,
             // because the `ConfineEntitiesSystem` assumes the entity's
             // anchor point is in the center. The Camera is the only
             // entity for which the anchor point is in the bottom left.
             entity_builder = entity_builder.with(Confined::new(Rect {
-                top:    size.1 - settings.camera.size.1 * 0.5,
-                bottom: 0.0 - settings.camera.size.1 * 0.5,
-                left:   0.0 - settings.camera.size.0 * 0.5,
-                right:  size.0 - settings.camera.size.0 * 0.5,
+                top:    level_size.1 - size.1 * 0.5,
+                bottom: 0.0 - size.1 * 0.5,
+                left:   0.0 - size.0 * 0.5,
+                right:  level_size.0 - size.0 * 0.5,
             }));
         }
 
@@ -355,7 +381,10 @@ impl LevelLoader {
         self.camera_id = Some(entity.id());
     }
 
-    fn build_tiles<T>(&mut self, data: &mut StateData<CustomGameData<T>>) {
+    fn build_tiles(
+        &mut self,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
         for EntityData {
             pos,
             size,
@@ -449,7 +478,10 @@ impl LevelLoader {
         }
     }
 
-    fn build_parallax<T>(&mut self, data: &mut StateData<CustomGameData<T>>) {
+    fn build_parallax(
+        &mut self,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
         let bg_dir = resource(BACKGROUNDS_DIR);
 
         for EntityData {
@@ -598,7 +630,10 @@ impl LevelLoader {
         }
     }
 
-    fn build_enemies<T>(&mut self, data: &mut StateData<CustomGameData<T>>) {
+    fn build_enemies(
+        &mut self,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
         let settings = data.world.settings();
 
         for EntityData {
@@ -666,7 +701,7 @@ impl LevelLoader {
         }
     }
 
-    fn build_goal<T>(&mut self, data: &mut StateData<CustomGameData<T>>) {
+    fn build_goal(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
         if let Some(EntityData {
             pos,
             size,
@@ -691,7 +726,10 @@ impl LevelLoader {
         }
     }
 
-    fn build_items<T>(&mut self, data: &mut StateData<CustomGameData<T>>) {
+    fn build_items(
+        &mut self,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
         let settings = data.world.settings();
 
         for EntityData {
