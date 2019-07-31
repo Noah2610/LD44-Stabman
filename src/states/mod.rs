@@ -1,10 +1,11 @@
 mod ingame;
+mod paused;
 mod startup;
-// mod paused;
 // mod main_menu;
 
 pub mod prelude {
     pub use super::ingame::Ingame;
+    pub use super::paused::Paused;
     pub use super::startup::Startup;
     // pub use super::main_menu::MainMenu;
     // pub use super::paused::Paused;

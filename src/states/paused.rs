@@ -1,20 +1,9 @@
-mod level_loader;
-mod level_manager;
-
 use super::state_prelude::*;
-use level_manager::prelude::*;
 
-pub struct Ingame {
-    level_manager: LevelManager,
-}
+#[derive(Default)]
+pub struct Paused {}
 
-impl Ingame {
-    pub fn new(settings: Settings) -> Self {
-        Self {
-            level_manager: LevelManager::new(settings.level_manager),
-        }
-    }
-
+impl Paused {
     fn handle_keys<'a, 'b>(
         &self,
         data: &StateData<CustomGameData<CustomData>>,
@@ -24,17 +13,16 @@ impl Ingame {
         if input_manager.is_up("quit") {
             Some(Trans::Quit)
         } else if input_manager.is_down("pause") {
-            let paused_state = Box::new(Paused::default());
-            Some(Trans::Push(paused_state))
+            Some(Trans::Pop)
         } else {
             None
         }
     }
 }
 
-impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
-    fn on_start(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
-        self.level_manager.load_current_level(&mut data);
+impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Paused {
+    fn on_start(&mut self, data: StateData<CustomGameData<CustomData>>) {
+
     }
 
     fn handle_event(
@@ -56,15 +44,13 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
 
     fn update(
         &mut self,
-        mut data: StateData<CustomGameData<CustomData>>,
+        data: StateData<CustomGameData<CustomData>>,
     ) -> Trans<CustomGameData<'a, 'b, CustomData>, StateEvent> {
-        data.data.update(&data.world, "ingame").unwrap();
+        data.data.update(&data.world, "paused").unwrap();
 
         if let Some(trans) = self.handle_keys(&data) {
             return trans;
         }
-
-        self.level_manager.update(&mut data);
 
         Trans::None
     }
