@@ -1,19 +1,18 @@
 mod ingame;
+mod main_menu;
 mod paused;
 mod startup;
-// mod main_menu;
 
 pub mod prelude {
     pub use super::ingame::Ingame;
+    pub use super::main_menu::MainMenu;
     pub use super::paused::Paused;
     pub use super::startup::Startup;
-    // pub use super::main_menu::MainMenu;
-    // pub use super::paused::Paused;
 }
 
 mod state_prelude {
     pub use amethyst::assets::{AssetStorage, Loader};
-    pub use amethyst::ecs::{Entity, World};
+    pub use amethyst::ecs::{Entities, Entity, World};
     pub use amethyst::input::is_close_requested;
     pub use amethyst::prelude::*;
     pub use amethyst::renderer::{
@@ -30,10 +29,13 @@ mod state_prelude {
         Transparent,
         VirtualKeyCode,
     };
+    pub use amethyst::shrev::{EventChannel, ReaderId};
     pub use amethyst::ui::{
         Anchor as AmethystAnchor,
         TtfFormat,
         UiCreator,
+        UiEvent,
+        UiEventType,
         UiText,
         UiTransform,
     };
@@ -56,7 +58,13 @@ mod state_prelude {
 pub use prelude::*;
 
 mod helpers {
+    use amethyst::ecs::Entity;
     use amethyst::ui::{Anchor as AmethystAnchor, UiTransform};
+
+    pub struct UiElement<T> {
+        pub entity:  Entity,
+        pub ui_type: T,
+    }
 
     /// `UiTransform::new` wrapper
     pub fn new_ui_transform<T: ToString>(

@@ -1,24 +1,24 @@
 use super::state_prelude::*;
-use amethyst::ecs::Write;
+use amethyst::ecs::{Join, ReadStorage, Write};
 
 enum UiType {
-    PauseButton,
+    MainMenu,
 }
 
 #[derive(Default)]
-pub struct Paused {
+pub struct MainMenu {
     ui_elements:  Vec<UiElement<UiType>>,
     ui_reader_id: Option<ReaderId<UiEvent>>,
 }
 
-impl Paused {
+impl MainMenu {
     fn create_ui(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
-        let pause_entity = data.world.exec(|mut creator: UiCreator| {
-            creator.create(resource("ui/paused/pause_button.ron"), ())
+        let main_menu_entity = data.world.exec(|mut creator: UiCreator| {
+            creator.create(resource("ui/main_menu/main_menu.ron"), ())
         });
         self.ui_elements.push(UiElement {
-            entity:  pause_entity,
-            ui_type: UiType::PauseButton,
+            entity:  main_menu_entity,
+            ui_type: UiType::MainMenu,
         });
     }
 
@@ -39,26 +39,43 @@ impl Paused {
         &mut self,
         data: &mut StateData<CustomGameData<CustomData>>,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
-        data.world.exec(|mut events: Write<EventChannel<UiEvent>>| {
-            let reader_id = self
-                .ui_reader_id
-                .get_or_insert_with(|| events.register_reader());
+        let settings = data.world.settings();
 
-            for event in events
-                .read(reader_id)
-                .filter(|e| e.event_type == UiEventType::ClickStop)
-            {
-                for UiElement { entity, ui_type } in self.ui_elements.iter() {
-                    if let UiType::PauseButton = ui_type {
-                        if entity.id() == event.target.id() {
-                            // Clicked pause button
-                            return Some(Trans::Pop);
+        data.world.exec(
+            |(entities, mut events, ui_transforms): (
+                Entities,
+                Write<EventChannel<UiEvent>>,
+                ReadStorage<UiTransform>,
+            )| {
+                let reader_id = self
+                    .ui_reader_id
+                    .get_or_insert_with(|| events.register_reader());
+
+                for event in events
+                    .read(reader_id)
+                    .filter(|e| e.event_type == UiEventType::ClickStop)
+                {
+                    for UiElement { entity, ui_type } in self.ui_elements.iter()
+                    {
+                        if let UiType::MainMenu = ui_type {
+                            if let Some(name) = (&entities, &ui_transforms)
+                                .join()
+                                .find(|(entity, transform)| {
+                                    // TODO: This is stupid... (probably?)
+                                    transform.id == "start_button"
+                                })
+                            {
+                                // Clicked start button - push ingame state
+                                return Some(Trans::Push(Box::new(
+                                    Ingame::new(settings),
+                                )));
+                            }
                         }
                     }
                 }
-            }
-            None
-        })
+                None
+            },
+        )
     }
 
     fn handle_keys<'a, 'b>(
@@ -69,15 +86,15 @@ impl Paused {
 
         if input_manager.is_up("quit") {
             Some(Trans::Quit)
-        } else if input_manager.is_down("pause") {
-            Some(Trans::Pop)
         } else {
             None
         }
     }
 }
 
-impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Paused {
+impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
+    for MainMenu
+{
     fn on_start(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
         self.create_ui(&mut data);
     }
@@ -107,7 +124,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Paused {
         &mut self,
         data: StateData<CustomGameData<CustomData>>,
     ) -> Trans<CustomGameData<'a, 'b, CustomData>, StateEvent> {
-        data.data.update(&data.world, "paused").unwrap();
+        data.data.update(&data.world, "main_menu").unwrap();
 
         if let Some(trans) = self.handle_keys(&data) {
             return trans;

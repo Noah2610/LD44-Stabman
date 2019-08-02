@@ -95,8 +95,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Startup {
         data.data.update(&data.world, "startup").unwrap();
 
         if self.is_finished_loading() {
-            // TODO: Switch to MainMenu
-            let ingame = Box::new(Ingame::new(data.world.settings()));
+            let ingame = Box::new(MainMenu::default());
             // Remove loading text
             if let Some(entity) = self.loading_text_entity {
                 data.world
