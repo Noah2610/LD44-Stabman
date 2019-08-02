@@ -103,6 +103,14 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
         self.delete_ui(&mut data);
     }
 
+    fn on_resume(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
+        self.create_ui(&mut data);
+    }
+
+    fn on_pause(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
+        self.delete_ui(&mut data);
+    }
+
     fn handle_event(
         &mut self,
         _data: StateData<CustomGameData<CustomData>>,
