@@ -81,6 +81,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Startup {
         data.world.add_resource(TextureHandles::default());
         data.world.add_resource(InputManager::default());
         data.world.add_resource(BulletCreator::default());
+        data.world.add_resource(UpdateHealthDisplay::default());
         data.world.add_resource(ToMainMenu::default());
 
         // TODO: remove

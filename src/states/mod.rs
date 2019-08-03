@@ -57,12 +57,15 @@ mod state_prelude {
 
 pub use prelude::*;
 
-mod helpers {
+pub mod helpers {
     use amethyst::ecs::Entity;
     use amethyst::ui::{Anchor as AmethystAnchor, UiTransform};
 
     #[derive(Default)]
     pub struct ToMainMenu(pub bool);
+
+    #[derive(Default)]
+    pub struct UpdateHealthDisplay(pub bool);
 
     /// `UiTransform::new` wrapper
     pub fn new_ui_transform<T: ToString>(

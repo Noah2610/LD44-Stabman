@@ -37,6 +37,8 @@ impl Ingame {
 impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
     fn on_start(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
         self.level_manager.load_current_level(&mut data);
+        // Force update `HealthDisplay`
+        data.world.write_resource::<UpdateHealthDisplay>().0 = true;
     }
 
     fn on_stop(&mut self, data: StateData<CustomGameData<CustomData>>) {

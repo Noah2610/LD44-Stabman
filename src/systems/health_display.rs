@@ -2,6 +2,7 @@ use deathframe::geo::Vector;
 use deathframe::handlers::SpriteSheetHandles;
 
 use super::system_prelude::*;
+use crate::states::helpers::UpdateHealthDisplay;
 
 // TODO: Put these values into settings.ron
 const FULL_HEART_SPRITE_ID: usize = 0;
@@ -20,6 +21,7 @@ impl<'a> System<'a> for HealthDisplaySystem {
     type SystemData = (
         Entities<'a>,
         Read<'a, SpriteSheetHandles>,
+        Write<'a, UpdateHealthDisplay>,
         ReadStorage<'a, Player>,
         ReadStorage<'a, Camera>,
         WriteStorage<'a, Transform>,
@@ -36,6 +38,7 @@ impl<'a> System<'a> for HealthDisplaySystem {
         (
             entities,
             sprite_sheet_handles,
+            mut update_health_display,
             players,
             cameras,
             mut transforms,
@@ -55,13 +58,16 @@ impl<'a> System<'a> for HealthDisplaySystem {
             .unwrap_or(Vector::new(0.0, 0.0));
 
         if let Some(health) = health_opt {
-            if health == self.previous_health {
+            if health == self.previous_health && !update_health_display.0 {
                 for (transform, heart) in (&mut transforms, &hearts).join() {
                     let (x, y, z) = transform_xyz_for(heart.0.index, offset);
                     transform.set_xyz(x, y, z);
                 }
             } else {
                 self.previous_health = health;
+                if update_health_display.0 {
+                    update_health_display.0 = false;
+                }
 
                 // Delete all previous hearts
                 for (entity, _) in (&entities, &hearts).join() {
