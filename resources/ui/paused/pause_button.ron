@@ -43,7 +43,7 @@ Container(
                 id:             "quit_button",
                 x:              256.0,
                 y:              0.0,
-                width:          128.0,
+                width:          192.0,
                 height:         64.0,
                 anchor:         Middle,
                 mouse_reactive: true,

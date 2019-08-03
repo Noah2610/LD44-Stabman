@@ -78,9 +78,11 @@ impl MainMenu {
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
         let input_manager = data.world.input_manager();
 
-        if input_manager.is_up("quit") {
+        // Quit game
+        if input_manager.is_up("decline") {
             Some(Trans::Quit)
-        } else if input_manager.is_up("start_game") {
+        // Start game
+        } else if input_manager.is_up("accept") {
             Some(Trans::Push(Box::new(Ingame::new(data.world.settings()))))
         } else {
             None

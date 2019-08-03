@@ -73,13 +73,15 @@ impl Paused {
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
         let input_manager = data.world.input_manager();
 
-        if input_manager.is_up("quit") {
-            // Return to main menu; it should tell the `Ingame` state, that it
-            // should immediately pop off as well.
+        // Return to main menu; it should tell the `Ingame` state, that it
+        // should immediately pop off as well.
+        if input_manager.is_up("decline") {
             self.to_main_menu = true;
             Some(Trans::Pop)
-        } else if input_manager.is_down("pause") {
-            // Unpause
+        // Unpause / Resume game
+        } else if input_manager.is_down("pause")
+            || input_manager.is_up("accept")
+        {
             Some(Trans::Pop)
         } else {
             None

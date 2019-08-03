@@ -3,9 +3,9 @@
     "player_x": Emulated(pos: Key(D), neg: Key(A)),
   },
   actions: {
-    "quit":                   [ [Key(Escape)], [Key(Q)], [Key(Back)] ],
+    "accept":                 [ [Key(Return)], [Key(Space)] ],
+    "decline":                [ [Key(Escape)], [Key(Q)], [Key(Back)] ],
     "pause":                  [ [Key(P)]],
-    "start_game":             [ [Key(Return)], [Key(Space)] ],
 
     // PLAYER
     "player_jump":            [ [Key(Space)], [Key(K)], [Key(Up)] ],
