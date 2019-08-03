@@ -58,10 +58,7 @@ impl MainMenu {
                                 "start_button" => Some(Trans::Push(Box::new(
                                     Ingame::new(settings.clone()),
                                 ))),
-                                "quit_button" => {
-                                    dbg!("QUIT");
-                                    Some(Trans::Quit)
-                                }
+                                "quit_button" => Some(Trans::Quit),
                                 _ => None,
                             };
                             if trans_opt.is_some() {

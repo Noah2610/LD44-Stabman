@@ -1,23 +1,62 @@
 #![enable(implicit_some)]
-// UiWidget::Button
-Button(
+// UiWidget::Container
+Container(
     // UiTransformBuilder
     transform: (
-        id:             "pause_button",
+        id:             "paused_menu",
         x:              0.0,
         y:              0.0,
-        width:          256.0,
-        height:         128.0,
+        width:          960.0,
+        height:         540.0,
         anchor:         Middle,
-        mouse_reactive: true,
+        mouse_reactive: false,
     ),
-    // UiButtonBuilder
-    button: (
-        text:              "PAUSE",
-        font:              File("resources/fonts/square.ttf", Ttf, ()),
-        font_size:         32.0,
-        normal_text_color: (0.2, 0.2, 1.0, 1.0),
-        hover_text_color:  (0.4, 0.4, 1.0, 1.0),
-        press_text_color:  (0.6, 0.6, 1.0, 1.0),
-    ),
+    // TODO: UiImagePrefab
+    background: None,
+    children: [
+        // UiWidget::Button
+        Button(
+            // UiTransformBuilder
+            transform: (
+                id:             "pause_button",
+                x:              -256.0,
+                y:              0.0,
+                width:          128.0,
+                height:         64.0,
+                anchor:         Middle,
+                mouse_reactive: true,
+            ),
+            // UiButtonBuilder
+            button: (
+                text:              "RESUME",
+                font:              File("resources/fonts/square.ttf", Ttf, ()),
+                font_size:         32.0,
+                normal_text_color: (0.2, 0.2, 1.0, 1.0),
+                hover_text_color:  (0.4, 0.4, 1.0, 1.0),
+                press_text_color:  (0.6, 0.6, 1.0, 1.0),
+            ),
+        ),
+        // UiWidget::Button
+        Button(
+            // UiTransformBuilder
+            transform: (
+                id:             "quit_button",
+                x:              256.0,
+                y:              0.0,
+                width:          128.0,
+                height:         64.0,
+                anchor:         Middle,
+                mouse_reactive: true,
+            ),
+            // UiButtonBuilder
+            button: (
+                text:              "TO MAIN MENU",
+                font:              File("resources/fonts/square.ttf", Ttf, ()),
+                font_size:         32.0,
+                normal_text_color: (0.2, 0.2, 1.0, 1.0),
+                hover_text_color:  (0.4, 0.4, 1.0, 1.0),
+                press_text_color:  (0.6, 0.6, 1.0, 1.0),
+            ),
+        )
+    ],
 )

@@ -1,13 +1,9 @@
 use super::state_prelude::*;
-use amethyst::ecs::Write;
-
-enum UiType {
-    PauseButton,
-}
+use amethyst::ecs::{Join, ReadStorage, Write};
 
 #[derive(Default)]
 pub struct Paused {
-    ui_elements:  Vec<UiElement<UiType>>,
+    ui_elements:  Vec<Entity>,
     ui_reader_id: Option<ReaderId<UiEvent>>,
     to_main_menu: bool,
 }
@@ -17,22 +13,11 @@ impl Paused {
         let pause_entity = data.world.exec(|mut creator: UiCreator| {
             creator.create(resource("ui/paused/pause_button.ron"), ())
         });
-        self.ui_elements.push(UiElement {
-            entity:  pause_entity,
-            ui_type: UiType::PauseButton,
-        });
+        self.ui_elements.push(pause_entity);
     }
 
     fn delete_ui(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
-        data.world
-            .delete_entities(
-                &self
-                    .ui_elements
-                    .iter()
-                    .map(|el| el.entity)
-                    .collect::<Vec<Entity>>(),
-            )
-            .unwrap();
+        data.world.delete_entities(&self.ui_elements).unwrap();
         self.ui_elements.clear();
     }
 
@@ -40,60 +25,62 @@ impl Paused {
         &mut self,
         data: &mut StateData<CustomGameData<CustomData>>,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
-        data.world.exec(|mut events: Write<EventChannel<UiEvent>>| {
-            let reader_id = self
-                .ui_reader_id
-                .get_or_insert_with(|| events.register_reader());
+        data.world.exec(
+            |(entities, mut events, ui_transforms): (
+                Entities,
+                Write<EventChannel<UiEvent>>,
+                ReadStorage<UiTransform>,
+            )| {
+                let reader_id = self
+                    .ui_reader_id
+                    .get_or_insert_with(|| events.register_reader());
 
-            for event in events
-                .read(reader_id)
-                .filter(|e| e.event_type == UiEventType::ClickStop)
-            {
-                for UiElement { entity, ui_type } in self.ui_elements.iter() {
-                    if let UiType::PauseButton = ui_type {
-                        if entity.id() == event.target.id() {
-                            // Clicked pause button
-                            return Some(Trans::Pop);
+                for event in events.read(reader_id) {
+                    if let UiEventType::ClickStop = event.event_type {
+                        let target_entity_id = event.target.id();
+                        if let Some(name) = (&entities, &ui_transforms)
+                            .join()
+                            .find_map(|(entity, transform)| {
+                                if entity.id() == target_entity_id {
+                                    Some(transform.id.as_ref())
+                                } else {
+                                    None
+                                }
+                            })
+                        {
+                            let trans_opt = match name {
+                                "pause_button" => Some(Trans::Pop),
+                                "quit_button" => {
+                                    self.to_main_menu = true;
+                                    Some(Trans::Pop)
+                                }
+                                _ => None,
+                            };
+                            if trans_opt.is_some() {
+                                return trans_opt;
+                            }
                         }
                     }
                 }
-            }
-            None
-        })
+                None
+            },
+        )
     }
 
     fn handle_keys<'a, 'b>(
         &mut self,
         data: &StateData<CustomGameData<CustomData>>,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
-        enum Action {
-            Quit,
-            Pause,
-        }
+        let input_manager = data.world.input_manager();
 
-        if let Some(action) = {
-            let input_manager = data.world.input_manager();
-
-            if input_manager.is_up("quit") {
-                Some(Action::Quit)
-            } else if input_manager.is_down("pause") {
-                Some(Action::Pause)
-            } else {
-                None
-            }
-        } {
-            match action {
-                Action::Quit => {
-                    // Return to main menu; it should tell the `Ingame` state, that it
-                    // should immediately pop off as well.
-                    self.to_main_menu = true;
-                    Some(Trans::Pop)
-                }
-                Action::Pause => {
-                    // Unpause
-                    Some(Trans::Pop)
-                }
-            }
+        if input_manager.is_up("quit") {
+            // Return to main menu; it should tell the `Ingame` state, that it
+            // should immediately pop off as well.
+            self.to_main_menu = true;
+            Some(Trans::Pop)
+        } else if input_manager.is_down("pause") {
+            // Unpause
+            Some(Trans::Pop)
         } else {
             None
         }

@@ -21,30 +21,13 @@ impl Ingame {
         &self,
         data: &StateData<CustomGameData<CustomData>>,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
-        enum Action {
-            Quit,
-            Pause,
-        }
+        let input_manager = data.world.input_manager();
 
-        if let Some(action) = {
-            let input_manager = data.world.input_manager();
-
-            if input_manager.is_up("quit") {
-                Some(Action::Quit)
-            } else if input_manager.is_down("pause") {
-                Some(Action::Pause)
-            } else {
-                None
-            }
-        } {
-            match action {
-                Action::Quit => Some(Trans::Pop),
-                Action::Pause => {
-                    // Pause
-                    let paused_state = Box::new(Paused::default());
-                    Some(Trans::Push(paused_state))
-                }
-            }
+        if input_manager.is_up("quit") {
+            Some(Trans::Pop)
+        } else if input_manager.is_down("pause") {
+            let paused_state = Box::new(Paused::default());
+            Some(Trans::Push(paused_state))
         } else {
             None
         }

@@ -61,11 +61,6 @@ mod helpers {
     use amethyst::ecs::Entity;
     use amethyst::ui::{Anchor as AmethystAnchor, UiTransform};
 
-    pub struct UiElement<T> {
-        pub entity:  Entity,
-        pub ui_type: T,
-    }
-
     #[derive(Default)]
     pub struct ToMainMenu(pub bool);
 
