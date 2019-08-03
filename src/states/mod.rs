@@ -66,6 +66,9 @@ mod helpers {
         pub ui_type: T,
     }
 
+    #[derive(Default)]
+    pub struct ToMainMenu(pub bool);
+
     /// `UiTransform::new` wrapper
     pub fn new_ui_transform<T: ToString>(
         name: T,

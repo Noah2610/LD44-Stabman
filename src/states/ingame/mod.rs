@@ -6,12 +6,14 @@ use level_manager::prelude::*;
 
 pub struct Ingame {
     level_manager: LevelManager,
+    to_main_menu:  bool,
 }
 
 impl Ingame {
     pub fn new(settings: Settings) -> Self {
         Self {
             level_manager: LevelManager::new(settings.level_manager),
+            to_main_menu:  false,
         }
     }
 
@@ -19,13 +21,30 @@ impl Ingame {
         &self,
         data: &StateData<CustomGameData<CustomData>>,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
-        let input_manager = data.world.input_manager();
+        enum Action {
+            Quit,
+            Pause,
+        }
 
-        if input_manager.is_up("quit") {
-            Some(Trans::Quit)
-        } else if input_manager.is_down("pause") {
-            let paused_state = Box::new(Paused::default());
-            Some(Trans::Push(paused_state))
+        if let Some(action) = {
+            let input_manager = data.world.input_manager();
+
+            if input_manager.is_up("quit") {
+                Some(Action::Quit)
+            } else if input_manager.is_down("pause") {
+                Some(Action::Pause)
+            } else {
+                None
+            }
+        } {
+            match action {
+                Action::Quit => Some(Trans::Pop),
+                Action::Pause => {
+                    // Pause
+                    let paused_state = Box::new(Paused::default());
+                    Some(Trans::Push(paused_state))
+                }
+            }
         } else {
             None
         }
@@ -37,6 +56,16 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
         self.level_manager.load_current_level(&mut data);
     }
 
+    fn on_stop(&mut self, data: StateData<CustomGameData<CustomData>>) {
+        // Delete _ALL_ entities before
+        data.world.delete_all();
+    }
+
+    fn on_resume(&mut self, data: StateData<CustomGameData<CustomData>>) {
+        // Return to main menu, if `Paused` state set the resource to do so
+        self.to_main_menu = data.world.read_resource::<ToMainMenu>().0;
+    }
+
     fn handle_event(
         &mut self,
         _data: StateData<CustomGameData<CustomData>>,
@@ -45,7 +74,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
         match &event {
             StateEvent::Window(event) => {
                 if is_close_requested(&event) {
-                    Trans::Quit
+                    Trans::Pop
                 } else {
                     Trans::None
                 }
@@ -58,6 +87,11 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
         &mut self,
         mut data: StateData<CustomGameData<CustomData>>,
     ) -> Trans<CustomGameData<'a, 'b, CustomData>, StateEvent> {
+        // Return to main menu, if necessary
+        if self.to_main_menu {
+            return Trans::Pop;
+        }
+
         data.data.update(&data.world, "ingame").unwrap();
 
         if let Some(trans) = self.handle_keys(&data) {

@@ -9,6 +9,7 @@ enum UiType {
 pub struct Paused {
     ui_elements:  Vec<UiElement<UiType>>,
     ui_reader_id: Option<ReaderId<UiEvent>>,
+    to_main_menu: bool,
 }
 
 impl Paused {
@@ -62,15 +63,37 @@ impl Paused {
     }
 
     fn handle_keys<'a, 'b>(
-        &self,
+        &mut self,
         data: &StateData<CustomGameData<CustomData>>,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
-        let input_manager = data.world.input_manager();
+        enum Action {
+            Quit,
+            Pause,
+        }
 
-        if input_manager.is_up("quit") {
-            Some(Trans::Quit)
-        } else if input_manager.is_down("pause") {
-            Some(Trans::Pop)
+        if let Some(action) = {
+            let input_manager = data.world.input_manager();
+
+            if input_manager.is_up("quit") {
+                Some(Action::Quit)
+            } else if input_manager.is_down("pause") {
+                Some(Action::Pause)
+            } else {
+                None
+            }
+        } {
+            match action {
+                Action::Quit => {
+                    // Return to main menu; it should tell the `Ingame` state, that it
+                    // should immediately pop off as well.
+                    self.to_main_menu = true;
+                    Some(Trans::Pop)
+                }
+                Action::Pause => {
+                    // Unpause
+                    Some(Trans::Pop)
+                }
+            }
         } else {
             None
         }
@@ -84,6 +107,11 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Paused {
 
     fn on_stop(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
         self.delete_ui(&mut data);
+        if self.to_main_menu {
+            // Create a resource to tell the `Ingame` state that
+            // it should immediately pop off as well.
+            data.world.write_resource::<ToMainMenu>().0 = true;
+        }
     }
 
     fn handle_event(

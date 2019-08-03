@@ -5,6 +5,9 @@
   actions: {
     "quit":                   [ [Key(Escape)], [Key(Q)]],
     "pause":                  [ [Key(P)]],
+    "start_game":             [ [Key(Return)], [Key(Space)] ],
+
+    // PLAYER
     "player_jump":            [ [Key(Space)], [Key(K)], [Key(Up)] ],
     "player_attack":          [ ],
     "player_attack_left":     [ [Key(Left)], [Key(H)] ],

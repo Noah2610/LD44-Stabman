@@ -7,7 +7,7 @@ enum UiType {
 
 #[derive(Default)]
 pub struct MainMenu {
-    ui_elements:  Vec<UiElement<UiType>>,
+    ui_elements:  Vec<Entity>,
     ui_reader_id: Option<ReaderId<UiEvent>>,
 }
 
@@ -16,22 +16,11 @@ impl MainMenu {
         let main_menu_entity = data.world.exec(|mut creator: UiCreator| {
             creator.create(resource("ui/main_menu/main_menu.ron"), ())
         });
-        self.ui_elements.push(UiElement {
-            entity:  main_menu_entity,
-            ui_type: UiType::MainMenu,
-        });
+        self.ui_elements.push(main_menu_entity);
     }
 
     fn delete_ui(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
-        data.world
-            .delete_entities(
-                &self
-                    .ui_elements
-                    .iter()
-                    .map(|el| el.entity)
-                    .collect::<Vec<Entity>>(),
-            )
-            .unwrap();
+        data.world.delete_entities(&self.ui_elements).unwrap();
         self.ui_elements.clear();
     }
 
@@ -51,24 +40,32 @@ impl MainMenu {
                     .ui_reader_id
                     .get_or_insert_with(|| events.register_reader());
 
-                for event in events
-                    .read(reader_id)
-                    .filter(|e| e.event_type == UiEventType::ClickStop)
-                {
-                    for UiElement { entity, ui_type } in self.ui_elements.iter()
-                    {
-                        if let UiType::MainMenu = ui_type {
-                            if let Some(name) = (&entities, &ui_transforms)
-                                .join()
-                                .find(|(entity, transform)| {
-                                    // TODO: This is stupid... (probably?)
-                                    transform.id == "start_button"
-                                })
-                            {
-                                // Clicked start button - push ingame state
-                                return Some(Trans::Push(Box::new(
-                                    Ingame::new(settings),
-                                )));
+                for event in events.read(reader_id) {
+                    if let UiEventType::ClickStop = event.event_type {
+                        let target_entity_id = event.target.id();
+                        if let Some(name) = (&entities, &ui_transforms)
+                            .join()
+                            .find_map(|(entity, transform)| {
+                                if entity.id() == target_entity_id {
+                                    Some(transform.id.as_ref())
+                                } else {
+                                    None
+                                }
+                            })
+                        {
+                            dbg!(&name);
+                            let trans_opt = match name {
+                                "start_button" => Some(Trans::Push(Box::new(
+                                    Ingame::new(settings.clone()),
+                                ))),
+                                "quit_button" => {
+                                    dbg!("QUIT");
+                                    Some(Trans::Quit)
+                                }
+                                _ => None,
+                            };
+                            if trans_opt.is_some() {
+                                return trans_opt;
                             }
                         }
                     }
@@ -86,6 +83,8 @@ impl MainMenu {
 
         if input_manager.is_up("quit") {
             Some(Trans::Quit)
+        } else if input_manager.is_up("start_game") {
+            Some(Trans::Push(Box::new(Ingame::new(data.world.settings()))))
         } else {
             None
         }
@@ -97,6 +96,8 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
 {
     fn on_start(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
         self.create_ui(&mut data);
+        // Always set `ToMainMenu` resource to `false`
+        data.world.write_resource::<ToMainMenu>().0 = false;
     }
 
     fn on_stop(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
@@ -105,6 +106,8 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
 
     fn on_resume(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
         self.create_ui(&mut data);
+        // Always set `ToMainMenu` resource to `false`
+        data.world.write_resource::<ToMainMenu>().0 = false;
     }
 
     fn on_pause(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
