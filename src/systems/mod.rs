@@ -7,6 +7,7 @@ mod harmful;
 mod health_display;
 mod hearts_system;
 mod loader;
+mod noclip;
 mod player_attack;
 mod player_controls;
 mod player_dash;
@@ -25,6 +26,7 @@ pub mod prelude {
     pub use super::health_display::HealthDisplaySystem;
     pub use super::hearts_system::HeartsSystem;
     pub use super::loader::LoaderSystem;
+    pub use super::noclip::NoclipSystem;
     pub use super::player_attack::PlayerAttackSystem;
     pub use super::player_controls::PlayerControlsSystem;
     pub use super::player_dash::PlayerDashSystem;

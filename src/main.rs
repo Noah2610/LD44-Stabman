@@ -15,6 +15,7 @@ mod states;
 mod systems;
 mod world_helpers;
 
+use std::env;
 use std::time::Duration;
 
 use amethyst::audio::AudioBundle;
@@ -115,7 +116,7 @@ fn build_game_data<'a, 'b>(
     let fps_bundle = FPSCounterBundle;
 
     // Create GameDataBuilder
-    let game_data = CustomGameData::<CustomData>::new()
+    let mut game_data = CustomGameData::<CustomData>::new()
         .custom(custom_data)
         .dispatcher("startup")?
         .dispatcher("main_menu")?
@@ -131,7 +132,6 @@ fn build_game_data<'a, 'b>(
             "input_system",
         ])?
         .with_core(ScaleSpritesSystem, "scale_sprites_system", &[])?
-        .with_core(DebugSystem::default(), "debug_system", &[])?
         .with("ingame", PlayerControlsSystem, "player_controls_system", &[
         ])?
         .with("ingame", GravitySystem, "gravity_system", &[])?
@@ -239,7 +239,20 @@ fn build_game_data<'a, 'b>(
             "move_entities_system",
             "player_attack_system",
         ])?;
+
+    if is_development_mode() {
+        game_data = game_data
+            .with_core(DebugSystem::default(), "debug_system", &[])?
+            .with("ingame", NoclipSystem::default(), "noclip_system", &[])?;
+    }
+
     Ok(game_data)
+}
+
+fn is_development_mode() -> bool {
+    const DEV_VAR_NAME: &str = "DEV";
+    env::vars()
+        .any(|(key, val)| key == DEV_VAR_NAME && !val.is_empty() && val != "0")
 }
 
 fn get_display_config() -> DisplayConfig {

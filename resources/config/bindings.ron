@@ -1,11 +1,20 @@
 (
   axes:    {
     "player_x": Emulated(pos: Key(D), neg: Key(A)),
+
+    // TODO
+    // NOCLIP (DEVELOPMENT)
+    "noclip_x": Emulated(pos: Key(D), neg: Key(A)),
+    "noclip_y": Emulated(pos: Key(W), neg: Key(S)),
   },
   actions: {
     "accept":                 [ [Key(Return)], [Key(Space)] ],
     "decline":                [ [Key(Escape)], [Key(Q)], [Key(Back)] ],
-    "pause":                  [ [Key(P)]],
+    "pause":                  [ [Key(P)] ],
+
+    // TODO
+    // NOCLIP (DEVELOPMENT)
+    "noclip_toggle":          [ [Key(C)] ],
 
     // PLAYER
     "player_jump":            [ [Key(Space)], [Key(K)], [Key(Up)] ],

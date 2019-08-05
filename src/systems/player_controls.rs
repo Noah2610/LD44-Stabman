@@ -17,6 +17,7 @@ impl<'a> System<'a> for PlayerControlsSystem {
         ReadStorage<'a, Goal>,
         ReadStorage<'a, Item>,
         ReadStorage<'a, HeartsContainer>,
+        ReadStorage<'a, Noclip>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, DecreaseVelocity>,
@@ -41,6 +42,7 @@ impl<'a> System<'a> for PlayerControlsSystem {
             goals,
             items,
             hearts_containers,
+            noclips,
             mut players,
             mut velocities,
             mut decr_velocities,
@@ -63,22 +65,26 @@ impl<'a> System<'a> for PlayerControlsSystem {
             transform,
             velocity,
             decr_velocity,
-            gravity,
+            gravity_opt,
             player_collision,
             animations_container,
             flipped,
+            noclip_opt,
         ) in (
             &mut players,
             &transforms,
             &mut velocities,
             &mut decr_velocities,
-            &mut gravities,
+            (&mut gravities).maybe(),
             &collisions,
             &mut animations_containers,
             &mut flippeds,
+            noclips.maybe(),
         )
             .join()
         {
+            let is_noclip = noclip_opt.is_some();
+
             let sides_touching = SidesTouching::new(
                 &entities,
                 player_collision,
@@ -86,40 +92,46 @@ impl<'a> System<'a> for PlayerControlsSystem {
                 &solids,
             );
 
-            handle_wall_cling(player, velocity, &sides_touching);
+            if !is_noclip {
+                handle_wall_cling(player, velocity, &sides_touching);
 
-            handle_on_ground_and_in_air(
-                player,
-                velocity,
-                decr_velocity,
-                animations_container,
-                &sides_touching,
-            );
-
-            // Kill the player, if they fall below the death_floor
-            if transform.translation().y < settings.death_floor {
-                player.health = 0;
-            }
-
-            if player.in_control && !goal_next_level {
-                handle_move(
-                    dt,
-                    &input_handler,
+                handle_on_ground_and_in_air(
                     player,
                     velocity,
                     decr_velocity,
                     animations_container,
-                    flipped,
                     &sides_touching,
                 );
 
-                handle_jump(
-                    &input_manager,
-                    player,
-                    velocity,
-                    gravity,
-                    &sides_touching,
-                );
+                // Kill the player, if they fall below the death_floor
+                if transform.translation().y < settings.death_floor {
+                    player.health = 0;
+                }
+            }
+
+            if player.in_control && !goal_next_level {
+                if !is_noclip {
+                    handle_move(
+                        dt,
+                        &input_handler,
+                        player,
+                        velocity,
+                        decr_velocity,
+                        animations_container,
+                        flipped,
+                        &sides_touching,
+                    );
+
+                    if let Some(gravity) = gravity_opt {
+                        handle_jump(
+                            &input_manager,
+                            player,
+                            velocity,
+                            gravity,
+                            &sides_touching,
+                        );
+                    }
+                }
 
                 handle_attack(
                     &input_manager,

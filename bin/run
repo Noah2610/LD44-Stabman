@@ -6,6 +6,10 @@
 #     If this variable is not `0` or empty,
 #     then the cargo command is executed in a new terminal.
 #     DEFAULT: ""
+#   $RUN_DEV
+#     If this variable is not `0` or empty,
+#     then the `$DEV` variable is set and passed to the executable.
+#     DEFAULT: "1"
 
 ROOT="$( cd "$(dirname "$0")/.." || exit 1; pwd )"
 [ -f "$ROOT/bin/util.sh" ] || ./bin/download-util.sh || exit 1
@@ -15,10 +19,12 @@ function run {
   check "cargo"
   local cmd="cargo +nightly-2019-03-01 run --features amethyst/nightly $*"
   if should_run_in_terminal; then
-    run_terminal "$cmd"
+    run_terminal "DEV="$RUN_DEV" $cmd"
   else
-    $cmd
+    DEV="$RUN_DEV" $cmd
   fi
 }
+
+[ -z "$RUN_DEV" ] && RUN_DEV="1"
 
 run "$@"

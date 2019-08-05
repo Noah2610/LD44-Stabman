@@ -22,9 +22,9 @@ Settings(
 
     player: (
         /// This is not used currently. Size is read from map.json, so it is defined with Tiled.
-        size:                       (16.0,        32.0),
+        size:                       (16.0, 32.0),
         /// Player velocity acceleration.
-        acceleration:               (1000.0,      0.0),
+        acceleration:               (1000.0, 0.0),
         /// Jump velocity boost.
         jump_strength:              400.0,
         /// Wall jump velocity boost (x, y).
@@ -33,15 +33,15 @@ Settings(
         decr_jump_strength:         200.0,
         /// The minimum amount of y velocity, after killing the jump.
         min_jump_velocity:          50.0,
-        /// Max velocity when.
+        /// Max velocity.
         max_velocity:               (Some(200.0), None),
         /// Decrease velocity by this amount, every frame.
         /// x value has no effect when moving, y value has no effect when falling/jumping.
-        decr_velocity:              (2000.0,      1000.0),
+        decr_velocity:              (2000.0, 1000.0),
         /// Gravitational pull when _not jumping_.
-        gravity:                    (0.0,         -800.0),
+        gravity:                    (0.0, -800.0),
         /// Gravitational pull _when jumping_.
-        jump_gravity:               (0.0,         -350.0),
+        jump_gravity:               (0.0, -350.0),
         /// Velocity when sliding on / clinging to a `Solid` & `Collision` entity.
         slide_strength:             75.0,
         /// Behavior when turning around. Possible values:
