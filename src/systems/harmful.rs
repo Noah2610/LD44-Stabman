@@ -12,6 +12,8 @@ impl<'a> System<'a> for HarmfulSystem {
         ReadStorage<'a, Harmful>,
         ReadStorage<'a, Harmable>,
         ReadStorage<'a, Collision>,
+        ReadStorage<'a, Loadable>,
+        ReadStorage<'a, Loaded>,
         ReadStorage<'a, Invincible>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, Enemy>,
@@ -27,6 +29,8 @@ impl<'a> System<'a> for HarmfulSystem {
             harmfuls,
             harmables,
             collisions,
+            loadables,
+            loadeds,
             invincibles,
             mut players,
             mut enemies,
@@ -36,35 +40,53 @@ impl<'a> System<'a> for HarmfulSystem {
         // TODO: Get knockback value from some component (`Knockback` component?)
         let knockback = settings.harmful.knockback_strength;
 
-        for (entity_harmable, collision_harmable, _, _) in
-            (&entities, &collisions, &harmables, !&invincibles).join()
+        for (
+            entity_harmable,
+            collision_harmable,
+            _,
+            loadable_opt,
+            loaded_opt,
+            _,
+        ) in (
+            &entities,
+            &collisions,
+            &harmables,
+            loadables.maybe(),
+            loadeds.maybe(),
+            !&invincibles,
+        )
+            .join()
         {
-            let harmable_id = entity_harmable.id();
-
-            for (entity_harmful, harmful, transform_harmful) in
-                (&entities, &harmfuls, &transforms).join()
+            if let (None, None) | (Some(_), Some(_)) =
+                (loadable_opt, loaded_opt)
             {
-                let harmful_id = entity_harmful.id();
-                if let Some(collision::Data {
-                    side,
-                    state: collision::State::Enter,
-                    ..
-                }) = collision_harmable.collision_with(harmful_id)
+                let harmable_id = entity_harmable.id();
+
+                for (entity_harmful, harmful, transform_harmful) in
+                    (&entities, &harmfuls, &transforms).join()
                 {
-                    // Deal damage
-                    deal_damage_to(
-                        (
-                            &entities,
-                            &transforms,
-                            &mut players,
-                            &mut enemies,
-                            &mut velocities,
-                        ),
-                        transform_harmful.into(),
-                        harmable_id,
-                        harmful.damage,
-                        knockback,
-                    );
+                    let harmful_id = entity_harmful.id();
+                    if let Some(collision::Data {
+                        side,
+                        state: collision::State::Enter,
+                        ..
+                    }) = collision_harmable.collision_with(harmful_id)
+                    {
+                        // Deal damage
+                        deal_damage_to(
+                            (
+                                &entities,
+                                &transforms,
+                                &mut players,
+                                &mut enemies,
+                                &mut velocities,
+                            ),
+                            transform_harmful.into(),
+                            harmable_id,
+                            harmful.damage,
+                            knockback,
+                        );
+                    }
                 }
             }
         }
