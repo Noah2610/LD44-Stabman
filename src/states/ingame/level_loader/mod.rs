@@ -691,11 +691,13 @@ impl LevelLoader {
                 .with(Harmable)
                 .with(Loadable);
 
-            if enemy_type != EnemyType::Flying
-                && enemy_type != EnemyType::Turret
-            {
-                entity = entity.with(Gravity::from(settings.enemies.gravity));
-            }
+            entity = match enemy_type {
+                EnemyType::Flying => entity,
+                EnemyType::Turret => {
+                    entity.with(NoAttack::default()).with(Invincible::default())
+                }
+                _ => entity.with(Gravity::from(settings.enemies.gravity)),
+            };
 
             entity.build();
         }

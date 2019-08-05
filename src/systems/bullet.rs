@@ -9,6 +9,7 @@ impl<'a> System<'a> for BulletSystem {
         Entities<'a>,
         ReadStorage<'a, Collision>,
         ReadStorage<'a, Solid<SolidTag>>,
+        ReadStorage<'a, Invincible>,
         WriteStorage<'a, Bullet>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, Enemy>,
@@ -21,6 +22,7 @@ impl<'a> System<'a> for BulletSystem {
             entities,
             collisions,
             solids,
+            invincibles,
             mut bullets,
             mut players,
             mut enemies,
@@ -34,8 +36,10 @@ impl<'a> System<'a> for BulletSystem {
         {
             // Collides with player?
             if bullet.owner != BulletOwner::Player {
-                if let Some((player_entity, player, player_velocity)) =
-                    (&entities, &mut players, &mut velocities).join().next()
+                if let Some((player_entity, player, player_velocity, _)) =
+                    (&entities, &mut players, &mut velocities, !&invincibles)
+                        .join()
+                        .next()
                 {
                     let player_id = player_entity.id();
                     if let Some(collision::Data {
@@ -60,6 +64,7 @@ impl<'a> System<'a> for BulletSystem {
                                 },
                                 (Some(knockback), None) => {
                                     None
+                                    // TODO: Cleanup, or add knockback?
                                     // (
                                     //     if player_pos.x > enemy_pos.x {
                                     //         enemy.knockback.0
@@ -89,7 +94,9 @@ impl<'a> System<'a> for BulletSystem {
             }
             // Collides with enemies?
             else if bullet.owner != BulletOwner::Enemy {
-                for (enemy_entity, enemy) in (&entities, &mut enemies).join() {
+                for (enemy_entity, enemy, _) in
+                    (&entities, &mut enemies, !&invincibles).join()
+                {
                     let enemy_id = enemy_entity.id();
                     if let Some(collision::Data {
                         state: collision::State::Enter,
@@ -105,8 +112,8 @@ impl<'a> System<'a> for BulletSystem {
             }
 
             // Collides with solid? (SolidTag::Default)
-            for (solid_entity, solid, _) in
-                (&entities, &solids, !&players).join()
+            for (solid_entity, solid, _, _) in
+                (&entities, &solids, !&players, !&enemies).join()
             {
                 let solid_id = solid_entity.id();
                 if let SolidTag::Default = solid.tag {

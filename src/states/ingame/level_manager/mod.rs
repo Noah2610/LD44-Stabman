@@ -75,10 +75,11 @@ impl LevelManager {
     pub fn update(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
         // Check if the level was beaten
         let (next_level, player_dead) = data.world.exec(
-            |(goals, players, animations_containers): (
+            |(goals, players, animations_containers, invincibles): (
                 ReadStorage<Goal>,
                 ReadStorage<Player>,
                 ReadStorage<AnimationsContainer>,
+                ReadStorage<Invincible>,
             )| {
                 let next_level = (&goals)
                     .join()
@@ -91,14 +92,15 @@ impl LevelManager {
                 //     })
                 // .unwrap_or(false);
 
-                let player_dead = (&players, &animations_containers)
-                    .join()
-                    .find_map(|(player, animations_container)| {
-                        Some(
-                            player.is_dead(), // && animations_container.play_once.is_none(),
-                        )
-                    })
-                    .unwrap_or(false);
+                let player_dead =
+                    (&players, &animations_containers, !&invincibles)
+                        .join()
+                        .find_map(|(player, animations_container, _)| {
+                            Some(
+                                player.is_dead(), // && animations_container.play_once.is_none(),
+                            )
+                        })
+                        .unwrap_or(false);
 
                 (next_level, player_dead)
             },

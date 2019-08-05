@@ -12,6 +12,7 @@ impl<'a> System<'a> for HarmfulSystem {
         ReadStorage<'a, Harmful>,
         ReadStorage<'a, Harmable>,
         ReadStorage<'a, Collision>,
+        ReadStorage<'a, Invincible>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, Enemy>,
         WriteStorage<'a, Velocity>,
@@ -26,6 +27,7 @@ impl<'a> System<'a> for HarmfulSystem {
             harmfuls,
             harmables,
             collisions,
+            invincibles,
             mut players,
             mut enemies,
             mut velocities,
@@ -34,8 +36,8 @@ impl<'a> System<'a> for HarmfulSystem {
         // TODO: Get knockback value from some component (`Knockback` component?)
         let knockback = settings.harmful.knockback_strength;
 
-        for (entity_harmable, collision_harmable, _) in
-            (&entities, &collisions, &harmables).join()
+        for (entity_harmable, collision_harmable, _, _) in
+            (&entities, &collisions, &harmables, !&invincibles).join()
         {
             let harmable_id = entity_harmable.id();
 

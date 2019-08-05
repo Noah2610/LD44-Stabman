@@ -11,6 +11,8 @@ impl<'a> System<'a> for PlayerAttackSystem {
         Entities<'a>,
         ReadStorage<'a, Size>,
         ReadStorage<'a, Collision>,
+        ReadStorage<'a, NoAttack>,
+        ReadStorage<'a, Invincible>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, PlayerAttack>,
         WriteStorage<'a, Transform>,
@@ -28,6 +30,8 @@ impl<'a> System<'a> for PlayerAttackSystem {
             entities,
             sizes,
             collisions,
+            no_attacks,
+            invincibles,
             mut players,
             mut player_attacks,
             mut transforms,
@@ -118,7 +122,7 @@ impl<'a> System<'a> for PlayerAttackSystem {
             if let Some(attack_id) = attack_id_opt {
                 let now = Instant::now();
 
-                for player in (&mut players).join() {
+                for (player, _) in (&mut players, !&no_attacks).join() {
                     for (attack, attack_collision, player_flipped) in
                         (&player_attacks, &collisions, &flippeds).join()
                     {
@@ -128,11 +132,13 @@ impl<'a> System<'a> for PlayerAttackSystem {
                                 enemy,
                                 enemy_velocity,
                                 enemy_animations_container,
+                                _,
                             ) in (
                                 &entities,
                                 &mut enemies,
                                 &mut velocities,
                                 &mut animations_containers,
+                                !&invincibles,
                             )
                                 .join()
                             {

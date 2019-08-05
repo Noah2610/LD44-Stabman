@@ -25,6 +25,7 @@ impl<'a> System<'a> for EnemyAiSystem {
         ReadStorage<'a, Collision>,
         ReadStorage<'a, Solid<SolidTag>>,
         ReadStorage<'a, Gravity>,
+        ReadStorage<'a, Invincible>,
         WriteStorage<'a, Enemy>,
         WriteStorage<'a, EnemyAi>,
         WriteStorage<'a, Player>,
@@ -46,6 +47,7 @@ impl<'a> System<'a> for EnemyAiSystem {
             collisions,
             solids,
             gravities,
+            invincibles,
             mut enemies,
             mut enemy_ais,
             mut players,
@@ -84,6 +86,7 @@ impl<'a> System<'a> for EnemyAiSystem {
                 enemy_collision,
                 enemy_solid,
                 enemy_gravity_opt,
+                enemy_invincible_opt,
             ) in (
                 &entities,
                 &mut enemies,
@@ -97,6 +100,7 @@ impl<'a> System<'a> for EnemyAiSystem {
                 &collisions,
                 &solids,
                 (&gravities).maybe(),
+                invincibles.maybe(),
             )
                 .join()
             {
@@ -170,7 +174,7 @@ impl<'a> System<'a> for EnemyAiSystem {
                 }
 
                 // Handle enemy death
-                if enemy.is_dead() {
+                if enemy_invincible_opt.is_none() && enemy.is_dead() {
                     player_data.player.add_health(enemy.reward);
                     entities.delete(enemy_entity).unwrap();
                 }

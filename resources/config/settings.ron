@@ -140,7 +140,7 @@ Settings(
             affected_by_knockback: true,
         ),
         turret:  (
-            health:                4,
+            health:                0,
             damage:                4,
             reward:                0,
             knockback:             (500.0, 150.0),

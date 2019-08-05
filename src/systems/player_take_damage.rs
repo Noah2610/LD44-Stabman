@@ -8,6 +8,8 @@ impl<'a> System<'a> for PlayerTakeDamageSystem {
         ReadStorage<'a, Transform>,
         ReadStorage<'a, Collision>,
         ReadStorage<'a, Enemy>,
+        ReadStorage<'a, NoAttack>,
+        ReadStorage<'a, Invincible>,
         WriteStorage<'a, Player>,
         WriteStorage<'a, Velocity>,
         WriteStorage<'a, AnimationsContainer>,
@@ -20,6 +22,8 @@ impl<'a> System<'a> for PlayerTakeDamageSystem {
             transforms,
             collisions,
             enemies,
+            no_attacks,
+            invincibles,
             mut players,
             mut velocities,
             mut animations_containers,
@@ -31,18 +35,20 @@ impl<'a> System<'a> for PlayerTakeDamageSystem {
             player_collision,
             player_velocity,
             player_animations_container,
+            _,
         ) in (
             &mut players,
             &transforms,
             &collisions,
             &mut velocities,
             &mut animations_containers,
+            !&invincibles,
         )
             .join()
         {
             if player.in_control {
-                for (enemy_entity, enemy, enemy_transform) in
-                    (&entities, &enemies, &transforms).join()
+                for (enemy_entity, enemy, enemy_transform, _) in
+                    (&entities, &enemies, &transforms, !&no_attacks).join()
                 {
                     let enemy_id = enemy_entity.id();
 
