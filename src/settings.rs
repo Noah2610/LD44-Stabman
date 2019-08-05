@@ -147,6 +147,7 @@ pub struct SettingsItemSettings {
     pub dash_velocity:                Vector,
     pub dash_input_delay_ms:          u64,
     pub dash_double_tap:              bool,
+    pub dash_only_in_air:             bool,
     pub bullet_deflect_damage:        u32,
     pub bullet_deflect_velocity_mult: Vector,
     pub bullet_deflect_lifetime_ms:   u64,

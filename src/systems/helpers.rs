@@ -82,7 +82,7 @@ mod direction {
     }
 }
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 pub struct SidesTouching {
     pub is_touching_top:    bool,
     pub is_touching_bottom: bool,

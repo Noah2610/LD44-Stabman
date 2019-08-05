@@ -200,6 +200,7 @@ Settings(
             dash_velocity:                (550.0, 250.0),
             dash_input_delay_ms:          250,
             dash_double_tap:              false,
+            dash_only_in_air:             true,
             bullet_deflect_damage:        1,
             bullet_deflect_velocity_mult: (-1.0, 1.0),
             bullet_deflect_lifetime_ms:   2_500,
