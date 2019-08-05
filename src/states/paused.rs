@@ -11,7 +11,7 @@ pub struct Paused {
 impl Paused {
     fn create_ui(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
         let pause_entity = data.world.exec(|mut creator: UiCreator| {
-            creator.create(resource("ui/paused/pause_button.ron"), ())
+            creator.create(resource("ui/paused.ron"), ())
         });
         self.ui_elements.push(pause_entity);
     }

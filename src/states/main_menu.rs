@@ -1,10 +1,6 @@
 use super::state_prelude::*;
 use amethyst::ecs::{Join, ReadStorage, Write};
 
-enum UiType {
-    MainMenu,
-}
-
 #[derive(Default)]
 pub struct MainMenu {
     ui_elements:  Vec<Entity>,
@@ -14,7 +10,7 @@ pub struct MainMenu {
 impl MainMenu {
     fn create_ui(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
         let main_menu_entity = data.world.exec(|mut creator: UiCreator| {
-            creator.create(resource("ui/main_menu/main_menu.ron"), ())
+            creator.create(resource("ui/main_menu.ron"), ())
         });
         self.ui_elements.push(main_menu_entity);
     }
