@@ -7,14 +7,16 @@ description = "Our Ludum Dare 44 Game Jam Entry"
 
 [dependencies]
 amethyst   = "0.10.0"
-deathframe = "0.1.1"
+bitflags   = "=1.0.4"  # https://github.com/rust-lang/rust/issues/59134#issuecomment-489430178
 json       = "0.11.13"
-regex      = "1.1.5"
 rand       = "0.6.5"
+regex      = "1.1.5"
 ron        = "0.4.2"
 serde      = { version = "1.0.89", features = ["derive"] }
 serde_json = "1.0.39"
-bitflags   = "=1.0.4"  # https://github.com/rust-lang/rust/issues/59134#issuecomment-489430178
+
+deathframe = "0.1.1"
+climer     = "0.3.1"
 
 [replace]
 "lewton:0.9.4" = { git = "https://github.com/Noah2610/lewton", branch = "custom-0.9.3" } # cross-compilation to windows doesn't work with lewton 0.9.4

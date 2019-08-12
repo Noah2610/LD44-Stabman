@@ -6,6 +6,7 @@ version = "0.2.8"
 dependencies = [
  "amethyst 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "climer 0.3.1",
  "deathframe 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "json 0.11.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.6.5 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -567,6 +568,22 @@ dependencies = [
 name = "claxon"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "climer"
+version = "0.3.1"
+dependencies = [
+ "climer_derive 0.1.0",
+ "regex 1.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "climer_derive"
+version = "0.1.0"
+dependencies = [
+ "quote 0.6.12 (registry+https://github.com/rust-lang/crates.io-index)",
+ "syn 0.15.33 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "clipboard"

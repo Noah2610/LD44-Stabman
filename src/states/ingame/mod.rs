@@ -2,6 +2,7 @@ mod level_loader;
 mod level_manager;
 
 use super::state_prelude::*;
+use climer::timer::Timer;
 use level_manager::prelude::*;
 
 pub struct Ingame {
@@ -40,11 +41,19 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
         self.level_manager.load_current_level(&mut data);
         // Force update `HealthDisplay`
         data.world.write_resource::<UpdateHealthDisplay>().0 = true;
+
+        // Start global timer
+        let mut timers = data.world.write_resource::<Timers>();
+        timers.global.start().unwrap();
     }
 
     fn on_stop(&mut self, data: StateData<CustomGameData<CustomData>>) {
         // Delete _ALL_ entities before
         data.world.delete_all();
+
+        // Stop global timer
+        let mut timers = data.world.write_resource::<Timers>();
+        timers.global.stop().unwrap();
     }
 
     fn on_resume(&mut self, data: StateData<CustomGameData<CustomData>>) {

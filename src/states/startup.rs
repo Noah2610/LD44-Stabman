@@ -83,6 +83,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Startup {
         data.world.add_resource(BulletCreator::default());
         data.world.add_resource(UpdateHealthDisplay::default());
         data.world.add_resource(ToMainMenu::default());
+        data.world.add_resource(Timers::default());
 
         // TODO: remove
         data.world.register::<HeartsContainer>();

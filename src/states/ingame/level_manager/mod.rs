@@ -70,6 +70,10 @@ impl LevelManager {
                 }
             });
         }
+
+        // (Re)start level timer
+        let mut timers = data.world.write_resource::<Timers>();
+        timers.level.start().unwrap();
     }
 
     pub fn update(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
@@ -106,6 +110,12 @@ impl LevelManager {
             },
         );
         if next_level {
+            {
+                let mut timers = data.world.write_resource::<Timers>();
+                timers.level.finish().unwrap();
+                println!("LEVEL TIME: {}", timers.level.time_output());
+            }
+
             if self.has_next_level() {
                 self.set_player_checkpoint(data);
                 self.load_next_level(data, true);
@@ -113,6 +123,9 @@ impl LevelManager {
             } else {
                 // TODO: Beat game!
                 println!("You win!");
+                let mut timers = data.world.write_resource::<Timers>();
+                timers.global.finish().unwrap();
+                println!("GLOBAL TIME: {}", timers.global.time_output());
             }
         } else if player_dead {
             // Restart level and load player from checkoint

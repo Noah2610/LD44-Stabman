@@ -41,6 +41,7 @@ mod state_prelude {
     };
     pub use amethyst::{State, StateData, StateEvent, Trans};
 
+    pub use climer::Timer;
     pub use deathframe::custom_game_data::prelude::*;
     pub use deathframe::handlers::prelude::*;
     pub use deathframe::input_manager::InputManager;
@@ -58,14 +59,20 @@ mod state_prelude {
 pub use prelude::*;
 
 pub mod helpers {
-    use amethyst::ecs::Entity;
     use amethyst::ui::{Anchor as AmethystAnchor, UiTransform};
+    use climer::Timer;
 
     #[derive(Default)]
     pub struct ToMainMenu(pub bool);
 
     #[derive(Default)]
     pub struct UpdateHealthDisplay(pub bool);
+
+    #[derive(Default)]
+    pub struct Timers {
+        pub level:  Timer,
+        pub global: Timer,
+    }
 
     /// `UiTransform::new` wrapper
     pub fn new_ui_transform<T: ToString>(

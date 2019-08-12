@@ -92,6 +92,11 @@ impl Paused {
 impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Paused {
     fn on_start(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
         self.create_ui(&mut data);
+
+        // Pause timers
+        let mut timers = data.world.write_resource::<Timers>();
+        timers.level.pause().unwrap();
+        timers.global.pause().unwrap();
     }
 
     fn on_stop(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
@@ -101,6 +106,11 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Paused {
             // it should immediately pop off as well.
             data.world.write_resource::<ToMainMenu>().0 = true;
         }
+
+        // Resume timers
+        let mut timers = data.world.write_resource::<Timers>();
+        timers.level.resume().unwrap();
+        timers.global.resume().unwrap();
     }
 
     fn handle_event(

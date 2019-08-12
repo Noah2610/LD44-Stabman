@@ -1,9 +1,10 @@
 extern crate amethyst;
+extern crate climer;
 extern crate deathframe;
-#[macro_use]
-extern crate serde;
 extern crate json;
 extern crate regex;
+#[macro_use]
+extern crate serde;
 
 mod bullet_creator;
 mod components;
@@ -36,7 +37,6 @@ use amethyst::renderer::{
 use amethyst::ui::{DrawUi, UiBundle};
 use amethyst::utils::fps_counter::FPSCounterBundle;
 use amethyst::{LogLevelFilter, LoggerConfig};
-use regex::Regex;
 
 use deathframe::custom_game_data::prelude::*;
 use deathframe::handlers::AudioHandles;
@@ -132,6 +132,7 @@ fn build_game_data<'a, 'b>(
             "input_system",
         ])?
         .with_core(ScaleSpritesSystem, "scale_sprites_system", &[])?
+        .with_core(TimerSystem::default(), "timer_system", &[])?
         .with("ingame", PlayerControlsSystem, "player_controls_system", &[
         ])?
         .with("ingame", GravitySystem, "gravity_system", &[])?
