@@ -28,7 +28,7 @@ Settings(
         /// Jump velocity boost.
         jump_strength:              400.0,
         /// Wall jump velocity boost (x, y).
-        wall_jump_strength:         (400.0, 500.0),
+        wall_jump_strength:         (500.0, 500.0),
         /// Amount of velocity to kill when releasing the jump button.
         decr_jump_strength:         200.0,
         /// The minimum amount of y velocity, after killing the jump.
@@ -81,10 +81,12 @@ Settings(
         level_names: (
             "overworld_1.json", "overworld_2.json", "overworld_3.json",
             "graveyard_1.json", "graveyard_2.json", "graveyard_3.json",
+            "graveyard_4.json", "graveyard_5.json",
         ),
         song_names:  (
             "level_1.ogg", "level_2.ogg", "level_3.ogg",
             "level_4.ogg", "level_5.ogg", "level_6.ogg",
+            "level_2.ogg", "level_4.ogg",
         ),
         tile_size:   (32.0, 32.0),
         /// Relative path to the save file
@@ -143,7 +145,7 @@ Settings(
             health:                0,
             damage:                4,
             reward:                0,
-            knockback:             (500.0, 150.0),
+            knockback:             (0.0, 0.0),
             trigger_distance:      (1536.0, 256.0),
             acceleration:          (0.0, 0.0),
             max_velocity:          (None, None),
