@@ -6,7 +6,7 @@ use crate::components::Player;
 
 #[derive(Serialize, Deserialize)]
 pub struct SavefileData {
-    pub player: Player,
+    pub player: Option<Player>,
     pub levels: LevelsData,
 }
 

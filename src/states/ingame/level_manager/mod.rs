@@ -303,27 +303,31 @@ impl LevelManager {
     fn save_to_savefile(&self) {
         let savefile_path = self.savefile_path();
 
-        if let Some(player) = &self.player_checkpoint_opt {
-            let savefile_data = savefile::SavefileData {
-                player: player.clone(),
-                levels: savefile::LevelsData {
-                    current:     self.level_name(),
-                    completed:   self.completed_levels.clone(),
-                    times:       self.level_times.clone(),
-                    global_time: self.global_time,
-                },
-            };
+        let savefile_data = savefile::SavefileData {
+            player: self.player_checkpoint_opt.clone(),
+            levels: savefile::LevelsData {
+                current:     self.level_name(),
+                completed:   self.completed_levels.clone(),
+                times:       self.level_times.clone(),
+                global_time: self.global_time,
+            },
+        };
 
-            match serde_json::to_string(&savefile_data) {
-                Ok(serialized) => {
-                    write_file(savefile_path, serialized).unwrap()
+        match serde_json::to_string(&savefile_data) {
+            Ok(serialized) => {
+                if crate::in_development_mode() {
+                    // Write un-encrypted savefile.json
+                    write_file(savefile_path, serialized).unwrap();
+                } else {
+                    // Write encrypted savefile.json
+                    write_file(savefile_path, encrypt(serialized)).unwrap();
                 }
-                Err(err) => eprintln!(
-                    "Couldn't save savefile data to file, an error occured \
-                     while serializing save data:\n{:#?}",
-                    err
-                ),
             }
+            Err(err) => eprintln!(
+                "Couldn't save savefile data to file, an error occured while \
+                 serializing save data:\n{:#?}",
+                err
+            ),
         }
     }
 
@@ -332,7 +336,7 @@ impl LevelManager {
         if let Ok(json_raw) = read_file(savefile_path) {
             match serde_json::from_str::<savefile::SavefileData>(&json_raw) {
                 Ok(deserialized) => {
-                    self.player_checkpoint_opt = Some(deserialized.player);
+                    self.player_checkpoint_opt = deserialized.player;
                     self.level_index =
                         self.level_index_from_name(deserialized.levels.current);
                     self.completed_levels = deserialized.levels.completed;
@@ -446,4 +450,11 @@ where
         (),
         &world.read_resource(),
     )
+}
+
+fn encrypt<T>(raw: T) -> String
+where
+    T: ToString,
+{
+    raw.to_string()
 }

@@ -241,7 +241,7 @@ fn build_game_data<'a, 'b>(
             "player_attack_system",
         ])?;
 
-    if is_development_mode() {
+    if in_development_mode() {
         game_data = game_data
             .with_core(DebugSystem::default(), "debug_system", &[])?
             .with("ingame", NoclipSystem::default(), "noclip_system", &[])?;
@@ -250,7 +250,7 @@ fn build_game_data<'a, 'b>(
     Ok(game_data)
 }
 
-fn is_development_mode() -> bool {
+pub fn in_development_mode() -> bool {
     const DEV_VAR_NAME: &str = "DEV";
     env::vars()
         .any(|(key, val)| key == DEV_VAR_NAME && !val.is_empty() && val != "0")
