@@ -84,20 +84,20 @@ impl LevelManager {
 
         // Create timer UI (if level has been completed before)
         if self.has_completed_current_level() {
-            self.create_timer_ui(
+            create_timer_ui(
                 TimerType::Level,
                 &self.settings.level_timer_ui,
-                "level_timer",
+                self.level_times.get(&self.level_name()).map(Clone::clone),
                 data,
             );
         }
         if self.has_completed_game()
             && data.world.read_resource::<Timers>().global.is_some()
         {
-            self.create_timer_ui(
+            create_timer_ui(
                 TimerType::Global,
                 &self.settings.global_timer_ui,
-                "global_timer",
+                self.global_time,
                 data,
             );
         }
@@ -153,7 +153,7 @@ impl LevelManager {
                 println!("LEVEL TIME: {}", &time);
                 let time_entry =
                     self.level_times.entry(level_name).or_insert(time);
-                if time > *time_entry {
+                if time < *time_entry {
                     *time_entry = time;
                 }
             }
@@ -352,66 +352,98 @@ impl LevelManager {
         use amethyst::utils::application_root_dir;
         format!("{}/{}", application_root_dir(), self.settings.savefile_path)
     }
+}
 
-    fn create_timer_ui<T>(
-        &self,
-        timer_type: TimerType,
-        ui_settings: &crate::settings::SettingsTimerUi,
-        ui_transform_name: T,
-        data: &mut StateData<CustomGameData<CustomData>>,
-    ) where
-        T: ToString,
-    {
-        let world = &mut data.world;
+fn create_timer_ui(
+    timer_type: TimerType,
+    ui_settings: &crate::settings::SettingsTimerUi,
+    highscore_opt: Option<Time>,
+    data: &mut StateData<CustomGameData<CustomData>>,
+) {
+    let world = &mut data.world;
 
-        // let screen_size = data
-        //     .data
-        //     .custom
-        //     .clone()
-        //     .unwrap()
-        //     .display_config
-        //     .dimensions
-        //     .unwrap_or((1200, 800));
+    let font = get_font(&ui_settings.font_file, &world);
 
-        let font = world.read_resource::<Loader>().load(
-            resource(&ui_settings.font_file),
-            TtfFormat,
-            Default::default(),
-            (),
-            &world.read_resource(),
-        );
+    let size = (512.0, 32.0);
+    let pos = (
+        size.0 * 0.5 + ui_settings.offset.0,
+        -size.1 * 0.5 + ui_settings.offset.1,
+        TIMER_Z,
+    );
 
-        let size = (512.0, 64.0);
+    let ui_transform_name = match timer_type {
+        TimerType::Level => "level_timer",
+        TimerType::Global => "global_timer",
+    };
+    let ui_transform = new_ui_transform(
+        ui_transform_name,
+        AmethystAnchor::TopLeft,
+        (pos.0, pos.1, pos.2, size.0, size.1, 0),
+    );
+
+    let mut ui_text = UiText::new(
+        font,
+        String::new(),
+        ui_settings.font_color,
+        ui_settings.font_size,
+    );
+    ui_text.align = AmethystAnchor::TopLeft;
+
+    let timer_ui = TimerUi {
+        timer_type,
+        text_prefix: ui_settings.text_prefix.clone(),
+    };
+
+    world
+        .create_entity()
+        .with(timer_ui)
+        .with(ui_transform)
+        .with(ui_text)
+        .build();
+
+    if let Some(pb) = highscore_opt {
+        let pb_settings = &ui_settings.highscore;
+
+        let font = get_font(&pb_settings.font_file, &world);
+
         let pos = (
-            size.0 * 0.5 + ui_settings.offset.0,
-            -size.1 * 0.5 + ui_settings.offset.1,
+            pos.0 + pb_settings.offset.0,
+            pos.1 + pb_settings.offset.1,
             TIMER_Z,
         );
 
+        let ui_transform_name = &format!("{}_pb", ui_transform_name);
         let ui_transform = new_ui_transform(
-            &ui_transform_name.to_string(),
+            ui_transform_name,
             AmethystAnchor::TopLeft,
             (pos.0, pos.1, pos.2, size.0, size.1, 0),
         );
 
         let mut ui_text = UiText::new(
             font,
-            String::new(),
-            ui_settings.font_color,
-            ui_settings.font_size,
+            format!("{}{}", pb_settings.text_prefix, pb),
+            pb_settings.font_color,
+            pb_settings.font_size,
         );
         ui_text.align = AmethystAnchor::TopLeft;
 
-        let timer_ui = TimerUi {
-            timer_type,
-            text_prefix: ui_settings.text_prefix.clone(),
-        };
-
         world
             .create_entity()
-            .with(timer_ui)
             .with(ui_transform)
             .with(ui_text)
             .build();
     }
+}
+
+fn get_font<T>(font: T, world: &World) -> amethyst::ui::FontHandle
+where
+    T: ToString,
+{
+    world.read_resource::<Loader>().load(
+        resource(font),
+        TtfFormat,
+        Default::default(),
+        (),
+        &world.read_resource(),
+    )
 }

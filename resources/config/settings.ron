@@ -100,6 +100,13 @@ Settings(
             font_size:   24.0,
             font_color:  [1.0, 1.0, 1.0, 0.5],
             offset:      (8.0, -8.0),
+            highscore: (
+                text_prefix: "Level time PB: ",
+                font_file:   "fonts/undefined-medium.ttf",
+                font_size:   12.0,
+                font_color:  [0.8, 0.8, 0.8, 0.5],
+                offset:      (0.0, -24.0), // Relative to parent timer UI
+            ),
         ),
         /// Settings for the _global_ speedrun timer UI
         global_timer_ui: (
@@ -107,7 +114,14 @@ Settings(
             font_file:   "fonts/undefined-medium.ttf",
             font_size:   16.0,
             font_color:  [1.0, 1.0, 1.0, 0.5],
-            offset:      (8.0, -32.0),
+            offset:      (8.0, -48.0),
+            highscore: (
+                text_prefix: "Game time PB: ",
+                font_file:   "fonts/undefined-medium.ttf",
+                font_size:   12.0,
+                font_color:  [0.8, 0.8, 0.8, 0.5],
+                offset:      (0.0, -16.0), // Relative to parent timer UI
+            ),
         ),
         /// If the time of both timers should be printed to the console, in regular intervals
         timers_print_to_stdout: false,

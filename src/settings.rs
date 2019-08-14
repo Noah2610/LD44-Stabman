@@ -1,7 +1,4 @@
-use std::fmt;
-
 use deathframe::geo::Vector;
-use serde::de::{self, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 pub mod prelude {
@@ -89,6 +86,16 @@ pub struct SettingsLevelManager {
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsTimerUi {
+    pub text_prefix: String,
+    pub font_file:   String,
+    pub font_size:   f32,
+    pub font_color:  [f32; 4],
+    pub offset:      Vector,
+    pub highscore:   SettingsTimerUiHighscore,
+}
+
+#[derive(Clone, Deserialize)]
+pub struct SettingsTimerUiHighscore {
     pub text_prefix: String,
     pub font_file:   String,
     pub font_size:   f32,
