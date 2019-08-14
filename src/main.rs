@@ -1,4 +1,5 @@
 extern crate amethyst;
+extern crate base64;
 extern crate climer;
 extern crate deathframe;
 extern crate json;

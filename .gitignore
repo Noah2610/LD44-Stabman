@@ -6,5 +6,5 @@
 /releases
 /logs
 *.log
-/savefile.json
+/savefile*
 /*.exe

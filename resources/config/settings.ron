@@ -90,7 +90,7 @@ Settings(
         ),
         tile_size: (32.0, 32.0),
         /// Relative path to the save file
-        savefile_path: "savefile.json",
+        savefile_path: "savefile",
         /// Health to replenish on death
         health_increase_on_death: 2,
         /// Settings for the _level_ speedrun timer UI

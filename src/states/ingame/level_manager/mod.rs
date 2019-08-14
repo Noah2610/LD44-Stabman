@@ -320,7 +320,15 @@ impl LevelManager {
                     write_file(savefile_path, serialized).unwrap();
                 } else {
                     // Write encrypted savefile.json
-                    write_file(savefile_path, encrypt(serialized)).unwrap();
+                    match encrypt(serialized) {
+                        Ok(encrypted) => {
+                            write_file(savefile_path, encrypted).unwrap()
+                        }
+                        Err(err) => eprintln!(
+                            "An error occured while encrypting savefile: {}",
+                            err
+                        ),
+                    }
                 }
             }
             Err(err) => eprintln!(
@@ -333,21 +341,50 @@ impl LevelManager {
 
     fn load_from_savefile(&mut self) {
         let savefile_path = self.savefile_path();
-        if let Ok(json_raw) = read_file(savefile_path) {
-            match serde_json::from_str::<savefile::SavefileData>(&json_raw) {
-                Ok(deserialized) => {
-                    self.player_checkpoint_opt = deserialized.player;
-                    self.level_index =
-                        self.level_index_from_name(deserialized.levels.current);
-                    self.completed_levels = deserialized.levels.completed;
-                    self.level_times = deserialized.levels.times;
-                    self.global_time = deserialized.levels.global_time;
+        if let Ok(raw) = read_file(savefile_path) {
+            let mut retry = true;
+            let mut tried_unencrypted = false;
+            let mut json_raw = match decrypt(&raw) {
+                Ok(s) => s,
+                Err(err) => {
+                    eprintln!(
+                        "An error occured while decrypting savefile: \
+                         {}\nTrying to load savefile without decrypting...",
+                        err
+                    );
+                    tried_unencrypted = true;
+                    raw.clone()
                 }
-                Err(err) => eprintln!(
-                    "Couldn't load savefile data from file, an error occured \
-                     while deserializing save data:\n{:#?}",
-                    err
-                ),
+            };
+
+            while retry {
+                match serde_json::from_str::<savefile::SavefileData>(&json_raw)
+                {
+                    Ok(deserialized) => {
+                        retry = false;
+                        self.player_checkpoint_opt = deserialized.player;
+                        self.level_index = self
+                            .level_index_from_name(deserialized.levels.current);
+                        self.completed_levels = deserialized.levels.completed;
+                        self.level_times = deserialized.levels.times;
+                        self.global_time = deserialized.levels.global_time;
+                        eprintln!("Successfully loaded savefile!");
+                    }
+                    Err(err) => {
+                        if tried_unencrypted {
+                            retry = false;
+                            eprintln!(
+                                "Couldn't load savefile data from file, an \
+                                 error occured while deserializing save \
+                                 data:\n{:#?}",
+                                err
+                            );
+                        } else {
+                            tried_unencrypted = true;
+                            json_raw = raw.clone();
+                        }
+                    }
+                }
             }
         }
     }
@@ -452,9 +489,25 @@ where
     )
 }
 
-fn encrypt<T>(raw: T) -> String
+fn encrypt<T>(raw: T) -> Result<String, String>
 where
     T: ToString,
 {
-    raw.to_string()
+    use base64::encode;
+
+    Ok(encode(&raw.to_string()))
+}
+
+fn decrypt<T>(raw: T) -> Result<String, String>
+where
+    T: ToString,
+{
+    use base64::decode;
+
+    match decode(&raw.to_string()) {
+        Ok(decoded) => {
+            String::from_utf8(decoded).map_err(|err| err.to_string())
+        }
+        Err(err) => Err(format!("Error decoding base64: {}", err)),
+    }
 }

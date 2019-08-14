@@ -7,6 +7,7 @@ description = "Our Ludum Dare 44 Game Jam Entry"
 
 [dependencies]
 amethyst   = "0.10.0"
+base64     = "0.10.1"
 bitflags   = "=1.0.4"  # https://github.com/rust-lang/rust/issues/59134#issuecomment-489430178
 json       = "0.11.13"
 rand       = "0.6.5"
