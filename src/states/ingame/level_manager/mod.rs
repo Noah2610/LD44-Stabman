@@ -6,6 +6,8 @@ use amethyst::ecs::{Entities, Join, ReadStorage, WriteStorage};
 use super::super::state_prelude::*;
 use super::level_loader::LevelLoader;
 
+const TIMER_Z: f32 = 10.0;
+
 pub mod prelude {
     pub use super::LevelManager;
 }
@@ -331,14 +333,14 @@ impl LevelManager {
     {
         let world = &mut data.world;
 
-        let screen_size = data
-            .data
-            .custom
-            .clone()
-            .unwrap()
-            .display_config
-            .dimensions
-            .unwrap_or((1200, 800));
+        // let screen_size = data
+        //     .data
+        //     .custom
+        //     .clone()
+        //     .unwrap()
+        //     .display_config
+        //     .dimensions
+        //     .unwrap_or((1200, 800));
 
         let font = world.read_resource::<Loader>().load(
             resource(&ui_settings.font_file),
@@ -348,11 +350,26 @@ impl LevelManager {
             &world.read_resource(),
         );
 
-        let transform = new_ui_transform(
-            &ui_transform_name.to_string(),
-            AmethystAnchor::Middle,
-            (0.0, 0.0, 0.0, screen_size.0 as f32, screen_size.1 as f32, 0),
+        let size = (512.0, 64.0);
+        let pos = (
+            size.0 * 0.5 + ui_settings.offset.0,
+            -size.1 * 0.5 + ui_settings.offset.1,
+            TIMER_Z,
         );
+
+        let ui_transform = new_ui_transform(
+            &ui_transform_name.to_string(),
+            AmethystAnchor::TopLeft,
+            (pos.0, pos.1, pos.2, size.0, size.1, 0),
+        );
+
+        let mut ui_text = UiText::new(
+            font,
+            String::new(),
+            ui_settings.font_color,
+            ui_settings.font_size,
+        );
+        ui_text.align = AmethystAnchor::TopLeft;
 
         let timer_ui = TimerUi {
             timer_type,
@@ -362,13 +379,8 @@ impl LevelManager {
         world
             .create_entity()
             .with(timer_ui)
-            .with(transform)
-            .with(UiText::new(
-                font,
-                String::new(),
-                ui_settings.font_color,
-                ui_settings.font_size,
-            ))
+            .with(ui_transform)
+            .with(ui_text)
             .build();
     }
 }

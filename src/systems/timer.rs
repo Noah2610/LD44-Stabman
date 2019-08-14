@@ -4,7 +4,7 @@ use std::time::{Duration, Instant};
 use super::system_prelude::*;
 use crate::states::helpers::Timers;
 
-const PRINT_DELAY_MS: u64 = 500;
+const PRINT_DELAY_MS: u64 = 100;
 
 pub struct TimerSystem {
     last_print_at: Instant,

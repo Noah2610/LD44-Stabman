@@ -96,19 +96,21 @@ Settings(
         /// Settings for the _level_ speedrun timer UI
         level_timer_ui: (
             text_prefix: "Level time: ",
-            font_file:   "fonts/square.ttf",
-            font_size:   32.0,
-            font_color:  [1.0, 1.0, 1.0, 1.0],
+            font_file:   "fonts/undefined-medium.ttf",
+            font_size:   24.0,
+            font_color:  [1.0, 1.0, 1.0, 0.5],
+            offset:      (8.0, -8.0),
         ),
         /// Settings for the _global_ speedrun timer UI
         global_timer_ui: (
             text_prefix: "Game time: ",
-            font_file:   "fonts/square.ttf",
-            font_size:   32.0,
-            font_color:  [1.0, 1.0, 1.0, 1.0],
+            font_file:   "fonts/undefined-medium.ttf",
+            font_size:   16.0,
+            font_color:  [1.0, 1.0, 1.0, 0.5],
+            offset:      (8.0, -32.0),
         ),
         /// If the time of both timers should be printed to the console, in regular intervals
-        timers_print_to_stdout: true,
+        timers_print_to_stdout: false,
     ),
 
     enemies: (

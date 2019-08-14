@@ -93,6 +93,7 @@ pub struct SettingsTimerUi {
     pub font_file:   String,
     pub font_size:   f32,
     pub font_color:  [f32; 4],
+    pub offset:      Vector,
 }
 
 #[derive(Clone, Deserialize)]
