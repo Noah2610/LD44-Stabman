@@ -381,10 +381,7 @@ impl LevelLoader {
         self.camera_id = Some(entity.id());
     }
 
-    fn build_tiles(
-        &mut self,
-        data: &mut StateData<CustomGameData<CustomData>>,
-    ) {
+    fn build_tiles(&self, data: &mut StateData<CustomGameData<CustomData>>) {
         for EntityData {
             pos,
             size,
@@ -478,10 +475,7 @@ impl LevelLoader {
         }
     }
 
-    fn build_parallax(
-        &mut self,
-        data: &mut StateData<CustomGameData<CustomData>>,
-    ) {
+    fn build_parallax(&self, data: &mut StateData<CustomGameData<CustomData>>) {
         let bg_dir = resource(BACKGROUNDS_DIR);
 
         for EntityData {
@@ -630,10 +624,7 @@ impl LevelLoader {
         }
     }
 
-    fn build_enemies(
-        &mut self,
-        data: &mut StateData<CustomGameData<CustomData>>,
-    ) {
+    fn build_enemies(&self, data: &mut StateData<CustomGameData<CustomData>>) {
         let settings = data.world.settings();
 
         for EntityData {
@@ -703,7 +694,7 @@ impl LevelLoader {
         }
     }
 
-    fn build_goal(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
+    fn build_goal(&self, data: &mut StateData<CustomGameData<CustomData>>) {
         if let Some(EntityData {
             pos,
             size,
@@ -728,10 +719,7 @@ impl LevelLoader {
         }
     }
 
-    fn build_items(
-        &mut self,
-        data: &mut StateData<CustomGameData<CustomData>>,
-    ) {
+    fn build_items(&self, data: &mut StateData<CustomGameData<CustomData>>) {
         let settings = data.world.settings();
 
         for EntityData {

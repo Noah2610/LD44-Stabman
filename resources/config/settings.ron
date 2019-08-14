@@ -77,22 +77,38 @@ Settings(
     ),
 
     level_manager: (
-        levels_dir:  "levels",
+        levels_dir: "levels",
         level_names: (
             "overworld_1.json", "overworld_2.json", "overworld_3.json",
             "graveyard_1.json", "graveyard_2.json", "graveyard_3.json",
             "graveyard_4.json", "graveyard_5.json",
         ),
-        song_names:  (
+        song_names: (
             "level_1.ogg", "level_2.ogg", "level_3.ogg",
             "level_4.ogg", "level_5.ogg", "level_6.ogg",
             "level_2.ogg", "level_4.ogg",
         ),
-        tile_size:   (32.0, 32.0),
+        tile_size: (32.0, 32.0),
         /// Relative path to the save file
         savefile_path: "savefile.json",
         /// Health to replenish on death
         health_increase_on_death: 2,
+        /// Settings for the _level_ speedrun timer UI
+        level_timer_ui: (
+            text_prefix: "Level time: ",
+            font_file:   "fonts/square.ttf",
+            font_size:   32.0,
+            font_color:  [1.0, 1.0, 1.0, 1.0],
+        ),
+        /// Settings for the _global_ speedrun timer UI
+        global_timer_ui: (
+            text_prefix: "Game time: ",
+            font_file:   "fonts/square.ttf",
+            font_size:   32.0,
+            font_color:  [1.0, 1.0, 1.0, 1.0],
+        ),
+        /// If the time of both timers should be printed to the console, in regular intervals
+        timers_print_to_stdout: true,
     ),
 
     enemies: (

@@ -82,6 +82,17 @@ pub struct SettingsLevelManager {
     pub tile_size:                Vector,
     pub savefile_path:            String,
     pub health_increase_on_death: u32,
+    pub level_timer_ui:           SettingsTimerUi,
+    pub global_timer_ui:          SettingsTimerUi,
+    pub timers_print_to_stdout:   bool,
+}
+
+#[derive(Clone, Deserialize)]
+pub struct SettingsTimerUi {
+    pub text_prefix: String,
+    pub font_file:   String,
+    pub font_size:   f32,
+    pub font_color:  [f32; 4],
 }
 
 #[derive(Clone, Deserialize)]

@@ -13,6 +13,7 @@ mod noclip;
 mod player;
 mod player_attack;
 mod player_heart;
+mod timer_ui;
 
 pub mod prelude {
     pub use deathframe::components::prelude::*;
@@ -32,6 +33,7 @@ pub mod prelude {
     pub use super::player::Player;
     pub use super::player_attack::PlayerAttack;
     pub use super::player_heart::PlayerHeart;
+    pub use super::timer_ui::{TimerType, TimerUi};
 }
 
 mod component_prelude {

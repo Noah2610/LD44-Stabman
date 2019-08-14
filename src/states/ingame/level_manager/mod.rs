@@ -13,6 +13,7 @@ pub mod prelude {
 pub struct LevelManager {
     pub settings:          SettingsLevelManager,
     pub level_index:       usize,
+    completed_levels:      Vec<String>,
     player_checkpoint_opt: Option<Player>,
 }
 
@@ -21,6 +22,7 @@ impl LevelManager {
         let mut level_manager = Self {
             settings,
             level_index: 0,
+            completed_levels: Vec::new(),
             player_checkpoint_opt: None,
         };
         level_manager.load_from_file();
@@ -45,14 +47,7 @@ impl LevelManager {
         );
         data.world.maintain();
 
-        let current_level_name = self
-            .settings
-            .level_names
-            .get(self.level_index)
-            .expect(&format!(
-                "Level at index {} does not exist",
-                self.level_index
-            ));
+        let current_level_name = self.level_name();
         let level_filepath = resource(format!(
             "{}/{}",
             self.settings.levels_dir, current_level_name
@@ -72,8 +67,28 @@ impl LevelManager {
         }
 
         // (Re)start level timer
-        let mut timers = data.world.write_resource::<Timers>();
-        timers.level.start().unwrap();
+        {
+            let mut timers = data.world.write_resource::<Timers>();
+            timers.level.start().unwrap();
+        }
+
+        // Create timer UI (if level has been completed before)
+        if self.has_completed_current_level() {
+            self.create_timer_ui(
+                TimerType::Level,
+                &self.settings.level_timer_ui,
+                "level_timer",
+                data,
+            );
+        }
+        if self.has_completed_game() {
+            self.create_timer_ui(
+                TimerType::Global,
+                &self.settings.global_timer_ui,
+                "global_timer",
+                data,
+            );
+        }
     }
 
     pub fn update(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
@@ -114,6 +129,10 @@ impl LevelManager {
                 let mut timers = data.world.write_resource::<Timers>();
                 timers.level.finish().unwrap();
                 println!("LEVEL TIME: {}", timers.level.time_output());
+            }
+            let level_name = self.level_name();
+            if !self.completed_levels.contains(&level_name) {
+                self.completed_levels.push(self.level_name());
             }
 
             if self.has_next_level() {
@@ -219,13 +238,49 @@ impl LevelManager {
         self.load_current_level(data);
     }
 
+    fn has_completed_current_level(&self) -> bool {
+        self.completed_levels.contains(&self.level_name())
+    }
+
+    fn has_completed_game(&self) -> bool {
+        self.completed_levels.len() >= self.settings.level_names.len()
+    }
+
+    fn level_name(&self) -> String {
+        self.settings
+            .level_names
+            .get(self.level_index)
+            .expect(&format!(
+                "Level at index {} doesn't exist",
+                self.level_index
+            ))
+            .to_string()
+    }
+
+    fn level_index_from_name<T>(&self, level_name: T) -> usize
+    where
+        T: ToString,
+    {
+        let level_name = level_name.to_string();
+        self.settings
+            .level_names
+            .iter()
+            .enumerate()
+            .find(|(_, name)| *name == &level_name)
+            .expect(&format!("Level with name '{}' doesn't exist", level_name))
+            .0
+    }
+
     fn save_to_savefile(&self) {
         let savefile_path = self.savefile_path();
 
         if let Some(player) = &self.player_checkpoint_opt {
             let savefile_data = savefile::SavefileData {
-                player:      player.clone(),
-                level_index: self.level_index,
+                player: player.clone(),
+                levels: savefile::LevelsData {
+                    current:   self.level_name(),
+                    completed: self.completed_levels.clone(),
+                },
             };
 
             match serde_json::to_string(&savefile_data) {
@@ -247,7 +302,9 @@ impl LevelManager {
             match serde_json::from_str::<savefile::SavefileData>(&json_raw) {
                 Ok(deserialized) => {
                     self.player_checkpoint_opt = Some(deserialized.player);
-                    self.level_index = deserialized.level_index;
+                    self.level_index =
+                        self.level_index_from_name(deserialized.levels.current);
+                    self.completed_levels = deserialized.levels.completed;
                 }
                 Err(err) => eprintln!(
                     "Couldn't load savefile data from file, an error occured \
@@ -261,5 +318,57 @@ impl LevelManager {
     fn savefile_path(&self) -> String {
         use amethyst::utils::application_root_dir;
         format!("{}/{}", application_root_dir(), self.settings.savefile_path)
+    }
+
+    fn create_timer_ui<T>(
+        &self,
+        timer_type: TimerType,
+        ui_settings: &crate::settings::SettingsTimerUi,
+        ui_transform_name: T,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) where
+        T: ToString,
+    {
+        let world = &mut data.world;
+
+        let screen_size = data
+            .data
+            .custom
+            .clone()
+            .unwrap()
+            .display_config
+            .dimensions
+            .unwrap_or((1200, 800));
+
+        let font = world.read_resource::<Loader>().load(
+            resource(&ui_settings.font_file),
+            TtfFormat,
+            Default::default(),
+            (),
+            &world.read_resource(),
+        );
+
+        let transform = new_ui_transform(
+            &ui_transform_name.to_string(),
+            AmethystAnchor::Middle,
+            (0.0, 0.0, 0.0, screen_size.0 as f32, screen_size.1 as f32, 0),
+        );
+
+        let timer_ui = TimerUi {
+            timer_type,
+            text_prefix: ui_settings.text_prefix.clone(),
+        };
+
+        world
+            .create_entity()
+            .with(timer_ui)
+            .with(transform)
+            .with(UiText::new(
+                font,
+                String::new(),
+                ui_settings.font_color,
+                ui_settings.font_size,
+            ))
+            .build();
     }
 }
