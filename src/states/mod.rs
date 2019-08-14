@@ -71,7 +71,7 @@ pub mod helpers {
     #[derive(Default)]
     pub struct Timers {
         pub level:  Timer,
-        pub global: Timer,
+        pub global: Option<Timer>,
     }
 
     /// `UiTransform::new` wrapper

@@ -2,7 +2,6 @@ mod level_loader;
 mod level_manager;
 
 use super::state_prelude::*;
-use climer::timer::Timer;
 use level_manager::prelude::*;
 
 pub struct Ingame {
@@ -38,13 +37,24 @@ impl Ingame {
 
 impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
     fn on_start(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
+        // Initialize global timer
+        // NOTE: This needs to happen before the level loads
+        if self.level_manager.is_first_level() {
+            let mut timers = data.world.write_resource::<Timers>();
+            let mut timer = climer::Timer::default();
+            timers.global = Some(timer);
+        }
+
         self.level_manager.load_current_level(&mut data);
         // Force update `HealthDisplay`
         data.world.write_resource::<UpdateHealthDisplay>().0 = true;
 
-        // Start global timer
-        let mut timers = data.world.write_resource::<Timers>();
-        timers.global.start().unwrap();
+        // Now start the global timer
+        data.world
+            .write_resource::<Timers>()
+            .global
+            .as_mut()
+            .map(|timer| timer.start().unwrap());
     }
 
     fn on_stop(&mut self, data: StateData<CustomGameData<CustomData>>) {
@@ -53,7 +63,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
 
         // Stop global timer
         let mut timers = data.world.write_resource::<Timers>();
-        timers.global.stop().unwrap();
+        timers.global = None;
     }
 
     fn on_resume(&mut self, data: StateData<CustomGameData<CustomData>>) {

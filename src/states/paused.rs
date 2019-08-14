@@ -96,7 +96,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Paused {
         // Pause timers
         let mut timers = data.world.write_resource::<Timers>();
         timers.level.pause().unwrap();
-        timers.global.pause().unwrap();
+        timers.global.as_mut().map(|timer| timer.pause().unwrap());
     }
 
     fn on_stop(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
@@ -110,7 +110,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Paused {
         // Resume timers
         let mut timers = data.world.write_resource::<Timers>();
         timers.level.resume().unwrap();
-        timers.global.resume().unwrap();
+        timers.global.as_mut().map(|timer| timer.resume().unwrap());
     }
 
     fn handle_event(

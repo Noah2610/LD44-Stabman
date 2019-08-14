@@ -1,5 +1,6 @@
-use amethyst::ui::UiText;
 use std::time::{Duration, Instant};
+
+use amethyst::ui::UiText;
 
 use super::system_prelude::*;
 use crate::states::helpers::Timers;
@@ -25,19 +26,22 @@ impl<'a> System<'a> for TimerSystem {
         let now = Instant::now();
         if now - self.last_print_at >= Duration::from_millis(PRINT_DELAY_MS) {
             timers.level.update().unwrap();
-            timers.global.update().unwrap();
+            timers.global.as_mut().map(|timer| timer.update().unwrap());
 
             if settings.level_manager.timers_print_to_stdout {
                 self.print_to_stdout(&timers);
             }
 
             for (timer_ui, ui_text) in (&timer_uis, &mut ui_texts).join() {
-                let time_output = match timer_ui.timer_type {
-                    TimerType::Level => timers.level.time_output(),
-                    TimerType::Global => timers.global.time_output(),
-                };
-                ui_text.text =
-                    format!("{}{}", timer_ui.text_prefix, time_output);
+                if let Some(time_output) = match timer_ui.timer_type {
+                    TimerType::Level => Some(timers.level.time_output()),
+                    TimerType::Global => {
+                        timers.global.as_ref().map(|timer| timer.time_output())
+                    }
+                } {
+                    ui_text.text =
+                        format!("{}{}", timer_ui.text_prefix, time_output);
+                }
             }
 
             self.last_print_at = now;
@@ -48,7 +52,9 @@ impl<'a> System<'a> for TimerSystem {
 impl TimerSystem {
     fn print_to_stdout(&self, timers: &Timers) {
         println!("level: {}", timers.level.time_output());
-        println!("global: {}", timers.global.time_output());
+        if let Some(global_timer) = timers.global.as_ref() {
+            println!("global: {}", global_timer.time_output());
+        }
     }
 }
 

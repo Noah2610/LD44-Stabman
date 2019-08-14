@@ -1,7 +1,11 @@
 mod savefile;
 
+use std::collections::HashMap;
+
 use amethyst::audio::{output::Output, AudioSink, Source};
 use amethyst::ecs::{Entities, Join, ReadStorage, WriteStorage};
+
+use climer::Time;
 
 use super::super::state_prelude::*;
 use super::level_loader::LevelLoader;
@@ -16,18 +20,22 @@ pub struct LevelManager {
     pub settings:          SettingsLevelManager,
     pub level_index:       usize,
     completed_levels:      Vec<String>,
+    level_times:           HashMap<String, Time>,
+    global_time:           Option<Time>,
     player_checkpoint_opt: Option<Player>,
 }
 
 impl LevelManager {
     pub fn new(settings: SettingsLevelManager) -> Self {
         let mut level_manager = Self {
-            settings,
-            level_index: 0,
-            completed_levels: Vec::new(),
+            settings:              settings,
+            level_index:           0,
+            completed_levels:      Vec::new(),
+            level_times:           HashMap::new(),
+            global_time:           None,
             player_checkpoint_opt: None,
         };
-        level_manager.load_from_file();
+        level_manager.load_from_savefile();
         level_manager
     }
 
@@ -83,7 +91,9 @@ impl LevelManager {
                 data,
             );
         }
-        if self.has_completed_game() {
+        if self.has_completed_game()
+            && data.world.read_resource::<Timers>().global.is_some()
+        {
             self.create_timer_ui(
                 TimerType::Global,
                 &self.settings.global_timer_ui,
@@ -91,6 +101,10 @@ impl LevelManager {
                 data,
             );
         }
+    }
+
+    pub fn is_first_level(&self) -> bool {
+        self.level_index == 0
     }
 
     pub fn update(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
@@ -127,14 +141,21 @@ impl LevelManager {
             },
         );
         if next_level {
+            let level_name = self.level_name();
+            if !self.completed_levels.contains(&level_name) {
+                self.completed_levels.push(self.level_name().clone());
+            }
             {
                 let mut timers = data.world.write_resource::<Timers>();
                 timers.level.finish().unwrap();
-                println!("LEVEL TIME: {}", timers.level.time_output());
-            }
-            let level_name = self.level_name();
-            if !self.completed_levels.contains(&level_name) {
-                self.completed_levels.push(self.level_name());
+
+                let time = timers.level.time_output();
+                println!("LEVEL TIME: {}", &time);
+                let time_entry =
+                    self.level_times.entry(level_name).or_insert(time);
+                if time > *time_entry {
+                    *time_entry = time;
+                }
             }
 
             if self.has_next_level() {
@@ -145,8 +166,14 @@ impl LevelManager {
                 // TODO: Beat game!
                 println!("You win!");
                 let mut timers = data.world.write_resource::<Timers>();
-                timers.global.finish().unwrap();
-                println!("GLOBAL TIME: {}", timers.global.time_output());
+                if let Some(global_timer) = timers.global.as_mut() {
+                    global_timer.finish().unwrap();
+                    let time = global_timer.time_output();
+                    println!("GLOBAL TIME: {}", &time);
+                    self.global_time = Some(time);
+                }
+                // self.set_player_checkpoint(data);
+                self.save_to_savefile();
             }
         } else if player_dead {
             // Restart level and load player from checkoint
@@ -280,8 +307,10 @@ impl LevelManager {
             let savefile_data = savefile::SavefileData {
                 player: player.clone(),
                 levels: savefile::LevelsData {
-                    current:   self.level_name(),
-                    completed: self.completed_levels.clone(),
+                    current:     self.level_name(),
+                    completed:   self.completed_levels.clone(),
+                    times:       self.level_times.clone(),
+                    global_time: self.global_time,
                 },
             };
 
@@ -298,7 +327,7 @@ impl LevelManager {
         }
     }
 
-    fn load_from_file(&mut self) {
+    fn load_from_savefile(&mut self) {
         let savefile_path = self.savefile_path();
         if let Ok(json_raw) = read_file(savefile_path) {
             match serde_json::from_str::<savefile::SavefileData>(&json_raw) {
@@ -307,6 +336,8 @@ impl LevelManager {
                     self.level_index =
                         self.level_index_from_name(deserialized.levels.current);
                     self.completed_levels = deserialized.levels.completed;
+                    self.level_times = deserialized.levels.times;
+                    self.global_time = deserialized.levels.global_time;
                 }
                 Err(err) => eprintln!(
                     "Couldn't load savefile data from file, an error occured \

@@ -16,7 +16,7 @@ serde      = { version = "1.0.89", features = ["derive"] }
 serde_json = "1.0.39"
 
 deathframe = "0.1.1"
-climer     = "0.3.3"
+climer     = { version = "0.3.6", features = ["serialize"] }
 
 [replace]
 "lewton:0.9.4" = { git = "https://github.com/Noah2610/lewton", branch = "custom-0.9.3" } # cross-compilation to windows doesn't work with lewton 0.9.4
