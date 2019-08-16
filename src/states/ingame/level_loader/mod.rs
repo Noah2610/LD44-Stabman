@@ -4,12 +4,12 @@ use std::fs::File;
 use std::io::prelude::*;
 
 use amethyst::ecs::world::Index;
-use deathframe::geo::{Anchor, Rect, Side, Vector};
+use deathframe::geo::{Anchor, Rect, Vector};
 use json::JsonValue;
 
 use super::super::state_prelude::*;
 use crate::components::prelude::*;
-use crate::settings::SettingsLevelManager;
+use crate::settings::SettingsLevelManagerCampaign;
 use crate::solid_tag::SolidTag;
 use helpers::*;
 
@@ -44,7 +44,7 @@ struct EntityData {
 }
 
 pub struct LevelLoader {
-    settings:      SettingsLevelManager,
+    settings:      SettingsLevelManagerCampaign,
     level_size:    Option<Vector>,
     camera_id:     Option<Index>,
     player_id:     Option<Index>,
@@ -57,7 +57,7 @@ pub struct LevelLoader {
 }
 
 impl LevelLoader {
-    pub fn new(settings: SettingsLevelManager) -> Self {
+    pub fn new(settings: SettingsLevelManagerCampaign) -> Self {
         Self {
             settings:      settings,
             level_size:    None,

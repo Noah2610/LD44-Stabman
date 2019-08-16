@@ -49,11 +49,19 @@ impl MainMenu {
                                 }
                             })
                         {
-                            dbg!(&name);
                             let trans_opt = match name {
-                                "start_button" => Some(Trans::Push(Box::new(
-                                    Ingame::new(settings.clone()),
-                                ))),
+                                "start_button_normal" => {
+                                    Some(Trans::Push(Box::new(Ingame::new(
+                                        settings.clone(),
+                                        CampaignType::Normal,
+                                    ))))
+                                }
+                                "start_button_bonus" => {
+                                    Some(Trans::Push(Box::new(Ingame::new(
+                                        settings.clone(),
+                                        CampaignType::Bonus,
+                                    ))))
+                                }
                                 "quit_button" => Some(Trans::Quit),
                                 _ => None,
                             };
@@ -79,7 +87,10 @@ impl MainMenu {
             Some(Trans::Quit)
         // Start game
         } else if input_manager.is_up("accept") {
-            Some(Trans::Push(Box::new(Ingame::new(data.world.settings()))))
+            Some(Trans::Push(Box::new(Ingame::new(
+                data.world.settings(),
+                CampaignType::default(),
+            ))))
         } else {
             None
         }

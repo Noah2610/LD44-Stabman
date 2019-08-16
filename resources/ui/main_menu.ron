@@ -1,6 +1,7 @@
 #![enable(implicit_some)]
 // UiWidget::Container
 Container(
+    /// BACKGROUND
     // UiTransformBuilder
     transform: (
         id:             "main_menu",
@@ -26,12 +27,14 @@ Container(
             ),
         ),
     ),
+
     children: [
+        /// START NORMAL
         // UiWidget::Button
         Button(
             // UiTransformBuilder
             transform: (
-                id:             "start_button",
+                id:             "start_button_normal",
                 x:              -0.34,
                 y:              -0.007,
                 width:          0.08,
@@ -53,6 +56,36 @@ Container(
                 //press_image:       File("resources/textures/ui/button_play.png", Png, (channel: Srgb)),
             ),
         ),
+
+        /// START BONUS
+        // UiWidget::Button
+        Button(
+            // UiTransformBuilder
+            transform: (
+                id:             "start_button_bonus",
+                x:              -0.34,
+                y:              -0.13,
+                width:          0.08,
+                height:         0.08,
+                anchor:         Middle,
+                mouse_reactive: true,
+                percent:        true,
+            ),
+            // UiButtonBuilder
+            button: (
+                text:              "BONUS",
+                font:              File("resources/fonts/square.ttf", Ttf, ()),
+                font_size:         20.0,
+                normal_text_color: (1.0, 1.0, 1.0, 0.5),
+                hover_text_color:  (1.0, 1.0, 1.0, 1.0),
+                press_text_color:  (1.0, 1.0, 1.0, 1.0),
+                // normal_image:      File("resources/textures/ui/bg_main_menu.png", Png, (channel: Srgb)),
+                // hover_image:       File("resources/textures/ui/bg_main_menu.png", Png, (channel: Srgb)),
+                // press_image:       File("resources/textures/ui/bg_main_menu.png", Png, (channel: Srgb)),
+            ),
+        ),
+
+        /// QUIT
         // UiWidget::Button
         Button(
             // UiTransformBuilder

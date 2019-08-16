@@ -10,9 +10,13 @@ pub struct Ingame {
 }
 
 impl Ingame {
-    pub fn new(settings: Settings) -> Self {
+    pub fn new(settings: Settings, campaign: CampaignType) -> Self {
+        let level_manager_settings = match campaign {
+            CampaignType::Normal => settings.level_manager.normal,
+            CampaignType::Bonus => settings.level_manager.bonus,
+        };
         Self {
-            level_manager: LevelManager::new(settings.level_manager),
+            level_manager: LevelManager::new(level_manager_settings),
             to_main_menu:  false,
         }
     }

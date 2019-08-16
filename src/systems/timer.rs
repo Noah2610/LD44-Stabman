@@ -28,7 +28,7 @@ impl<'a> System<'a> for TimerSystem {
             timers.level.update().unwrap();
             timers.global.as_mut().map(|timer| timer.update().unwrap());
 
-            if settings.level_manager.timers_print_to_stdout {
+            if settings.timers_print_to_stdout {
                 self.print_to_stdout(&timers);
             }
 

@@ -9,6 +9,7 @@ pub mod prelude {
     pub use super::SettingsItem;
     pub use super::SettingsItems;
     pub use super::SettingsLevelManager;
+    pub use super::SettingsLevelManagerCampaign;
     pub use super::SettingsLoadingText;
     pub use super::SettingsPlayer;
     pub use super::SettingsPlayerQuickTurnaround;
@@ -16,16 +17,17 @@ pub mod prelude {
 
 #[derive(Clone, Deserialize)]
 pub struct Settings {
-    pub player:        SettingsPlayer,
-    pub camera:        SettingsCamera,
-    pub loading_text:  SettingsLoadingText,
-    pub level_manager: SettingsLevelManager,
-    pub enemies:       SettingsEnemies,
-    pub items:         SettingsItems,
-    pub music_volume:  f32,
-    pub death_floor:   f32,
-    pub harmful:       SettingsHarmful,
-    pub entity_loader: SettingsEntityLoader,
+    pub player:                 SettingsPlayer,
+    pub camera:                 SettingsCamera,
+    pub loading_text:           SettingsLoadingText,
+    pub level_manager:          SettingsLevelManager,
+    pub enemies:                SettingsEnemies,
+    pub items:                  SettingsItems,
+    pub music_volume:           f32,
+    pub death_floor:            f32,
+    pub harmful:                SettingsHarmful,
+    pub entity_loader:          SettingsEntityLoader,
+    pub timers_print_to_stdout: bool,
 }
 
 #[derive(Clone, Deserialize)]
@@ -73,6 +75,12 @@ pub struct SettingsLoadingText {
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsLevelManager {
+    pub normal: SettingsLevelManagerCampaign,
+    pub bonus:  SettingsLevelManagerCampaign,
+}
+
+#[derive(Clone, Deserialize)]
+pub struct SettingsLevelManagerCampaign {
     pub levels_dir:               String,
     pub level_names:              Vec<String>,
     pub song_names:               Vec<String>,
@@ -81,7 +89,6 @@ pub struct SettingsLevelManager {
     pub health_increase_on_death: u32,
     pub level_timer_ui:           SettingsTimerUi,
     pub global_timer_ui:          SettingsTimerUi,
-    pub timers_print_to_stdout:   bool,
 }
 
 #[derive(Clone, Deserialize)]

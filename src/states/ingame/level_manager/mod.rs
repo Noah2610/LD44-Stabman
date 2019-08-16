@@ -17,23 +17,25 @@ pub mod prelude {
 }
 
 pub struct LevelManager {
-    pub settings:          SettingsLevelManager,
+    pub settings:          SettingsLevelManagerCampaign,
     pub level_index:       usize,
+    player_checkpoint_opt: Option<Player>,
     completed_levels:      Vec<String>,
     level_times:           HashMap<String, Time>,
     global_time:           Option<Time>,
-    player_checkpoint_opt: Option<Player>,
+    current_song:          Option<String>,
 }
 
 impl LevelManager {
-    pub fn new(settings: SettingsLevelManager) -> Self {
+    pub fn new(settings: SettingsLevelManagerCampaign) -> Self {
         let mut level_manager = Self {
             settings:              settings,
             level_index:           0,
+            player_checkpoint_opt: None,
             completed_levels:      Vec::new(),
             level_times:           HashMap::new(),
             global_time:           None,
-            player_checkpoint_opt: None,
+            current_song:          None,
         };
         level_manager.load_from_savefile();
         level_manager
@@ -161,7 +163,7 @@ impl LevelManager {
             if self.has_next_level() {
                 self.set_player_checkpoint(data);
                 self.load_next_level(data, true);
-                self.play_current_song(data);
+            // self.play_current_song(data);
             } else {
                 // TODO: Beat game!
                 println!("You win!");
@@ -195,15 +197,17 @@ impl LevelManager {
             data.world.maintain();
             self.save_to_savefile();
         }
-        if data.world.read_resource::<AudioSink>().empty() {
-            self.play_current_song(data);
-        }
+        self.play_current_song(data);
     }
 
     fn play_current_song(
-        &self,
+        &mut self,
         data: &mut StateData<CustomGameData<CustomData>>,
     ) {
+        if !self.should_play_current_song() {
+            return;
+        }
+
         let music_volume = data.world.settings().music_volume;
         let output = data.world.read_resource::<Output>();
         let mut sink = data.world.write_resource::<AudioSink>();
@@ -212,21 +216,32 @@ impl LevelManager {
         sink.set_volume(music_volume);
 
         let asset = data.world.read_resource::<AssetStorage<Source>>();
-        let name =
-            self.settings
-                .song_names
-                .get(self.level_index)
-                .expect(&format!(
-                    "Song name at index {} doesn't exist",
-                    self.level_index
-                ));
+        let name = self.current_song_name();
         let handle = data
             .world
             .write_resource::<AudioHandles>()
             .get_or_load(resource(format!("audio/{}", name)), &data.world);
         if let Some(sound) = asset.get(&handle) {
             sink.append(sound).unwrap();
+            self.current_song = Some(name.to_string());
         }
+    }
+
+    fn should_play_current_song(&self) -> bool {
+        match &self.current_song {
+            None => true,
+            Some(name) => name.as_str() != self.current_song_name(),
+        }
+    }
+
+    fn current_song_name(&self) -> &str {
+        self.settings
+            .song_names
+            .get(self.level_index)
+            .expect(&format!(
+                "Song name at index {} doesn't exist",
+                self.level_index
+            ))
     }
 
     fn set_player_checkpoint(

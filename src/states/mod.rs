@@ -74,6 +74,17 @@ pub mod helpers {
         pub global: Option<Timer>,
     }
 
+    pub enum CampaignType {
+        Normal,
+        Bonus,
+    }
+
+    impl Default for CampaignType {
+        fn default() -> Self {
+            CampaignType::Normal
+        }
+    }
+
     /// `UiTransform::new` wrapper
     pub fn new_ui_transform<T: ToString>(
         name: T,
