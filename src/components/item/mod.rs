@@ -71,7 +71,7 @@ impl Item {
             }
             ItemType::BulletDeflect => {
                 player.items_data.bullet_deflect.can_deflect = true;
-                player.items_data.bullet_deflect.damage =
+                player.items_data.bullet_deflect.damage +=
                     settings.settings.bullet_deflect_damage;
                 player.items_data.bullet_deflect.velocity_mult =
                     settings.settings.bullet_deflect_velocity_mult;
