@@ -191,8 +191,8 @@ pub struct SettingsHarmful {
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsEntityLoader {
-    pub load_distance:                    (f32, f32),
-    pub enemy_load_distance_substraction: (f32, f32),
+    pub load_distance:                  (f32, f32),
+    pub enemy_load_distance_difference: (f32, f32),
 }
 
 impl<'de> Deserialize<'de> for SettingsPlayerQuickTurnaround {

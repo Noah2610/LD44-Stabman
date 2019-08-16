@@ -304,13 +304,14 @@ Settings(
     entity_loader: (
       /// Anything beyond this distance to the player will be unloaded,
       /// anything within this distance to the player will be loaded.
-      load_distance:                    (544.0, 544.0),
-      /// The `load_distance` minus the `enemy_load_distance_substraction`,
+      // load_distance:                    (544.0, 544.0),
+      load_distance:                    (256.0, 256.0),
+      /// The `load_distance` minus the `enemy_load_distance_difference`,
       /// is the load_distance for enemies.
       /// We load enemies from less far away, because if they are loaded
       /// and moving into unloaded solid tiles, then they will get stuck
       /// once the tiles become loaded.
-      enemy_load_distance_substraction: (72.0, 72.0),
+      enemy_load_distance_difference: (72.0, 72.0),
     ),
 
     /// If the time of both timers should be printed to the console, in regular intervals

@@ -8,13 +8,14 @@ enum LoadAction {
 #[derive(Default)]
 pub struct LoaderSystem;
 
-/// Loads loadable entities when they are within a certain range to the player.
+/// Loads loadable entities when they are within a certain range to the camera's center.
 impl<'a> System<'a> for LoaderSystem {
     type SystemData = (
         ReadExpect<'a, Settings>,
         Entities<'a>,
-        ReadStorage<'a, Player>,
+        ReadStorage<'a, Camera>,
         ReadStorage<'a, Transform>,
+        ReadStorage<'a, Size>,
         ReadStorage<'a, Enemy>,
         ReadStorage<'a, Loadable>,
         WriteStorage<'a, Loaded>,
@@ -25,17 +26,21 @@ impl<'a> System<'a> for LoaderSystem {
         (
             settings,
             entities,
-            players,
+            cameras,
             transforms,
+            sizes,
             enemies,
             loadables,
             mut loadeds,
         ): Self::SystemData,
     ) {
-        if let Some((_, player_transform)) =
-            (&players, &transforms).join().next()
+        if let Some((_, camera_transform, camera_size)) =
+            (&cameras, &transforms, &sizes).join().next()
         {
-            let player_pos = player_transform.translation();
+            let camera_pos = {
+                let pos = camera_transform.translation();
+                (pos.x + camera_size.w * 0.5, pos.y + camera_size.h * 0.5)
+            };
             let mut entities_to_load_or_unload: Vec<LoadAction> = Vec::new();
 
             for (entity, transform, _, loaded_opt, enemy_opt) in (
@@ -47,26 +52,38 @@ impl<'a> System<'a> for LoaderSystem {
             )
                 .join()
             {
+                // let load_distance = match enemy_opt {
+                //     None => settings.entity_loader.load_distance,
+                //     Some(_) => (
+                //         settings.entity_loader.load_distance.0
+                //             - settings
+                //                 .entity_loader
+                //                 .enemy_load_distance_substraction
+                //                 .0,
+                //         settings.entity_loader.load_distance.1
+                //             - settings
+                //                 .entity_loader
+                //                 .enemy_load_distance_substraction
+                //                 .1,
+                //     ),
+                // };
                 let load_distance = match enemy_opt {
-                    None => settings.entity_loader.load_distance,
-                    Some(_) => (
-                        settings.entity_loader.load_distance.0
-                            - settings
-                                .entity_loader
-                                .enemy_load_distance_substraction
-                                .0,
-                        settings.entity_loader.load_distance.1
-                            - settings
-                                .entity_loader
-                                .enemy_load_distance_substraction
-                                .1,
-                    ),
+                    None => {
+                        let difference = settings
+                            .entity_loader
+                            .enemy_load_distance_difference;
+                        (
+                            camera_size.w * 0.5 + difference.0,
+                            camera_size.h * 0.5 + difference.1,
+                        )
+                    }
+                    Some(_) => (camera_size.w * 0.5, camera_size.h * 0.5),
                 };
 
                 let pos = transform.translation();
                 let distance = (
-                    (player_pos.x - pos.x).abs(),
-                    (player_pos.y - pos.y).abs(),
+                    (camera_pos.0 - pos.x).abs(),
+                    (camera_pos.1 - pos.y).abs(),
                 );
 
                 match loaded_opt {
