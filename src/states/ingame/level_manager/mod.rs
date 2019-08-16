@@ -204,7 +204,9 @@ impl LevelManager {
         &mut self,
         data: &mut StateData<CustomGameData<CustomData>>,
     ) {
-        if !self.should_play_current_song() {
+        if !data.world.read_resource::<AudioSink>().empty()
+            && !self.should_play_current_song()
+        {
             return;
         }
 

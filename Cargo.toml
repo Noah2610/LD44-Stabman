@@ -6,7 +6,7 @@ edition = "2018"
 description = "Our Ludum Dare 44 Game Jam Entry"
 
 [dependencies]
-amethyst   = "0.10.0"
+amethyst   = { version = "0.10.0", features = ["sdl_controller"] }
 base64     = "0.10.1"
 bitflags   = "=1.0.4"  # https://github.com/rust-lang/rust/issues/59134#issuecomment-489430178
 json       = "0.11.13"
@@ -16,7 +16,7 @@ ron        = "0.4.2"
 serde      = { version = "1.0.89", features = ["derive"] }
 serde_json = "1.0.39"
 
-deathframe = "0.1.1"
+deathframe = "0.1.2"
 climer     = { version = "0.3.6", features = ["serialize"] }
 
 [replace]

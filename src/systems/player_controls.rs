@@ -8,7 +8,6 @@ impl<'a> System<'a> for PlayerControlsSystem {
         Entities<'a>,
         ReadExpect<'a, Settings>,
         Read<'a, Time>,
-        Read<'a, InputHandler<String, String>>,
         Read<'a, InputManager>,
         Write<'a, BulletCreator>,
         ReadStorage<'a, Transform>,
@@ -33,7 +32,6 @@ impl<'a> System<'a> for PlayerControlsSystem {
             entities,
             settings,
             time,
-            input_handler,
             input_manager,
             mut bullet_creator,
             transforms,
@@ -113,7 +111,7 @@ impl<'a> System<'a> for PlayerControlsSystem {
                 if !is_noclip {
                     handle_move(
                         dt,
-                        &input_handler,
+                        &input_manager,
                         player,
                         velocity,
                         decr_velocity,
@@ -200,7 +198,7 @@ fn handle_wall_cling(
 
 fn handle_move(
     dt: f32,
-    input_handler: &InputHandler<String, String>,
+    input_manager: &InputManager,
     player: &Player,
     velocity: &mut Velocity,
     decr_velocity: &mut DecreaseVelocity,
@@ -208,7 +206,11 @@ fn handle_move(
     flipped: &mut Flipped,
     sides_touching: &SidesTouching,
 ) {
-    if let Some(x) = input_handler.axis_value("player_x") {
+    const PLAYER_X_AXIS_ID_PREFIX: &str = "player_x";
+
+    if let Some(x) = input_manager.axis_value_find(|(id, &value)| {
+        id.starts_with(PLAYER_X_AXIS_ID_PREFIX) && value != 0.0
+    }) {
         use crate::settings::SettingsPlayerQuickTurnaround as QTA;
 
         let x = x as f32;
@@ -239,7 +241,8 @@ fn handle_move(
             } else {
                 player.air_acceleration.0
             } * dt)
-                * x_sign; // TODO: Maybe don't use the sign? Might work well with controller axis inputs.
+                * x; // TODO: Maybe don't use the sign? Might work well with controller axis inputs.
+                     // * x_sign; // TODO: Maybe don't use the sign? Might work well with controller axis inputs.
 
             // Increase velocity with a maximum
             velocity
@@ -264,12 +267,6 @@ fn handle_move(
                 decr_velocity.dont_decrease_x_when_neg();
             }
 
-            // Is standing on solid
-            if sides_touching.is_touching_bottom {
-                // Set walking animation
-                animations_container.set("walking");
-            }
-
             // Flip animation
             if !player.is_attacking {
                 if flipped == &Flipped::Horizontal && x > 0.0 {
@@ -278,12 +275,15 @@ fn handle_move(
                     *flipped = Flipped::Horizontal;
                 }
             }
+        }
+    }
+
+    // Is standing on solid
+    if sides_touching.is_touching_bottom {
+        if velocity.x == 0.0 {
+            animations_container.set("idle");
         } else {
-            // Is standing on solid
-            if sides_touching.is_touching_bottom {
-                // Standing still - set idle animation
-                animations_container.set("idle");
-            }
+            animations_container.set("walking");
         }
     }
 }
