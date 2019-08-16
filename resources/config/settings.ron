@@ -86,9 +86,9 @@ Settings(
                 "graveyard_4.json", "graveyard_5.json", "graveyard_6.json", "graveyard_7.json",
             ),
             song_names: (
-                "level_1.ogg", "level_2.ogg", "level_3.ogg",
-                "level_4.ogg", "level_5.ogg", "level_6.ogg",
-                "level_4.ogg", "level_5.ogg", "level_6.ogg", "level_4.ogg",
+                "level_1.ogg", "level_1.ogg", "level_1.ogg",
+                "level_2.ogg", "level_2.ogg", "level_3.ogg",
+                "level_3.ogg", "level_4.ogg", "level_5.ogg", "level_6.ogg",
             ),
             tile_size: (32.0, 32.0),
             /// Relative path to the save file
@@ -201,9 +201,9 @@ Settings(
             affected_by_knockback: true,
         ),
         flying:  (
-            health:                2,
+            health:                3,
             damage:                4,
-            reward:                1,
+            reward:                2,
             knockback:             (400.0, 150.0),
             trigger_distance:      (256.0, 192.0),
             acceleration:          (500.0, 100.0),

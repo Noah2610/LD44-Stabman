@@ -27,10 +27,7 @@ impl Ingame {
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
         let input_manager = data.world.input_manager();
 
-        // Return to main menu
-        if input_manager.is_up("decline") {
-            Some(Trans::Pop)
-        } else if input_manager.is_down("pause") {
+        if input_manager.is_down("pause") {
             let paused_state = Box::new(Paused::default());
             Some(Trans::Push(paused_state))
         } else {
