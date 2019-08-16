@@ -14,7 +14,17 @@ Container(
     ),
     // TODO: UiImagePrefab
     background: (
-        image: File("resources/textures/bg/overworld_4.png", Png, (channel: Srgb)),
+        image: File(
+            "resources/textures/ui/bg_main_menu.png",
+            Png,
+            (
+                channel: Srgb,
+                sampler: (
+                    filter: Scale,
+                    wrap_mode: (Clamp, Clamp, Clamp),
+                )
+            ),
+        ),
     ),
     children: [
         // UiWidget::Button
@@ -22,24 +32,25 @@ Container(
             // UiTransformBuilder
             transform: (
                 id:             "start_button",
-                x:              128.0,
-                y:              0.0,
-                width:          64.0,
-                height:         64.0,
+                x:              -0.34,
+                y:              -0.007,
+                width:          0.08,
+                height:         0.12,
                 anchor:         Middle,
                 mouse_reactive: true,
+                percent:        true,
             ),
             // UiButtonBuilder
             button: (
                 text:              "START",
                 font:              File("resources/fonts/square.ttf", Ttf, ()),
                 font_size:         20.0,
-                normal_text_color: (1.0, 1.0, 1.0, 0.0),
+                normal_text_color: (1.0, 1.0, 1.0, 0.5),
                 hover_text_color:  (1.0, 1.0, 1.0, 1.0),
                 press_text_color:  (1.0, 1.0, 1.0, 1.0),
-                normal_image:      File("resources/textures/buttons/play.png", Png, (channel: Srgb)),
-                hover_image:       File("resources/textures/buttons/play.png", Png, (channel: Srgb)),
-                press_image:       File("resources/textures/buttons/play.png", Png, (channel: Srgb)),
+                //normal_image:      File("resources/textures/ui/button_play.png", Png, (channel: Srgb)),
+                //hover_image:       File("resources/textures/ui/button_play.png", Png, (channel: Srgb)),
+                //press_image:       File("resources/textures/ui/button_play.png", Png, (channel: Srgb)),
             ),
         ),
         // UiWidget::Button
@@ -47,24 +58,25 @@ Container(
             // UiTransformBuilder
             transform: (
                 id:             "quit_button",
-                x:              -128.0,
-                y:              0.0,
-                width:          64.0,
-                height:         64.0,
+                x:              -0.432,
+                y:              -0.16,
+                width:          0.075,
+                height:         0.11,
                 anchor:         Middle,
                 mouse_reactive: true,
+                percent:        true,
             ),
             // UiButtonBuilder
             button: (
                 text:              "QUIT",
                 font:              File("resources/fonts/square.ttf", Ttf, ()),
                 font_size:         20.0,
-                normal_text_color: (1.0, 1.0, 1.0, 0.0),
+                normal_text_color: (1.0, 1.0, 1.0, 0.5),
                 hover_text_color:  (1.0, 1.0, 1.0, 1.0),
                 press_text_color:  (1.0, 1.0, 1.0, 1.0),
-                normal_image:      File("resources/textures/buttons/quit.png", Png, (channel: Srgb)),
-                hover_image:       File("resources/textures/buttons/quit.png", Png, (channel: Srgb)),
-                press_image:       File("resources/textures/buttons/quit.png", Png, (channel: Srgb)),
+                // normal_image:      File("resources/textures/ui/button_quit.png", Png, (channel: Srgb)),
+                // hover_image:       File("resources/textures/ui/button_quit.png", Png, (channel: Srgb)),
+                // press_image:       File("resources/textures/ui/button_quit.png", Png, (channel: Srgb)),
             ),
         ),
     ],
