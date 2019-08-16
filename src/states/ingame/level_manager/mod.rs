@@ -110,7 +110,7 @@ impl LevelManager {
     }
 
     pub fn update(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
-        // Check if the level was beaten
+        // Check if the level was beaten and if the player has died
         let (next_level, player_dead) = data.world.exec(
             |(goals, players, animations_containers, invincibles): (
                 ReadStorage<Goal>,
@@ -142,6 +142,7 @@ impl LevelManager {
                 (next_level, player_dead)
             },
         );
+
         if next_level {
             let level_name = self.level_name();
             if !self.completed_levels.contains(&level_name) {
@@ -150,7 +151,6 @@ impl LevelManager {
             {
                 let mut timers = data.world.write_resource::<Timers>();
                 timers.level.finish().unwrap();
-
                 let time = timers.level.time_output();
                 println!("LEVEL TIME: {}", &time);
                 let time_entry =
@@ -163,19 +163,8 @@ impl LevelManager {
             if self.has_next_level() {
                 self.set_player_checkpoint(data);
                 self.load_next_level(data, true);
-            // self.play_current_song(data);
             } else {
-                // TODO: Beat game!
-                println!("You win!");
-                let mut timers = data.world.write_resource::<Timers>();
-                if let Some(global_timer) = timers.global.as_mut() {
-                    global_timer.finish().unwrap();
-                    let time = global_timer.time_output();
-                    println!("GLOBAL TIME: {}", &time);
-                    self.global_time = Some(time);
-                }
-                // self.set_player_checkpoint(data);
-                self.save_to_savefile();
+                self.win_game(data);
             }
         } else if player_dead {
             // Restart level and load player from checkoint
@@ -198,6 +187,36 @@ impl LevelManager {
             self.save_to_savefile();
         }
         self.play_current_song(data);
+    }
+
+    fn win_game(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
+        println!("You win!");
+        // Stop global timer
+        {
+            let mut timers = data.world.write_resource::<Timers>();
+            if let Some(global_timer) = timers.global.as_mut() {
+                global_timer.finish().unwrap();
+                let time = global_timer.time_output();
+                println!("GLOBAL TIME: {}", &time);
+                self.global_time = Some(time);
+            }
+            timers.global = Some(Timer::default());
+        }
+
+        // Continue game from the first level
+        self.level_index = 0;
+        self.set_player_checkpoint(data);
+        self.save_to_savefile();
+        self.load_current_level(data);
+        // Force update `HealthDisplay`
+        data.world.write_resource::<UpdateHealthDisplay>().0 = true;
+
+        // Start the global timer again
+        data.world
+            .write_resource::<Timers>()
+            .global
+            .as_mut()
+            .map(|timer| timer.start().unwrap());
     }
 
     fn play_current_song(
