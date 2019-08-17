@@ -122,11 +122,17 @@
       width:  32,
       height: 64,
     ),
-    ( // 20 - Item pickup
-      x:      0,
-      y:      352,
-      width:  32,
-      height: 64,
+    ( // 20 - win 0
+      x:      576,
+      y:      192,
+      width:  64,
+      height: 96,
+    ),
+    ( // 21 - win 1
+      x:      64,
+      y:      192,
+      width:  64,
+      height: 96,
     ),
   ],
 )

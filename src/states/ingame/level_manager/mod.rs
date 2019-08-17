@@ -121,13 +121,13 @@ impl LevelManager {
                 let next_level = (&goals)
                     .join()
                     .find_map(|goal| Some(goal.next_level))
-                    .unwrap_or(false);
-                // && (&players, &animations_containers)
-                //     .join()
-                //     .find_map(|(_, animations_container)| {
-                //         Some(animations_container.play_once.is_none())
-                //     })
-                // .unwrap_or(false);
+                    .unwrap_or(false)
+                    && (&players, &animations_containers)
+                        .join()
+                        .find_map(|(_, animations_container)| {
+                            Some(animations_container.play_once.is_none())
+                        })
+                        .unwrap_or(false);
 
                 let player_dead =
                     (&players, &animations_containers, !&invincibles)

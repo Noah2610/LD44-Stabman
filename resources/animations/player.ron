@@ -8,7 +8,8 @@
     (
       name: "walking",
       default_delay_ms: Some(100),
-      sprite_ids: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      // sprite_ids: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      sprite_ids: [3, 4, 5, 8, 9, 10],
     ),
     (
       name: "mid_air",
@@ -24,6 +25,11 @@
       name: "death",
       default_delay_ms: Some(500),
       sprite_ids: [5, 14, 2, 16],
+    ),
+    (
+      name: "win",
+      default_delay_ms: Some(500),
+      sprite_ids: [20, 21],
     ),
   ],
   current: Some("idle"),

@@ -66,9 +66,15 @@ impl<'a> System<'a> for HarmfulSystem {
                     (&entities, &harmfuls, &transforms).join()
                 {
                     let harmful_id = entity_harmful.id();
+
                     if let Some(collision::Data {
-                        side,
+                        side: Side::Inner,
                         state: collision::State::Enter,
+                        ..
+                    })
+                    | Some(collision::Data {
+                        side: Side::Inner,
+                        state: collision::State::SideEnter,
                         ..
                     }) = collision_harmable.collision_with(harmful_id)
                     {

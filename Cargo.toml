@@ -16,7 +16,7 @@ ron        = "0.4.2"
 serde      = { version = "1.0.89", features = ["derive"] }
 serde_json = "1.0.39"
 
-deathframe = "0.1.2"
+deathframe = "0.1.4"
 climer     = { version = "0.3.6", features = ["serialize"] }
 
 [replace]
