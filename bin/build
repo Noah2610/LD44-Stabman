@@ -7,9 +7,13 @@
 #     then the cargo command is executed in a new terminal.
 #     DEFAULT: ""
 
-ROOT="$( cd "$(dirname "$0")/.." || exit 1; pwd )"
-[ -f "$ROOT/bin/util.sh" ] || ./bin/download-util.sh || exit 1
-source "$ROOT/bin/util.sh"
+# shellcheck source=./util.sh
+_dir="$( dirname "$0" )"
+[ -f "${_dir}/util.sh" ] || bash "${_dir}/download-util.sh" || exit 1
+source "${_dir}/util.sh"
+unset _dir
+
+LOGFILE="${ROOT}/logs/$( basename "$0" ).log"
 
 function build {
   check "cargo"

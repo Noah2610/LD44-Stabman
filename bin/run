@@ -11,15 +11,19 @@
 #     then the `$DEV` variable is set and passed to the executable.
 #     DEFAULT: "1"
 
-ROOT="$( cd "$(dirname "$0")/.." || exit 1; pwd )"
-[ -f "$ROOT/bin/util.sh" ] || ./bin/download-util.sh || exit 1
-source "$ROOT/bin/util.sh"
+# shellcheck source=./util.sh
+_dir="$( dirname "$0" )"
+[ -f "${_dir}/util.sh" ] || bash "${_dir}/download-util.sh" || exit 1
+source "${_dir}/util.sh"
+unset _dir
+
+LOGFILE="${ROOT}/logs/$( basename "$0" ).log"
 
 function run {
   check "cargo"
   local cmd="cargo +nightly-2019-03-01 run --features amethyst/nightly $*"
   if should_run_in_terminal; then
-    run_terminal "DEV="$RUN_DEV" $cmd"
+    run_terminal "DEV='$RUN_DEV' $cmd"
   else
     DEV="$RUN_DEV" $cmd
   fi

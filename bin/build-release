@@ -33,13 +33,17 @@
 #     for example: "stable", "nightly", "1.34.2", "2019-01-01"
 #     DEFAULT: "1.34.2"
 
-ROOT="$( cd "$(dirname "$0")/.." || exit 1; pwd )"
-[ -f "$ROOT/bin/util.sh" ] || ./bin/download-util.sh || exit 1
-source "$ROOT/bin/util.sh"
+# shellcheck source=./util.sh
+_dir="$( dirname "$0" )"
+[ -f "${_dir}/util.sh" ] || bash "${_dir}/download-util.sh" || exit 1
+source "${_dir}/util.sh"
+unset _dir
 
 set -e
 
+LOGFILE="${ROOT}/logs/$( basename "$0" ).log"
 WINDOWS_TARGET="x86_64-pc-windows-gnu"
+INCLUDE_FILES=()
 
 function get_latest_version {
   check "sed"
@@ -73,11 +77,13 @@ function get_filename_for_target {
 
 function mk_archive {
   local path="$1"
+  local dir
+  local filename
   [ -z "$1" ] && err "No path given to function \`$0\`."
   check "zip" && check "dirname" && check "basename"
-  local dir="$( dirname "$path" )"
+  dir="$( dirname "$path" )"
   [ -n "$dir" ] && cd "$dir"
-  local filename="$( basename "$path" )"
+  filename="$( basename "$path" )"
   msg "${spacing}Zipping directory..."
   try_run "zip -r ${filename}.zip $filename"
   try_run "rm -rf $filename"
@@ -103,11 +109,11 @@ function build_release {
 
     case "$target" in
       "linux" | "default")
-        spacing="$spacing" build_release_for_linux "$@"
+        build_release_for_linux "$@"
         ;;
 
       "windows")
-        spacing="$spacing" build_release_for_windows "$@"
+        build_release_for_windows "$@"
         ;;
 
       *)
@@ -123,34 +129,40 @@ function build_release {
 #   local target_display
 #   local filename
 #   local target
+#   local spacing
 function build_release_for_linux {
   msg "${spacing}Compiling..."
-  spacing="$spacing" try_run "cargo +$RELEASE_RUST_VERSION build --release $*"
-  cd "$RELEASE_DIR"
-  mkdir "$filename"
+  try_run "cargo +${RELEASE_RUST_VERSION} build --release $*"
+
+  target_dir="${RELEASE_DIR}/${filename}"
+  mkdir "$target_dir"
 
   msg "${spacing}Copying executable and resources..."
-  spacing="$spacing" try_run "cp ../target/release/${RELEASE_EXE_NAME} ./${filename}"
-  spacing="$spacing" try_run "cp -r $RELEASE_RESOURCES_DIR ./${filename}"
+  try_run "cp ${ROOT}/target/release/${RELEASE_EXE_NAME} $target_dir"
+  try_run "cp -r $RELEASE_RESOURCES_DIR $target_dir"
+  try_run "cp ${INCLUDE_FILES[*]} $target_dir"
 
-  spacing="$spacing" mk_archive "$filename"
+  mk_archive "$target_dir"
 }
 
 # Pre-set local variables:
 #   local target_display
 #   local filename
 #   local target
+#   local spacing
 function build_release_for_windows {
   msg "${spacing}Compiling..."
-  try_run "cargo +$RELEASE_RUST_VERSION build --release --target $WINDOWS_TARGET $*"
-  cd "$RELEASE_DIR"
-  mkdir "$filename"
+  try_run "cargo +${RELEASE_RUST_VERSION} build --release --target $WINDOWS_TARGET $*"
+
+  target_dir="${RELEASE_DIR}/${filename}"
+  mkdir "$target_dir"
 
   msg "${spacing}Copying executable and resources..."
-  try_run "cp ../target/${WINDOWS_TARGET}/release/${RELEASE_EXE_NAME}.exe ./${filename}"
-  try_run "cp -r $RELEASE_RESOURCES_DIR ./${filename}"
+  try_run "cp ${ROOT}/target/${WINDOWS_TARGET}/release/${RELEASE_EXE_NAME}.exe $target_dir"
+  try_run "cp -r $RELEASE_RESOURCES_DIR $target_dir"
+  try_run "cp ${INCLUDE_FILES[*]} $target_dir"
 
-  mk_archive "$filename"
+  mk_archive "$target_dir"
 }
 
 # Set global settings variables.
