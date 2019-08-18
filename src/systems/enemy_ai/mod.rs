@@ -145,7 +145,13 @@ impl<'a> System<'a> for EnemyAiSystem {
                     ),
                 }
 
-                // Reset y velocity if enemy has gravity and they are standing on a solid
+                // Reset velocity when enemy is touching a solid
+                if (sides_touching.is_touching_left && enemy_velocity.x < 0.0)
+                    || (sides_touching.is_touching_right
+                        && enemy_velocity.x > 0.0)
+                {
+                    enemy_velocity.x = 0.0;
+                }
                 if (sides_touching.is_touching_bottom && enemy_velocity.y < 0.0)
                     || (sides_touching.is_touching_top
                         && enemy_velocity.y > 0.0)

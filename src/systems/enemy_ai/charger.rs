@@ -1,4 +1,3 @@
-use deathframe::components::solid::SolidTag as _;
 use deathframe::geo::Vector;
 
 use super::super::system_prelude::*;
@@ -38,21 +37,22 @@ pub(super) fn run(
             &ai_data.stop_moving_when_colliding_sides
         {
             (entities, solids).join().any(|(entity, other_solid)| {
-                solid.tag.collides_with(&other_solid.tag)
-                    && if let Some(coll_data) =
-                        collision.collision_with(entity.id())
-                    {
-                        stop_moving_sides.contains(&coll_data.side)
-                    } else {
-                        false
-                    }
+                if let Some(collision::Data {
+                    side,
+                    state: collision::State::Enter,
+                    ..
+                }) = collision.collision_with(entity.id())
+                {
+                    stop_moving_sides.contains(side)
+                } else {
+                    false
+                }
             })
         } else {
             false
         };
         if in_collision {
             // Stop moving
-            velocity.clear();
             ai_data.is_moving = false;
         }
     } else {
