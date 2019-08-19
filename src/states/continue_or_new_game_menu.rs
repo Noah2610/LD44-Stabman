@@ -29,7 +29,12 @@ impl ContinueOrNewGameMenu {
             Some(Trans::Pop)
         // Continue game
         } else if input_manager.is_up("accept") {
-            Some(Trans::Switch(Box::new(Ingame::new(self.campaign.clone()))))
+            Some(Trans::Switch(Box::new(
+                Ingame::builder()
+                    .campaign(self.campaign.clone())
+                    .new_game(false)
+                    .build(),
+            )))
         } else {
             None
         }
@@ -94,14 +99,20 @@ impl Menu for ContinueOrNewGameMenu {
         event_name: &str,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
         match event_name {
-            "continue_button" => Some(Trans::Switch(Box::new(Ingame::new(
-                self.campaign.clone(),
-            )))),
+            "continue_button" => Some(Trans::Switch(Box::new(
+                Ingame::builder()
+                    .campaign(self.campaign.clone())
+                    .new_game(false)
+                    .build(),
+            ))),
             "new_game_button" => {
                 // TODO: Delete save
-                Some(Trans::Switch(Box::new(Ingame::new(
-                    self.campaign.clone(),
-                ))))
+                Some(Trans::Switch(Box::new(
+                    Ingame::builder()
+                        .campaign(self.campaign.clone())
+                        .new_game(true)
+                        .build(),
+                )))
             }
             _ => None,
         }

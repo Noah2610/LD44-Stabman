@@ -8,15 +8,12 @@ pub struct Ingame {
     campaign:      CampaignType,
     level_manager: Option<LevelManager>,
     to_main_menu:  bool,
+    new_game:      bool,
 }
 
 impl Ingame {
-    pub fn new(campaign: CampaignType) -> Self {
-        Self {
-            campaign:      campaign,
-            level_manager: None,
-            to_main_menu:  false,
-        }
+    pub fn builder() -> IngameBuilder {
+        IngameBuilder::default()
     }
 
     fn handle_keys<'a, 'b>(
@@ -50,8 +47,11 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
             CampaignType::Normal => settings.level_manager.normal,
             CampaignType::Bonus => settings.level_manager.bonus,
         };
-        self.level_manager =
-            Some(LevelManager::new(&mut data, level_manager_settings));
+        self.level_manager = Some(LevelManager::new(
+            &mut data,
+            level_manager_settings,
+            self.new_game,
+        ));
 
         // Initialize global timer
         // NOTE: This needs to happen before the level loads
@@ -122,5 +122,36 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
         self.level_manager_mut().update(&mut data);
 
         Trans::None
+    }
+}
+
+#[derive(Default)]
+pub struct IngameBuilder {
+    campaign: CampaignType,
+    new_game: bool,
+}
+
+impl IngameBuilder {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn campaign(mut self, campaign: CampaignType) -> Self {
+        self.campaign = campaign;
+        self
+    }
+
+    pub fn new_game(mut self, new_game: bool) -> Self {
+        self.new_game = new_game;
+        self
+    }
+
+    pub fn build(self) -> Ingame {
+        Ingame {
+            campaign:      self.campaign,
+            level_manager: None,
+            to_main_menu:  false,
+            new_game:      self.new_game,
+        }
     }
 }

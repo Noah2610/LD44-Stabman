@@ -30,6 +30,7 @@ impl LevelManager {
     pub fn new(
         data: &mut StateData<CustomGameData<CustomData>>,
         settings: SettingsLevelManagerCampaign,
+        new_game: bool,
     ) -> Self {
         let mut level_manager = Self {
             settings:              settings,
@@ -41,6 +42,9 @@ impl LevelManager {
             current_song:          None,
         };
         level_manager.load_from_savefile(data);
+        if new_game {
+            level_manager.remove_save(data);
+        }
         level_manager
     }
 
@@ -461,6 +465,23 @@ impl LevelManager {
     fn savefile_path(&self) -> String {
         use amethyst::utils::application_root_dir;
         format!("{}/{}", application_root_dir(), self.settings.savefile_path)
+    }
+
+    /// This method removes some data from the savefile, for starting a "new game".
+    /// This does not delete stuff like stats, or best times.
+    // TODO: Decide if this should really work this way,
+    //       or if it should actually remove _everything_.
+    fn remove_save(
+        &mut self,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
+        self.level_index = 0;
+        self.player_checkpoint_opt = None;
+        self.completed_levels = Vec::new();
+        data.world
+            .write_resource::<Stats>()
+            .levels
+            .reset_current_stats();
     }
 }
 
