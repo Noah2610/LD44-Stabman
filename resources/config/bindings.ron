@@ -20,13 +20,13 @@
 
     // PLAYER
     "player_jump":            [ [Key(Space)], [Key(K)], [Key(Up)], [Controller(0, A)] ],
-    "player_attack":          [ [Controller(0, X)] ],
-    "player_attack_left":     [ [Key(Left)], [Key(H)], [Controller(0, LeftShoulder)] ],
-    "player_attack_right":    [ [Key(Right)], [Key(L)], [Controller(0, RightShoulder)] ],
+    "player_attack":          [ ],
+    "player_attack_left":     [ [Key(Left)], [Key(H)], [Controller(0, X)] ],
+    "player_attack_right":    [ [Key(Right)], [Key(L)], [Controller(0, B)] ],
     "player_buy_item":        [ [Key(E)], [Controller(0, Y)] ],
 
     // DASHES
-    "player_dash_trigger":    [ [Key(J)], [Key(Down)], [Key(LShift)], [Controller(0, B)] ],
+    "player_dash_trigger":    [ [Key(J)], [Key(Down)], [Key(LShift)], [Controller(0, LeftShoulder)], [Controller(0, RightShoulder)] ],
     "player_dash_up_left":    [ [Key(W), Key(A)], [Controller(0, DPadUp), Controller(0, DPadLeft)] ],
     "player_dash_up_right":   [ [Key(W), Key(D)], [Controller(0, DPadUp), Controller(0, DPadRight)] ],
     "player_dash_down_left":  [ [Key(S), Key(A)], [Controller(0, DPadDown), Controller(0, DPadLeft)] ],

@@ -4,6 +4,10 @@
 # Here are some resolution presets; to use a preset,
 # un-comment its line by removing the `#` at the beginning of the line.
 
-1280 x 720  # Default resolution; used when no resolution is specified in this file
+# Default resolution, used when no resolution is specified in this file
+1280 x 720
+
+# A 50% larger resolution, useful for some levels
+# 1600 x 900
 
 # TODO: More presets
