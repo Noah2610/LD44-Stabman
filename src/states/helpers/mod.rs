@@ -1,11 +1,14 @@
+mod menu;
 mod resources;
 mod stats;
 
+pub use menu::*;
 pub use resources::*;
 pub use stats::*;
 
 use amethyst::ui::{Anchor as AmethystAnchor, UiTransform};
 
+#[derive(Clone)]
 pub enum CampaignType {
     Normal,
     Bonus,

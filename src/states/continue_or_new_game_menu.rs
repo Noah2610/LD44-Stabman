@@ -1,60 +1,50 @@
 use super::state_prelude::*;
 use amethyst::ecs::{Join, ReadStorage, Write};
 
-const UI_RON_PATH: &str = "ui/paused.ron";
+const UI_RON_PATH: &str = "ui/continue_or_new_game_menu.ron";
 
-#[derive(Default)]
-pub struct Paused {
+pub struct ContinueOrNewGameMenu {
+    campaign:     CampaignType,
     ui_entities:  Vec<Entity>,
     ui_reader_id: Option<ReaderId<UiEvent>>,
-    to_main_menu: bool,
 }
 
-impl Paused {
+impl ContinueOrNewGameMenu {
+    pub fn new(campaign: CampaignType) -> Self {
+        Self {
+            campaign:     campaign,
+            ui_entities:  Vec::new(),
+            ui_reader_id: None,
+        }
+    }
+
     fn handle_keys<'a, 'b>(
-        &mut self,
+        &self,
         data: &StateData<CustomGameData<CustomData>>,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
         let input_manager = data.world.input_manager();
 
-        // Return to main menu; it should tell the `Ingame` state, that it
-        // should immediately pop off as well.
+        // Back to main menu - pop off
         if input_manager.is_up("decline") {
-            self.to_main_menu = true;
             Some(Trans::Pop)
-        // Unpause / Resume game
-        } else if input_manager.is_down("pause")
-            || input_manager.is_up("accept")
-        {
-            Some(Trans::Pop)
+        // Continue game
+        } else if input_manager.is_up("accept") {
+            Some(Trans::Switch(Box::new(Ingame::new(self.campaign.clone()))))
         } else {
             None
         }
     }
 }
 
-impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Paused {
+impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
+    for ContinueOrNewGameMenu
+{
     fn on_start(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
         self.create_ui(&mut data);
-
-        // Pause timers
-        let mut timers = data.world.write_resource::<Timers>();
-        timers.level.pause().unwrap();
-        timers.global.as_mut().map(|timer| timer.pause().unwrap());
     }
 
     fn on_stop(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
         self.delete_ui(&mut data);
-        if self.to_main_menu {
-            // Create a resource to tell the `Ingame` state that
-            // it should immediately pop off as well.
-            data.world.write_resource::<ToMainMenu>().0 = true;
-        }
-
-        // Resume timers
-        let mut timers = data.world.write_resource::<Timers>();
-        timers.level.resume().unwrap();
-        timers.global.as_mut().map(|timer| timer.resume().unwrap());
     }
 
     fn handle_event(
@@ -78,12 +68,12 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Paused {
         &mut self,
         data: StateData<CustomGameData<CustomData>>,
     ) -> Trans<CustomGameData<'a, 'b, CustomData>, StateEvent> {
-        data.data.update(&data.world, "paused").unwrap();
-
+        data.data
+            .update(&data.world, "continue_or_new_game_menu")
+            .unwrap();
         if let Some(trans) = self.handle_keys(&data) {
             return trans;
         }
-
         Trans::None
     }
 
@@ -98,16 +88,20 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Paused {
     }
 }
 
-impl Menu for Paused {
+impl Menu for ContinueOrNewGameMenu {
     fn event_triggered<'a, 'b>(
         &mut self,
         event_name: &str,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
         match event_name {
-            "pause_button" => Some(Trans::Pop),
-            "quit_button" => {
-                self.to_main_menu = true;
-                Some(Trans::Pop)
+            "continue_button" => Some(Trans::Switch(Box::new(Ingame::new(
+                self.campaign.clone(),
+            )))),
+            "new_game_button" => {
+                // TODO: Delete save
+                Some(Trans::Switch(Box::new(Ingame::new(
+                    self.campaign.clone(),
+                ))))
             }
             _ => None,
         }

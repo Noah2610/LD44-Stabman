@@ -123,6 +123,7 @@ fn build_game_data<'a, 'b>(
         .dispatcher("main_menu")?
         .dispatcher("ingame")?
         .dispatcher("paused")?
+        .dispatcher("continue_or_new_game_menu")?
         .with_core_bundle(transform_bundle)?
         .with_core_bundle(render_bundle)?
         .with_core_bundle(input_bundle)?

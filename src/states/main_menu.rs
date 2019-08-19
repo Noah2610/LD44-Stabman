@@ -1,75 +1,15 @@
 use super::state_prelude::*;
 use amethyst::ecs::{Join, ReadStorage, Write};
 
+const UI_RON_PATH: &str = "ui/main_menu.ron";
+
 #[derive(Default)]
 pub struct MainMenu {
-    ui_elements:  Vec<Entity>,
+    ui_entities:  Vec<Entity>,
     ui_reader_id: Option<ReaderId<UiEvent>>,
 }
 
 impl MainMenu {
-    fn create_ui(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
-        let main_menu_entity = data.world.exec(|mut creator: UiCreator| {
-            creator.create(resource("ui/main_menu.ron"), ())
-        });
-        self.ui_elements.push(main_menu_entity);
-    }
-
-    fn delete_ui(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
-        data.world.delete_entities(&self.ui_elements).unwrap();
-        self.ui_elements.clear();
-    }
-
-    fn update_ui_events<'a, 'b>(
-        &mut self,
-        data: &mut StateData<CustomGameData<CustomData>>,
-    ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
-        let settings = data.world.settings();
-
-        data.world.exec(
-            |(entities, mut events, ui_transforms): (
-                Entities,
-                Write<EventChannel<UiEvent>>,
-                ReadStorage<UiTransform>,
-            )| {
-                let reader_id = self
-                    .ui_reader_id
-                    .get_or_insert_with(|| events.register_reader());
-
-                for event in events.read(reader_id) {
-                    if let UiEventType::ClickStop = event.event_type {
-                        let target_entity_id = event.target.id();
-                        if let Some(name) = (&entities, &ui_transforms)
-                            .join()
-                            .find_map(|(entity, transform)| {
-                                if entity.id() == target_entity_id {
-                                    Some(transform.id.as_ref())
-                                } else {
-                                    None
-                                }
-                            })
-                        {
-                            let trans_opt = match name {
-                                "start_button_normal" => Some(Trans::Push(
-                                    Box::new(Ingame::new(CampaignType::Normal)),
-                                )),
-                                "start_button_bonus" => Some(Trans::Push(
-                                    Box::new(Ingame::new(CampaignType::Bonus)),
-                                )),
-                                "quit_button" => Some(Trans::Quit),
-                                _ => None,
-                            };
-                            if trans_opt.is_some() {
-                                return trans_opt;
-                            }
-                        }
-                    }
-                }
-                None
-            },
-        )
-    }
-
     fn handle_keys<'a, 'b>(
         &self,
         data: &StateData<CustomGameData<CustomData>>,
@@ -81,7 +21,9 @@ impl MainMenu {
             Some(Trans::Quit)
         // Start game
         } else if input_manager.is_up("accept") {
-            Some(Trans::Push(Box::new(Ingame::new(CampaignType::default()))))
+            Some(Trans::Push(Box::new(ContinueOrNewGameMenu::new(
+                CampaignType::default(),
+            ))))
         } else {
             None
         }
@@ -133,11 +75,9 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
         data: StateData<CustomGameData<CustomData>>,
     ) -> Trans<CustomGameData<'a, 'b, CustomData>, StateEvent> {
         data.data.update(&data.world, "main_menu").unwrap();
-
         if let Some(trans) = self.handle_keys(&data) {
             return trans;
         }
-
         Trans::None
     }
 
@@ -149,5 +89,43 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
             return trans;
         }
         Trans::None
+    }
+}
+
+impl Menu for MainMenu {
+    fn event_triggered<'a, 'b>(
+        &mut self,
+        event_name: &str,
+    ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
+        match event_name {
+            "start_button_normal" => Some(Trans::Push(Box::new(
+                ContinueOrNewGameMenu::new(CampaignType::Normal),
+            ))),
+            "start_button_bonus" => Some(Trans::Push(Box::new(
+                ContinueOrNewGameMenu::new(CampaignType::Bonus),
+            ))),
+            "quit_button" => Some(Trans::Quit),
+            _ => None,
+        }
+    }
+
+    fn ui_ron_path(&self) -> &str {
+        UI_RON_PATH
+    }
+
+    fn ui_entities(&self) -> &Vec<Entity> {
+        &self.ui_entities
+    }
+
+    fn ui_entities_mut(&mut self) -> &mut Vec<Entity> {
+        &mut self.ui_entities
+    }
+
+    fn ui_reader_id(&self) -> &Option<ReaderId<UiEvent>> {
+        &self.ui_reader_id
+    }
+
+    fn ui_reader_id_mut(&mut self) -> &mut Option<ReaderId<UiEvent>> {
+        &mut self.ui_reader_id
     }
 }

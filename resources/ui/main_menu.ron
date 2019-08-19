@@ -13,7 +13,7 @@ Container(
         mouse_reactive: false,
         percent:        true,
     ),
-    // TODO: UiImagePrefab
+    // UiImageBuilder
     background: (
         image: File(
             "resources/textures/ui/bg_main_menu.png",
