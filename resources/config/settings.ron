@@ -34,7 +34,7 @@ Settings(
         /// The minimum amount of y velocity, after killing the jump.
         min_jump_velocity:          50.0,
         /// Max velocity.
-        max_velocity:               (Some(200.0), None),
+        max_velocity:               (None, None),
         /// Decrease velocity by this amount, every frame.
         /// x value has no effect when moving, y value has no effect when falling/jumping.
         decr_velocity:              (2000.0, 1000.0),
@@ -185,7 +185,7 @@ Settings(
             knockback:             (600.0, 200.0),
             trigger_distance:      (192.0, 128.0),
             acceleration:          (200.0, 0.0),
-            max_velocity:          (Some(50.0), Some(500.0)),
+            max_velocity:          (None, None),
             decr_velocity:         (1000.0, 1000.0),
             affected_by_knockback: true,
         ),
@@ -196,7 +196,7 @@ Settings(
             knockback:             (700.0, 200.0),
             trigger_distance:      (256.0, 32.0),
             acceleration:          (500.0, 0.0),
-            max_velocity:          (Some(200.0), Some(500.0)),
+            max_velocity:          (None, None),
             decr_velocity:         (100.0, 1000.0),
             affected_by_knockback: true,
         ),
@@ -207,7 +207,7 @@ Settings(
             knockback:             (400.0, 150.0),
             trigger_distance:      (256.0, 192.0),
             acceleration:          (500.0, 100.0),
-            max_velocity:          (Some(25.0), Some(25.0)),
+            max_velocity:          (None, None),
             decr_velocity:         (100.0, 100.0),
             affected_by_knockback: true,
         ),
@@ -218,7 +218,7 @@ Settings(
             knockback:             (2000.0, 200.0),
             trigger_distance:      (128.0, 128.0),
             acceleration:          (500.0, 100.0),
-            max_velocity:          (Some(100.0), Some(500.0)),
+            max_velocity:          (None, None),
             decr_velocity:         (1000.0, 1000.0),
             affected_by_knockback: true,
         ),
