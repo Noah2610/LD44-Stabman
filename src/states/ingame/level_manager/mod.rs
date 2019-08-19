@@ -27,7 +27,10 @@ pub struct LevelManager {
 }
 
 impl LevelManager {
-    pub fn new(settings: SettingsLevelManagerCampaign) -> Self {
+    pub fn new(
+        data: &mut StateData<CustomGameData<CustomData>>,
+        settings: SettingsLevelManagerCampaign,
+    ) -> Self {
         let mut level_manager = Self {
             settings:              settings,
             level_index:           0,
@@ -37,7 +40,7 @@ impl LevelManager {
             global_time:           None,
             current_song:          None,
         };
-        level_manager.load_from_savefile();
+        level_manager.load_from_savefile(data);
         level_manager
     }
 
@@ -167,24 +170,7 @@ impl LevelManager {
                 self.win_game(data);
             }
         } else if player_dead {
-            // Restart level and load player from checkoint
-            self.restart_level(data);
-            data.world.maintain();
-
-            let health_increase = self.settings.health_increase_on_death;
-            if health_increase > 0 {
-                data.world.exec(|mut players: WriteStorage<Player>| {
-                    if let Some(player) = (&mut players).join().next() {
-                        // Increase player's health
-                        player.add_health(health_increase);
-                        // Set player checkpoint
-                        self.player_checkpoint_opt = Some(player.clone());
-                    }
-                });
-            }
-
-            data.world.maintain();
-            self.save_to_savefile();
+            self.player_died(data);
         }
         self.play_current_song(data);
     }
@@ -203,10 +189,12 @@ impl LevelManager {
             timers.global = Some(Timer::default());
         }
 
+        // Reset current death counters from stats
+        data.world.write_resource::<Stats>().deaths.reset_current();
         // Continue game from the first level
         self.level_index = 0;
         self.set_player_checkpoint(data);
-        self.save_to_savefile();
+        self.save_to_savefile(data);
         self.load_current_level(data);
         // Force update `HealthDisplay`
         data.world.write_resource::<UpdateHealthDisplay>().0 = true;
@@ -217,6 +205,36 @@ impl LevelManager {
             .global
             .as_mut()
             .map(|timer| timer.start().unwrap());
+    }
+
+    fn player_died(
+        &mut self,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
+        // Increase Stats death counter for the level
+        data.world
+            .write_resource::<Stats>()
+            .deaths
+            .add_for(self.level_name());
+
+        // Restart level and load player from checkoint
+        self.restart_level(data);
+        data.world.maintain();
+
+        let health_increase = self.settings.health_increase_on_death;
+        if health_increase > 0 {
+            data.world.exec(|mut players: WriteStorage<Player>| {
+                if let Some(player) = (&mut players).join().next() {
+                    // Increase player's health
+                    player.add_health(health_increase);
+                    // Set player checkpoint
+                    self.player_checkpoint_opt = Some(player.clone());
+                }
+            });
+        }
+
+        data.world.maintain();
+        self.save_to_savefile(data);
     }
 
     fn play_current_song(
@@ -284,7 +302,7 @@ impl LevelManager {
             self.level_index += 1;
             if should_save {
                 // Save to savefile after changing the level_index but before loading the next level.
-                self.save_to_savefile();
+                self.save_to_savefile(data);
             }
             self.load_current_level(data);
         } else {
@@ -336,7 +354,7 @@ impl LevelManager {
             .0
     }
 
-    fn save_to_savefile(&self) {
+    fn save_to_savefile(&self, data: &StateData<CustomGameData<CustomData>>) {
         let savefile_path = self.savefile_path();
 
         let savefile_data = savefile::SavefileData {
@@ -347,6 +365,7 @@ impl LevelManager {
                 times:       self.level_times.clone(),
                 global_time: self.global_time,
             },
+            stats:  Some(data.world.read_resource::<Stats>().clone()),
         };
 
         match serde_json::to_string(&savefile_data) {
@@ -375,7 +394,10 @@ impl LevelManager {
         }
     }
 
-    fn load_from_savefile(&mut self) {
+    fn load_from_savefile(
+        &mut self,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
         let savefile_path = self.savefile_path();
         if let Ok(raw) = read_file(savefile_path) {
             let mut retry = true;
@@ -404,6 +426,9 @@ impl LevelManager {
                         self.completed_levels = deserialized.levels.completed;
                         self.level_times = deserialized.levels.times;
                         self.global_time = deserialized.levels.global_time;
+                        if let Some(stats) = deserialized.stats {
+                            *data.world.write_resource::<Stats>() = stats;
+                        }
                         eprintln!("Successfully loaded savefile!");
                     }
                     Err(err) => {

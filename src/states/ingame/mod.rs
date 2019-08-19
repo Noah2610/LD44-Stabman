@@ -5,18 +5,16 @@ use super::state_prelude::*;
 use level_manager::prelude::*;
 
 pub struct Ingame {
-    level_manager: LevelManager,
+    campaign:      CampaignType,
+    level_manager: Option<LevelManager>,
     to_main_menu:  bool,
 }
 
 impl Ingame {
-    pub fn new(settings: Settings, campaign: CampaignType) -> Self {
-        let level_manager_settings = match campaign {
-            CampaignType::Normal => settings.level_manager.normal,
-            CampaignType::Bonus => settings.level_manager.bonus,
-        };
+    pub fn new(campaign: CampaignType) -> Self {
         Self {
-            level_manager: LevelManager::new(level_manager_settings),
+            campaign:      campaign,
+            level_manager: None,
             to_main_menu:  false,
         }
     }
@@ -34,19 +32,36 @@ impl Ingame {
             None
         }
     }
+
+    fn level_manager(&self) -> &LevelManager {
+        self.level_manager.as_ref().expect("LevelManager is None")
+    }
+
+    fn level_manager_mut(&mut self) -> &mut LevelManager {
+        self.level_manager.as_mut().expect("LevelManager is None")
+    }
 }
 
 impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
     fn on_start(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
+        // Initialize the LevelManager
+        let settings = data.world.settings();
+        let level_manager_settings = match self.campaign {
+            CampaignType::Normal => settings.level_manager.normal,
+            CampaignType::Bonus => settings.level_manager.bonus,
+        };
+        self.level_manager =
+            Some(LevelManager::new(&mut data, level_manager_settings));
+
         // Initialize global timer
         // NOTE: This needs to happen before the level loads
-        if self.level_manager.is_first_level() {
+        if self.level_manager().is_first_level() {
             let mut timers = data.world.write_resource::<Timers>();
-            let mut timer = climer::Timer::default();
+            let timer = climer::Timer::default();
             timers.global = Some(timer);
         }
 
-        self.level_manager.load_current_level(&mut data);
+        self.level_manager_mut().load_current_level(&mut data);
         // Force update `HealthDisplay`
         data.world.write_resource::<UpdateHealthDisplay>().0 = true;
 
@@ -104,7 +119,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
             return trans;
         }
 
-        self.level_manager.update(&mut data);
+        self.level_manager_mut().update(&mut data);
 
         Trans::None
     }
