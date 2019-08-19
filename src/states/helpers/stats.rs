@@ -2,27 +2,40 @@ use std::collections::HashMap;
 
 #[derive(Default, Clone, Serialize, Deserialize)]
 pub struct Stats {
-    pub deaths: StatsDeaths,
+    pub levels: StatsLevels,
 }
 
-#[derive(Default, Clone, Serialize, Deserialize)]
-pub struct StatsDeaths(HashMap<String, StatsLevelDeaths>);
-
-impl StatsDeaths {
-    pub fn add_for<T>(&mut self, level: T)
+impl Stats {
+    pub fn level_mut<T>(&mut self, level: T) -> &mut StatsLevel
     where
         T: ToString,
     {
         let level = level.to_string();
-        let level_deaths = self.0.entry(level).or_insert_with(Default::default);
-        level_deaths.current += 1;
-        level_deaths.total += 1;
+        self.levels.0.entry(level).or_insert_with(Default::default)
     }
+}
 
-    pub fn reset_current(&mut self) {
-        for (_, level_deaths) in self.0.iter_mut() {
-            level_deaths.current = 0;
+#[derive(Default, Clone, Serialize, Deserialize)]
+pub struct StatsLevels(HashMap<String, StatsLevel>);
+
+impl StatsLevels {
+    pub fn reset_current_deaths(&mut self) {
+        for (_, level_stats) in self.0.iter_mut() {
+            level_stats.deaths.current = 0;
         }
+    }
+}
+
+#[derive(Default, Clone, Serialize, Deserialize)]
+pub struct StatsLevel {
+    pub deaths: StatsLevelDeaths,
+    // pub kills:  StatsLevelKills,
+}
+
+impl StatsLevelDeaths {
+    pub fn increase(&mut self) {
+        self.current += 1;
+        self.total += 1;
     }
 }
 
@@ -31,3 +44,6 @@ pub struct StatsLevelDeaths {
     pub current: u32,
     pub total:   u32,
 }
+
+#[derive(Default, Clone, Serialize, Deserialize)]
+pub struct StatsKills {}

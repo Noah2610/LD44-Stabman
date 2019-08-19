@@ -190,7 +190,10 @@ impl LevelManager {
         }
 
         // Reset current death counters from stats
-        data.world.write_resource::<Stats>().deaths.reset_current();
+        data.world
+            .write_resource::<Stats>()
+            .levels
+            .reset_current_deaths();
         // Continue game from the first level
         self.level_index = 0;
         self.set_player_checkpoint(data);
@@ -214,8 +217,9 @@ impl LevelManager {
         // Increase Stats death counter for the level
         data.world
             .write_resource::<Stats>()
+            .level_mut(self.level_name())
             .deaths
-            .add_for(self.level_name());
+            .increase();
 
         // Restart level and load player from checkoint
         self.restart_level(data);
