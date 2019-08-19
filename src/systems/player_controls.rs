@@ -25,7 +25,6 @@ impl<'a> System<'a> for PlayerControlsSystem {
         WriteStorage<'a, Gravity>,
         WriteStorage<'a, AnimationsContainer>,
         WriteStorage<'a, Flipped>,
-        WriteStorage<'a, Heart>,
     );
 
     fn run(
@@ -51,7 +50,6 @@ impl<'a> System<'a> for PlayerControlsSystem {
             mut gravities,
             mut animations_containers,
             mut flippeds,
-            mut hearts,
         ): Self::SystemData,
     ) {
         let dt = time.delta_seconds();
@@ -159,7 +157,6 @@ impl<'a> System<'a> for PlayerControlsSystem {
                     &items,
                     &collisions,
                     &hearts_containers,
-                    &mut hearts,
                 );
             } else if !player.in_control && !goal_next_level {
                 // Start of a level
@@ -477,9 +474,8 @@ fn handle_item_purchase(
     items: &ReadStorage<Item>,
     collisions: &ReadStorage<Collision>,
     hearts_containers: &ReadStorage<HeartsContainer>,
-    hearts: &mut WriteStorage<Heart>,
 ) {
-    for (item_entity, item, item_collision, hearts_container_opt) in
+    for (item_entity, item, _, hearts_container_opt) in
         (entities, items, collisions, hearts_containers.maybe()).join()
     {
         let item_id = item_entity.id();
@@ -496,7 +492,7 @@ fn handle_item_purchase(
                 // Remove hearts
                 if let Some(hearts_container) = hearts_container_opt {
                     for id in hearts_container.heart_ids.iter() {
-                        entities.delete(entities.entity(*id));
+                        entities.delete(entities.entity(*id)).unwrap();
                     }
                 }
                 // Increase stats items bought
