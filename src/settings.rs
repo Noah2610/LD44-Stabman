@@ -11,6 +11,7 @@ pub mod prelude {
     pub use super::SettingsLevelManager;
     pub use super::SettingsLevelManagerCampaign;
     pub use super::SettingsLoadingText;
+    pub use super::SettingsNoclip;
     pub use super::SettingsPlayer;
     pub use super::SettingsPlayerQuickTurnaround;
 }
@@ -28,6 +29,7 @@ pub struct Settings {
     pub harmful:                SettingsHarmful,
     pub entity_loader:          SettingsEntityLoader,
     pub timers_print_to_stdout: bool,
+    pub noclip:                 SettingsNoclip,
 }
 
 #[derive(Clone, Deserialize)]
@@ -193,6 +195,12 @@ pub struct SettingsHarmful {
 pub struct SettingsEntityLoader {
     pub load_distance:                  (f32, f32),
     pub enemy_load_distance_difference: (f32, f32),
+}
+
+#[derive(Clone, Deserialize)]
+pub struct SettingsNoclip {
+    pub acceleration: Vector,
+    pub max_velocity: (Option<f32>, Option<f32>),
 }
 
 impl<'de> Deserialize<'de> for SettingsPlayerQuickTurnaround {

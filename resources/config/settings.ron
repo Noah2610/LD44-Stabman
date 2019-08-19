@@ -316,4 +316,10 @@ Settings(
 
     /// If the time of both timers should be printed to the console, in regular intervals
     timers_print_to_stdout: false,
+
+    /// Noclip settings; only in development mode.
+    noclip: (
+        acceleration: (800.0, 800.0),
+        max_velocity: (Some(1000.0), Some(1000.0)),
+    )
 )

@@ -1,14 +1,12 @@
 use super::system_prelude::*;
 
-const ACCELERATION: (f32, f32) = (800.0, 800.0);
-const MAX_VELOCITY: (Option<f32>, Option<f32>) = (Some(512.0), Some(512.0));
-
 #[derive(Default)]
 pub struct NoclipSystem;
 
 impl<'a> System<'a> for NoclipSystem {
     type SystemData = (
         Entities<'a>,
+        ReadExpect<'a, Settings>,
         Read<'a, Time>,
         Read<'a, InputManager>,
         WriteStorage<'a, Player>,
@@ -24,6 +22,7 @@ impl<'a> System<'a> for NoclipSystem {
         &mut self,
         (
             entities,
+            settings,
             time,
             input_manager,
             mut players,
@@ -37,7 +36,7 @@ impl<'a> System<'a> for NoclipSystem {
     ) {
         if let Some((
             player_entity,
-            mut player,
+            player,
             mut player_velocity,
             mut player_decrease_velocity_opt,
             mut player_solid_opt,
@@ -110,6 +109,8 @@ impl<'a> System<'a> for NoclipSystem {
             // Move in noclip mode
             if is_noclip {
                 let dt = time.delta_seconds();
+                let acceleration = settings.noclip.acceleration;
+                let max_velocity = settings.noclip.max_velocity;
 
                 // Always reset all special jumps (wall jumps, dashes)
                 player.reset_jumps();
@@ -119,9 +120,9 @@ impl<'a> System<'a> for NoclipSystem {
                     input_manager.axis_value("noclip_x").map(|x| x as f32)
                 {
                     if x > 0.0 || x < 0.0 {
-                        let increase = ACCELERATION.0 * x * dt;
+                        let increase = acceleration.0 * x * dt;
                         player_velocity
-                            .increase_x_with_max(increase, MAX_VELOCITY.0);
+                            .increase_x_with_max(increase, max_velocity.0);
                         player_decrease_velocity_opt.as_mut().map(|decr| {
                             if increase > 0.0 {
                                 decr.dont_decrease_x_when_pos();
@@ -144,9 +145,9 @@ impl<'a> System<'a> for NoclipSystem {
                     input_manager.axis_value("noclip_y").map(|y| y as f32)
                 {
                     if y > 0.0 || y < 0.0 {
-                        let increase = ACCELERATION.1 * y * dt;
+                        let increase = acceleration.1 * y * dt;
                         player_velocity
-                            .increase_y_with_max(increase, MAX_VELOCITY.1);
+                            .increase_y_with_max(increase, max_velocity.1);
                         player_decrease_velocity_opt.as_mut().map(|decr| {
                             if increase > 0.0 {
                                 decr.dont_decrease_y_when_pos();
