@@ -1,6 +1,6 @@
 [package]
 name = "LD44"
-version = "0.2.15"
+version = "0.2.16"
 authors = ["Noah Rosenzweig <rosenzweig.noah@gmail.com>"]
 edition = "2018"
 description = "Our Ludum Dare 44 Game Jam Entry"
