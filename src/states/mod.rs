@@ -3,6 +3,7 @@ mod ingame;
 mod main_menu;
 mod paused;
 mod startup;
+mod win_game_menu;
 
 pub mod prelude {
     pub use super::continue_or_new_game_menu::ContinueOrNewGameMenu;
@@ -10,6 +11,7 @@ pub mod prelude {
     pub use super::main_menu::MainMenu;
     pub use super::paused::Paused;
     pub use super::startup::Startup;
+    pub use super::win_game_menu::WinGameMenu;
 }
 
 mod state_prelude {

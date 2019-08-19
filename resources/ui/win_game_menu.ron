@@ -1,0 +1,67 @@
+#![enable(implicit_some)]
+// UiWidget::Container
+Container(
+    // UiTransformBuilder
+    transform: (
+        id:             "win_game_menu",
+        x:              0.0,
+        y:              0.0,
+        width:          0.8,
+        height:         0.8,
+        anchor:         Middle,
+        mouse_reactive: false,
+        percent:        true,
+    ),
+    // TODO: UiImageBuilder
+    background: (
+        image: Data(
+            Rgba((0.0, 0.0, 0.0, 0.8), (channel: Srgb)),
+        ),
+    ),
+    children: [
+        // UiWidget::Button
+        Button(
+            // UiTransformBuilder
+            transform: (
+                id:             "continue_button",
+                x:              -256.0,
+                y:              0.0,
+                width:          128.0,
+                height:         64.0,
+                anchor:         Middle,
+                mouse_reactive: true,
+            ),
+            // UiButtonBuilder
+            button: (
+                text:              "CONTINUE FROM START",
+                font:              File("resources/fonts/square.ttf", Ttf, ()),
+                font_size:         32.0,
+                normal_text_color: (0.2, 0.2, 1.0, 1.0),
+                hover_text_color:  (0.4, 0.4, 1.0, 1.0),
+                press_text_color:  (0.6, 0.6, 1.0, 1.0),
+            ),
+        ),
+        // UiWidget::Button
+        Button(
+            // UiTransformBuilder
+            transform: (
+                id:             "quit_button",
+                x:              256.0,
+                y:              0.0,
+                width:          192.0,
+                height:         64.0,
+                anchor:         Middle,
+                mouse_reactive: true,
+            ),
+            // UiButtonBuilder
+            button: (
+                text:              "TO MAIN MENU",
+                font:              File("resources/fonts/square.ttf", Ttf, ()),
+                font_size:         32.0,
+                normal_text_color: (0.2, 0.2, 1.0, 1.0),
+                hover_text_color:  (0.4, 0.4, 1.0, 1.0),
+                press_text_color:  (0.6, 0.6, 1.0, 1.0),
+            ),
+        )
+    ],
+)

@@ -1,5 +1,4 @@
 use super::state_prelude::*;
-use amethyst::ecs::{Join, ReadStorage, Write};
 
 const UI_RON_PATH: &str = "ui/continue_or_new_game_menu.ron";
 
@@ -96,24 +95,22 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
 impl Menu for ContinueOrNewGameMenu {
     fn event_triggered<'a, 'b>(
         &mut self,
-        event_name: &str,
+        _data: &mut StateData<CustomGameData<CustomData>>,
+        event_name: String,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
-        match event_name {
+        match event_name.as_ref() {
             "continue_button" => Some(Trans::Switch(Box::new(
                 Ingame::builder()
                     .campaign(self.campaign.clone())
                     .new_game(false)
                     .build(),
             ))),
-            "new_game_button" => {
-                // TODO: Delete save
-                Some(Trans::Switch(Box::new(
-                    Ingame::builder()
-                        .campaign(self.campaign.clone())
-                        .new_game(true)
-                        .build(),
-                )))
-            }
+            "new_game_button" => Some(Trans::Switch(Box::new(
+                Ingame::builder()
+                    .campaign(self.campaign.clone())
+                    .new_game(true)
+                    .build(),
+            ))),
             _ => None,
         }
     }

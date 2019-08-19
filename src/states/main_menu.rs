@@ -1,5 +1,4 @@
 use super::state_prelude::*;
-use amethyst::ecs::{Join, ReadStorage, Write};
 
 const UI_RON_PATH: &str = "ui/main_menu.ron";
 
@@ -95,9 +94,10 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
 impl Menu for MainMenu {
     fn event_triggered<'a, 'b>(
         &mut self,
-        event_name: &str,
+        _data: &mut StateData<CustomGameData<CustomData>>,
+        event_name: String,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
-        match event_name {
+        match event_name.as_ref() {
             "start_button_normal" => Some(Trans::Push(Box::new(
                 ContinueOrNewGameMenu::new(CampaignType::Normal),
             ))),

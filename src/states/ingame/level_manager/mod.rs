@@ -19,6 +19,7 @@ pub mod prelude {
 pub struct LevelManager {
     pub settings:          SettingsLevelManagerCampaign,
     pub level_index:       usize,
+    pub has_won_game:      bool,
     player_checkpoint_opt: Option<Player>,
     completed_levels:      Vec<String>,
     level_times:           HashMap<String, Time>,
@@ -35,6 +36,7 @@ impl LevelManager {
         let mut level_manager = Self {
             settings:              settings,
             level_index:           0,
+            has_won_game:          false,
             player_checkpoint_opt: None,
             completed_levels:      Vec::new(),
             level_times:           HashMap::new(),
@@ -206,16 +208,20 @@ impl LevelManager {
         self.level_index = 0;
         self.set_player_checkpoint(data);
         self.save_to_savefile(data);
-        self.load_current_level(data);
+
+        self.has_won_game = true;
+
+        // TODO
+        // self.load_current_level(data);
         // Force update `HealthDisplay`
-        data.world.write_resource::<UpdateHealthDisplay>().0 = true;
+        // data.world.write_resource::<UpdateHealthDisplay>().0 = true;
 
         // Start the global timer again
-        data.world
-            .write_resource::<Timers>()
-            .global
-            .as_mut()
-            .map(|timer| timer.start().unwrap());
+        // data.world
+        //     .write_resource::<Timers>()
+        //     .global
+        //     .as_mut()
+        //     .map(|timer| timer.start().unwrap());
     }
 
     fn player_died(

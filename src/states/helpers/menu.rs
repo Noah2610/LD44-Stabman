@@ -19,7 +19,8 @@ pub trait Menu {
 
     fn event_triggered<'a, 'b>(
         &mut self,
-        event_name: &str,
+        data: &mut StateData<CustomGameData<CustomData>>,
+        event_name: String,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>>;
 
     fn create_ui(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
@@ -38,6 +39,8 @@ pub trait Menu {
         &mut self,
         data: &mut StateData<CustomGameData<CustomData>>,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
+        let mut triggered_event = None;
+
         data.world.exec(
             |(entities, mut events, ui_transforms): (
                 Entities,
@@ -55,21 +58,28 @@ pub trait Menu {
                             .join()
                             .find_map(|(entity, transform)| {
                                 if entity.id() == target_entity_id {
-                                    Some(transform.id.as_ref())
+                                    Some(transform.id.to_string())
                                 } else {
                                     None
                                 }
                             })
                         {
-                            let trans_opt = self.event_triggered(name);
-                            if trans_opt.is_some() {
-                                return trans_opt;
-                            }
+                            triggered_event = Some(name);
                         }
                     }
                 }
-                None
             },
-        )
+        );
+
+        if let Some(event_name) = triggered_event {
+            let trans_opt = self.event_triggered(data, event_name);
+            if trans_opt.is_some() {
+                trans_opt
+            } else {
+                None
+            }
+        } else {
+            None
+        }
     }
 }

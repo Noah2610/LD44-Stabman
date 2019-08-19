@@ -74,8 +74,9 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
     }
 
     fn on_stop(&mut self, data: StateData<CustomGameData<CustomData>>) {
-        // Delete _ALL_ entities before
-        data.world.delete_all();
+        // TODO
+        // Delete _ALL_ entities
+        // data.world.delete_all();
 
         // Stop global timer
         let mut timers = data.world.write_resource::<Timers>();
@@ -120,6 +121,12 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
         }
 
         self.level_manager_mut().update(&mut data);
+        if self.level_manager().has_won_game {
+            // Switch to WinGameMenu
+            return Trans::Switch(Box::new(WinGameMenu::new(
+                self.campaign.clone(),
+            )));
+        }
 
         Trans::None
     }
@@ -132,10 +139,6 @@ pub struct IngameBuilder {
 }
 
 impl IngameBuilder {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
     pub fn campaign(mut self, campaign: CampaignType) -> Self {
         self.campaign = campaign;
         self
