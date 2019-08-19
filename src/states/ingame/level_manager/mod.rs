@@ -106,6 +106,10 @@ impl LevelManager {
                 data,
             );
         }
+
+        // Set the CurrentLevelName resource
+        data.world.write_resource::<CurrentLevelName>().0 =
+            Some(self.level_name());
     }
 
     pub fn is_first_level(&self) -> bool {
@@ -193,7 +197,7 @@ impl LevelManager {
         data.world
             .write_resource::<Stats>()
             .levels
-            .reset_current_deaths();
+            .reset_current_stats();
         // Continue game from the first level
         self.level_index = 0;
         self.set_player_checkpoint(data);

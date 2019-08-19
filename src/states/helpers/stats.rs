@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use crate::components::EnemyType;
+
 #[derive(Default, Clone, Serialize, Deserialize)]
 pub struct Stats {
     pub levels: StatsLevels,
@@ -19,9 +21,10 @@ impl Stats {
 pub struct StatsLevels(HashMap<String, StatsLevel>);
 
 impl StatsLevels {
-    pub fn reset_current_deaths(&mut self) {
+    pub fn reset_current_stats(&mut self) {
         for (_, level_stats) in self.0.iter_mut() {
-            level_stats.deaths.current = 0;
+            level_stats.deaths.reset_current();
+            level_stats.kills.reset_current();
         }
     }
 }
@@ -29,14 +32,7 @@ impl StatsLevels {
 #[derive(Default, Clone, Serialize, Deserialize)]
 pub struct StatsLevel {
     pub deaths: StatsLevelDeaths,
-    // pub kills:  StatsLevelKills,
-}
-
-impl StatsLevelDeaths {
-    pub fn increase(&mut self) {
-        self.current += 1;
-        self.total += 1;
-    }
+    pub kills:  StatsLevelKills,
 }
 
 #[derive(Default, Clone, Serialize, Deserialize)]
@@ -45,5 +41,59 @@ pub struct StatsLevelDeaths {
     pub total:   u32,
 }
 
+impl StatsLevelDeaths {
+    pub fn increase(&mut self) {
+        self.current += 1;
+        self.total += 1;
+    }
+
+    pub fn reset_current(&mut self) {
+        self.current = 0;
+    }
+}
+
 #[derive(Default, Clone, Serialize, Deserialize)]
-pub struct StatsKills {}
+pub struct StatsLevelKills {
+    pub current: StatsLevelKillsEnemies,
+    pub total:   StatsLevelKillsEnemies,
+}
+
+impl StatsLevelKills {
+    pub fn increase_for(&mut self, enemy: &EnemyType) {
+        match enemy {
+            EnemyType::Normal => {
+                self.current.normal += 1;
+                self.total.normal += 1;
+            }
+            EnemyType::Charger => {
+                self.current.charger += 1;
+                self.total.charger += 1;
+            }
+            EnemyType::Flying => {
+                self.current.flying += 1;
+                self.total.flying += 1;
+            }
+            EnemyType::Reaper => {
+                self.current.reaper += 1;
+                self.total.reaper += 1;
+            }
+            EnemyType::Turret => {
+                self.current.turret += 1;
+                self.total.turret += 1;
+            }
+        }
+    }
+
+    pub fn reset_current(&mut self) {
+        self.current = StatsLevelKillsEnemies::default();
+    }
+}
+
+#[derive(Default, Clone, Serialize, Deserialize)]
+pub struct StatsLevelKillsEnemies {
+    pub normal:  u32,
+    pub charger: u32,
+    pub flying:  u32,
+    pub reaper:  u32,
+    pub turret:  u32,
+}

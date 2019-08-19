@@ -20,7 +20,9 @@ impl<'a> System<'a> for EnemyAiSystem {
         Entities<'a>,
         ReadExpect<'a, Settings>,
         Read<'a, Time>,
+        Read<'a, CurrentLevelName>,
         Write<'a, BulletCreator>,
+        Write<'a, Stats>,
         ReadStorage<'a, Transform>,
         ReadStorage<'a, Collision>,
         ReadStorage<'a, Solid<SolidTag>>,
@@ -42,7 +44,9 @@ impl<'a> System<'a> for EnemyAiSystem {
             entities,
             settings,
             time,
+            current_level_name,
             mut bullet_creator,
+            mut stats,
             transforms,
             collisions,
             solids,
@@ -184,6 +188,13 @@ impl<'a> System<'a> for EnemyAiSystem {
                 if enemy_invincible_opt.is_none() && enemy.is_dead() {
                     player_data.player.add_health(enemy.reward);
                     entities.delete(enemy_entity).unwrap();
+                    // Increase stats kill count
+                    if let Some(level) = current_level_name.0.as_ref() {
+                        stats
+                            .level_mut(level)
+                            .kills
+                            .increase_for(&enemy.enemy_type);
+                    }
                 }
             }
         }
