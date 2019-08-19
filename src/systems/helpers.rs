@@ -1,8 +1,10 @@
 use std::ops::Deref;
 
 use amethyst::ecs::storage::{MaskedStorage, Storage};
+use deathframe::components::solid::SolidTag as _;
 
 use super::system_prelude::*;
+use crate::solid_tag::SolidTag;
 
 pub use direction::*;
 
@@ -93,7 +95,8 @@ pub struct SidesTouching {
 impl SidesTouching {
     pub fn new<D>(
         entities: &Entities,
-        player_collision: &Collision,
+        target_collision: &Collision,
+        target_solid: &Solid<SolidTag>,
         collisions: &Storage<Collision, D>,
         solids: &ReadStorage<Solid<SolidTag>>,
     ) -> Self
@@ -104,24 +107,28 @@ impl SidesTouching {
         let mut is_touching_bottom = false;
         let mut is_touching_left = false;
         let mut is_touching_right = false;
-        if player_collision.in_collision() {
-            for (other_entity, _, _) in (entities, collisions, solids).join() {
-                if let Some(colliding_with) =
-                    player_collision.collision_with(other_entity.id())
-                {
-                    match colliding_with.side {
-                        Side::Top => is_touching_top = true,
-                        Side::Bottom => is_touching_bottom = true,
-                        Side::Left => is_touching_left = true,
-                        Side::Right => is_touching_right = true,
-                        _ => (),
-                    }
-                    if is_touching_top
-                        && is_touching_bottom
-                        && is_touching_left
-                        && is_touching_right
+        if target_collision.in_collision() {
+            for (other_entity, _, other_solid) in
+                (entities, collisions, solids).join()
+            {
+                if target_solid.tag.collides_with(&other_solid.tag) {
+                    if let Some(colliding_with) =
+                        target_collision.collision_with(other_entity.id())
                     {
-                        break;
+                        match colliding_with.side {
+                            Side::Top => is_touching_top = true,
+                            Side::Bottom => is_touching_bottom = true,
+                            Side::Left => is_touching_left = true,
+                            Side::Right => is_touching_right = true,
+                            _ => (),
+                        }
+                        if is_touching_top
+                            && is_touching_bottom
+                            && is_touching_left
+                            && is_touching_right
+                        {
+                            break;
+                        }
                     }
                 }
             }

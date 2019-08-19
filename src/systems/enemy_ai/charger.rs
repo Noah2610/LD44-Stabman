@@ -1,3 +1,4 @@
+use deathframe::components::solid::SolidTag as _;
 use deathframe::geo::Vector;
 
 use super::super::system_prelude::*;
@@ -43,7 +44,8 @@ pub(super) fn run(
                     ..
                 }) = collision.collision_with(entity.id())
                 {
-                    stop_moving_sides.contains(side)
+                    solid.tag.collides_with(&other_solid.tag)
+                        && stop_moving_sides.contains(side)
                 } else {
                     false
                 }

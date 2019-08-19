@@ -107,6 +107,7 @@ impl<'a> System<'a> for EnemyAiSystem {
                 let sides_touching = SidesTouching::new(
                     &entities,
                     enemy_collision,
+                    enemy_solid,
                     &collisions,
                     &solids,
                 );

@@ -45,17 +45,20 @@ impl<'a> System<'a> for PlayerDashSystem {
             mut player_velocity,
             mut player_gravity_opt,
             player_collision,
+            player_solid,
         ) in (
             &mut players,
             &mut velocities,
             (&mut gravities).maybe(),
             &collisions,
+            &solids,
         )
             .join()
         {
             let sides_touching = SidesTouching::new(
                 &entities,
                 player_collision,
+                player_solid,
                 &collisions,
                 &solids,
             );

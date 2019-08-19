@@ -65,6 +65,7 @@ impl<'a> System<'a> for PlayerControlsSystem {
             decr_velocity,
             gravity_opt,
             player_collision,
+            player_solid,
             animations_container,
             flipped,
             noclip_opt,
@@ -75,6 +76,7 @@ impl<'a> System<'a> for PlayerControlsSystem {
             &mut decr_velocities,
             (&mut gravities).maybe(),
             &collisions,
+            &solids,
             &mut animations_containers,
             &mut flippeds,
             noclips.maybe(),
@@ -86,6 +88,7 @@ impl<'a> System<'a> for PlayerControlsSystem {
             let sides_touching = SidesTouching::new(
                 &entities,
                 player_collision,
+                player_solid,
                 &collisions,
                 &solids,
             );
