@@ -25,14 +25,16 @@ impl StatsLevels {
         for (_, level_stats) in self.0.iter_mut() {
             level_stats.deaths.reset_current();
             level_stats.kills.reset_current();
+            level_stats.items_bought.reset_current();
         }
     }
 }
 
 #[derive(Default, Clone, Serialize, Deserialize)]
 pub struct StatsLevel {
-    pub deaths: StatsLevelDeaths,
-    pub kills:  StatsLevelKills,
+    pub deaths:       StatsLevelDeaths,
+    pub kills:        StatsLevelKills,
+    pub items_bought: StatsLevelItemsBought,
 }
 
 #[derive(Default, Clone, Serialize, Deserialize)]
@@ -96,4 +98,21 @@ pub struct StatsLevelKillsEnemies {
     pub flying:  u32,
     pub reaper:  u32,
     pub turret:  u32,
+}
+
+#[derive(Default, Clone, Serialize, Deserialize)]
+pub struct StatsLevelItemsBought {
+    pub current: u32,
+    pub total:   u32,
+}
+
+impl StatsLevelItemsBought {
+    pub fn increase(&mut self) {
+        self.current += 1;
+        self.total += 1;
+    }
+
+    pub fn reset_current(&mut self) {
+        self.current = 0;
+    }
 }

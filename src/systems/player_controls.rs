@@ -9,7 +9,9 @@ impl<'a> System<'a> for PlayerControlsSystem {
         ReadExpect<'a, Settings>,
         Read<'a, Time>,
         Read<'a, InputManager>,
+        Read<'a, CurrentLevelName>,
         Write<'a, BulletCreator>,
+        Write<'a, Stats>,
         ReadStorage<'a, Transform>,
         ReadStorage<'a, Collision>,
         ReadStorage<'a, Solid<SolidTag>>,
@@ -33,7 +35,9 @@ impl<'a> System<'a> for PlayerControlsSystem {
             settings,
             time,
             input_manager,
+            current_level_name,
             mut bullet_creator,
+            mut stats,
             transforms,
             collisions,
             solids,
@@ -147,6 +151,8 @@ impl<'a> System<'a> for PlayerControlsSystem {
                 handle_item_purchase(
                     &settings.items,
                     &entities,
+                    &current_level_name,
+                    &mut stats,
                     &input_manager,
                     player,
                     player_collision,
@@ -460,16 +466,18 @@ fn handle_attack<'a>(
     }
 }
 
-fn handle_item_purchase<'a>(
+fn handle_item_purchase(
     settings: &SettingsItems,
-    entities: &Entities<'a>,
+    entities: &Entities,
+    current_level_name: &CurrentLevelName,
+    stats: &mut Stats,
     input_manager: &InputManager,
     player: &mut Player,
     player_collision: &Collision,
-    items: &ReadStorage<'a, Item>,
-    collisions: &ReadStorage<'a, Collision>,
-    hearts_containers: &ReadStorage<'a, HeartsContainer>,
-    hearts: &mut WriteStorage<'a, Heart>,
+    items: &ReadStorage<Item>,
+    collisions: &ReadStorage<Collision>,
+    hearts_containers: &ReadStorage<HeartsContainer>,
+    hearts: &mut WriteStorage<Heart>,
 ) {
     for (item_entity, item, item_collision, hearts_container_opt) in
         (entities, items, collisions, hearts_containers.maybe()).join()
@@ -490,6 +498,10 @@ fn handle_item_purchase<'a>(
                     for id in hearts_container.heart_ids.iter() {
                         entities.delete(entities.entity(*id));
                     }
+                }
+                // Increase stats items bought
+                if let Some(level) = current_level_name.0.as_ref() {
+                    stats.level_mut(level).items_bought.increase();
                 }
             }
         }
