@@ -87,10 +87,16 @@ impl LevelManager {
             });
         }
 
-        // (Re)start level timer
         {
+            // (Re)start level timer
             let mut timers = data.world.write_resource::<Timers>();
             timers.level.start().unwrap();
+            // Resume global timer
+            timers.global.as_mut().map(|timer| {
+                if timer.state.is_paused() {
+                    timer.resume().unwrap();
+                }
+            });
         }
 
         // Create timer UI (if level has been completed before)
@@ -124,17 +130,19 @@ impl LevelManager {
 
     pub fn update(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
         // Check if the level was beaten and if the player has died
-        let (next_level, player_dead) = data.world.exec(
+        let (player_in_goal, next_level, player_dead) = data.world.exec(
             |(goals, players, animations_containers, invincibles): (
                 ReadStorage<Goal>,
                 ReadStorage<Player>,
                 ReadStorage<AnimationsContainer>,
                 ReadStorage<Invincible>,
             )| {
-                let next_level = (&goals)
+                let player_in_goal = (&goals)
                     .join()
                     .find_map(|goal| Some(goal.next_level))
-                    .unwrap_or(false)
+                    .unwrap_or(false);
+
+                let next_level = player_in_goal
                     && (&players, &animations_containers)
                         .join()
                         .find_map(|(_, animations_container)| {
@@ -152,25 +160,34 @@ impl LevelManager {
                         })
                         .unwrap_or(false);
 
-                (next_level, player_dead)
+                (player_in_goal, next_level, player_dead)
             },
         );
 
-        if next_level {
-            let level_name = self.level_name();
-            if !self.completed_levels.contains(&level_name) {
-                self.completed_levels.push(self.level_name().clone());
+        let level_name = self.level_name();
+
+        if player_in_goal {
+            // Stop level timer
+            let mut timers = data.world.write_resource::<Timers>();
+            timers.level.finish().unwrap();
+            let time = timers.level.time_output();
+            println!("LEVEL TIME: {}", &time);
+            let time_entry =
+                self.level_times.entry(level_name.clone()).or_insert(time);
+            if time < *time_entry {
+                *time_entry = time;
             }
-            {
-                let mut timers = data.world.write_resource::<Timers>();
-                timers.level.finish().unwrap();
-                let time = timers.level.time_output();
-                println!("LEVEL TIME: {}", &time);
-                let time_entry =
-                    self.level_times.entry(level_name).or_insert(time);
-                if time < *time_entry {
-                    *time_entry = time;
+            // Pause global timer
+            timers.global.as_mut().map(|timer| {
+                if timer.state.is_running() {
+                    timer.pause().unwrap()
                 }
+            });
+        }
+
+        if next_level {
+            if !self.completed_levels.contains(&level_name) {
+                self.completed_levels.push(level_name);
             }
 
             if self.has_next_level() {
