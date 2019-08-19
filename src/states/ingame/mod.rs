@@ -76,7 +76,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
     fn on_stop(&mut self, data: StateData<CustomGameData<CustomData>>) {
         // TODO
         // Delete _ALL_ entities
-        // data.world.delete_all();
+        data.world.delete_all();
 
         // Stop global timer
         let mut timers = data.world.write_resource::<Timers>();

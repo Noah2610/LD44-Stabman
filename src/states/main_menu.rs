@@ -13,6 +13,7 @@ impl MainMenu {
         &self,
         data: &StateData<CustomGameData<CustomData>>,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
+        let settings = data.world.settings();
         let input_manager = data.world.input_manager();
 
         // Quit game
@@ -20,11 +21,29 @@ impl MainMenu {
             Some(Trans::Quit)
         // Start game
         } else if input_manager.is_up("accept") {
-            Some(Trans::Push(Box::new(ContinueOrNewGameMenu::new(
-                CampaignType::default(),
-            ))))
+            Some(self.trans_for_campaign(CampaignType::default(), &settings))
         } else {
             None
+        }
+    }
+
+    /// Returns the `Trans::Push` with the appropriate state, given the campaign.
+    /// Checks if the savefile for that campaign exists;
+    /// if it does exist, then push the `ContinueOrNewGameMenu` state,
+    /// if it does _not_ exist, then push the `Ingame` state.
+    fn trans_for_campaign<'a, 'b>(
+        &self,
+        campaign: CampaignType,
+        settings: &Settings,
+    ) -> Trans<CustomGameData<'a, 'b, CustomData>, StateEvent> {
+        // Only start ContinueOrNewGameMenu if a savefile already exists,
+        // otherwise start the game directly.
+        if savefile_exists_for(&campaign, settings) {
+            Trans::Push(Box::new(ContinueOrNewGameMenu::new(campaign)))
+        } else {
+            Trans::Push(Box::new(
+                Ingame::builder().campaign(campaign).new_game(false).build(),
+            ))
         }
     }
 }
@@ -94,18 +113,27 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
 impl Menu for MainMenu {
     fn event_triggered<'a, 'b>(
         &mut self,
-        _data: &mut StateData<CustomGameData<CustomData>>,
+        data: &mut StateData<CustomGameData<CustomData>>,
         event_name: String,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
+        let settings = data.world.settings();
+        let mut start_with_campaign = None;
+
         match event_name.as_ref() {
-            "start_button_normal" => Some(Trans::Push(Box::new(
-                ContinueOrNewGameMenu::new(CampaignType::Normal),
-            ))),
-            "start_button_bonus" => Some(Trans::Push(Box::new(
-                ContinueOrNewGameMenu::new(CampaignType::Bonus),
-            ))),
-            "quit_button" => Some(Trans::Quit),
-            _ => None,
+            "start_button_normal" => {
+                start_with_campaign = Some(CampaignType::Normal);
+            }
+            "start_button_bonus" => {
+                start_with_campaign = Some(CampaignType::Bonus);
+            }
+            "quit_button" => return Some(Trans::Quit),
+            _ => (),
+        };
+
+        if let Some(campaign) = start_with_campaign {
+            Some(self.trans_for_campaign(campaign, &settings))
+        } else {
+            None
         }
     }
 
@@ -128,4 +156,17 @@ impl Menu for MainMenu {
     fn ui_reader_id_mut(&mut self) -> &mut Option<ReaderId<UiEvent>> {
         &mut self.ui_reader_id
     }
+}
+
+fn savefile_exists_for(campaign: &CampaignType, settings: &Settings) -> bool {
+    use amethyst::utils::application_root_dir;
+    use std::path::Path;
+
+    let savefile_relative = match campaign {
+        CampaignType::Normal => &settings.level_manager.normal.savefile_path,
+        CampaignType::Bonus => &settings.level_manager.bonus.savefile_path,
+    };
+    let savefile_path =
+        format!("{}/{}", application_root_dir(), savefile_relative);
+    Path::new(&savefile_path).exists()
 }
