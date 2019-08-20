@@ -484,7 +484,9 @@ fn handle_item_purchase(
             ..
         }) = player_collision.collision_with(item_id)
         {
-            if input_manager.is_down("player_buy_item") {
+            if item.cost < player.health
+                && input_manager.is_down("player_buy_item")
+            {
                 // Pickup item
                 item.apply(player, settings);
                 entities.delete(item_entity).unwrap();
