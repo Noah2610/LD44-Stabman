@@ -133,7 +133,8 @@ impl PlayerDashSystem {
     ) {
         // If player has used up all their dashes, we don't need to bother checking.
         // Also only allow dashing in air (when set in settings).
-        if !player.has_dash()
+        if !player.in_control
+            || !player.has_dash()
             || (settings.items.settings.dash_only_in_air
                 && player_sides_touching.is_touching_bottom)
         {
