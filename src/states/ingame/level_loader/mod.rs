@@ -43,10 +43,15 @@ struct EntityData {
     pub graphic:    Option<Graphic>,
 }
 
+struct CameraData {
+    pub id:   Index,
+    pub size: Vector,
+}
+
 pub struct LevelLoader {
     settings:      SettingsLevelManagerCampaign,
     level_size:    Option<Vector>,
-    camera_id:     Option<Index>,
+    camera_data:   Option<CameraData>,
     player_id:     Option<Index>,
     player_data:   Option<EntityData>,
     tiles_data:    Vec<EntityData>,
@@ -61,7 +66,7 @@ impl LevelLoader {
         Self {
             settings:      settings,
             level_size:    None,
-            camera_id:     None,
+            camera_data:   None,
             player_id:     None,
             player_data:   None,
             tiles_data:    Vec::new(),
@@ -74,7 +79,7 @@ impl LevelLoader {
 
     /// Returns `true` if everything has finished loading and building properly.
     pub fn is_finished(&self) -> bool {
-        self.player_id.is_some() && self.camera_id.is_some()
+        self.player_id.is_some() && self.camera_data.is_some()
     }
 
     /// Start loading the level data from the given level filename.
@@ -378,7 +383,10 @@ impl LevelLoader {
 
         let entity = entity_builder.build();
 
-        self.camera_id = Some(entity.id());
+        self.camera_data = Some(CameraData {
+            id:   entity.id(),
+            size: size,
+        });
     }
 
     fn build_tiles(&self, data: &mut StateData<CustomGameData<CustomData>>) {
@@ -485,7 +493,13 @@ impl LevelLoader {
             graphic: _,
         } in &self.parallax_data
         {
-            if let Some(camera_id) = self.camera_id {
+            let mut parallax_size = size.clone();
+
+            if let Some(CameraData {
+                id: camera_id,
+                size: camera_size,
+            }) = self.camera_data
+            {
                 // Load bg image texture
                 let texture_handle_opt = if let Some((_, bg_filename)) =
                     properties.entries().find(|(key, _)| key == &"image")
@@ -587,6 +601,34 @@ impl LevelLoader {
                                     .repeat_y = false;
                             }
                         }
+                        "scale" => {
+                            let value = val.as_str().expect(
+                                "Couldn't parse JsonValue as str (scale)",
+                            );
+                            // Using value names "contain" and "cover" borrowed from CSS spec.
+                            // https://cssreference.io/property/background-size/
+                            match value {
+                                "contain" | "cover" => {
+                                    // Scale parallax size to window size
+                                    parallax_size = {
+                                        let scale = match value {
+                                            "contain" => (camera_size.0
+                                                / size.0)
+                                                .min(camera_size.1 / size.1),
+                                            "cover" => (camera_size.0 / size.0)
+                                                .max(camera_size.1 / size.1),
+                                            _ => unreachable!(),
+                                        };
+
+                                        (size.0 * scale, size.1 * scale).into()
+                                    };
+                                }
+                                _ => panic!(
+                                    "Invalid parallax scale value: '{}'",
+                                    value
+                                ),
+                            }
+                        }
                         _ => (),
                     }
                 }
@@ -609,7 +651,7 @@ impl LevelLoader {
                 ); // NOTE: Draw parallax backgrounds behind foreground
                 entity = entity
                     .with(transform)
-                    .with(Size::from(*size))
+                    .with(Size::from(parallax_size))
                     .with(Velocity::default())
                     .with(ScaleOnce)
                     .with(Transparent)
