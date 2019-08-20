@@ -5,6 +5,7 @@ use crate::components::EnemyType;
 #[derive(Default, Clone, Serialize, Deserialize)]
 pub struct Stats {
     pub levels: StatsLevels,
+    pub wins:   u32,
 }
 
 impl Stats {

@@ -9,6 +9,7 @@ use climer::Time;
 
 use super::super::state_prelude::*;
 use super::level_loader::LevelLoader;
+use savefile::TimeData;
 
 const TIMER_Z: f32 = 10.0;
 
@@ -22,8 +23,8 @@ pub struct LevelManager {
     pub has_won_game:      bool,
     player_checkpoint_opt: Option<Player>,
     completed_levels:      Vec<String>,
-    level_times:           HashMap<String, Time>,
-    global_time:           Option<Time>,
+    level_times:           HashMap<String, TimeData>,
+    global_time:           Option<TimeData>,
     current_song:          Option<String>,
 }
 
@@ -104,7 +105,21 @@ impl LevelManager {
             create_timer_ui(
                 TimerType::Level,
                 &self.settings.level_timer_ui,
-                self.level_times.get(&self.level_name()).map(Clone::clone),
+                {
+                    if let Some(times) =
+                        self.level_times.get(&self.level_name())
+                    {
+                        Some(
+                            if times.general < times.first {
+                                times.general.clone()
+                            } else {
+                                times.first.clone()
+                            },
+                        )
+                    } else {
+                        None
+                    }
+                },
                 data,
             );
         }
@@ -114,7 +129,19 @@ impl LevelManager {
             create_timer_ui(
                 TimerType::Global,
                 &self.settings.global_timer_ui,
-                self.global_time,
+                {
+                    if let Some(times) = self.global_time.as_ref() {
+                        Some(
+                            if times.general < times.first {
+                                times.general.clone()
+                            } else {
+                                times.first.clone()
+                            },
+                        )
+                    } else {
+                        None
+                    }
+                },
                 data,
             );
         }
@@ -165,6 +192,7 @@ impl LevelManager {
         );
 
         let level_name = self.level_name();
+        let is_first_loop = self.is_first_loop(data);
 
         if player_in_goal {
             // Stop level timer
@@ -172,10 +200,18 @@ impl LevelManager {
             timers.level.finish().unwrap();
             let time = timers.level.time_output();
             println!("LEVEL TIME: {}", &time);
-            let time_entry =
-                self.level_times.entry(level_name.clone()).or_insert(time);
-            if time < *time_entry {
-                *time_entry = time;
+            let time_entry = self
+                .level_times
+                .entry(level_name.clone())
+                .or_insert(TimeData {
+                    general: time,
+                    first:   time,
+                });
+            if time < time_entry.general {
+                time_entry.general = time;
+            }
+            if is_first_loop && time < time_entry.first {
+                time_entry.first = time;
             }
             // Pause global timer
             timers.global.as_mut().map(|timer| {
@@ -206,21 +242,39 @@ impl LevelManager {
         println!("You win!");
         // Stop global timer
         {
+            let is_first_loop = self.is_first_loop(data);
             let mut timers = data.world.write_resource::<Timers>();
+
             if let Some(global_timer) = timers.global.as_mut() {
                 global_timer.finish().unwrap();
                 let time = global_timer.time_output();
                 println!("GLOBAL TIME: {}", &time);
-                self.global_time = Some(time);
+                if self.global_time.is_none() {
+                    self.global_time = Some(TimeData {
+                        general: time,
+                        first:   time,
+                    });
+                }
+                self.global_time.as_mut().map(|global_time| {
+                    if time < global_time.general {
+                        global_time.general = time;
+                    }
+                    if is_first_loop && time < global_time.first {
+                        global_time.first = time;
+                    }
+                });
             }
+
             timers.global = Some(Timer::default());
         }
 
-        // Reset current death counters from stats
-        data.world
-            .write_resource::<Stats>()
-            .levels
-            .reset_current_stats();
+        // Reset current death counters from stats,
+        // and increase wins counter.
+        {
+            let mut stats = data.world.write_resource::<Stats>();
+            stats.levels.reset_current_stats();
+            stats.wins += 1;
+        }
         // Continue game from the first level
         self.level_index = 0;
         self.set_player_checkpoint(data);
@@ -364,6 +418,14 @@ impl LevelManager {
         self.completed_levels.len() >= self.settings.level_names.len()
     }
 
+    fn is_first_loop(
+        &self,
+        data: &StateData<CustomGameData<CustomData>>,
+    ) -> bool {
+        let stats = data.world.read_resource::<Stats>();
+        stats.wins == 0
+    }
+
     fn level_name(&self) -> String {
         self.settings
             .level_names
@@ -398,7 +460,7 @@ impl LevelManager {
                 current:     self.level_name(),
                 completed:   self.completed_levels.clone(),
                 times:       self.level_times.clone(),
-                global_time: self.global_time,
+                global_time: self.global_time.clone(),
             },
             stats:  Some(data.world.read_resource::<Stats>().clone()),
         };
@@ -501,10 +563,9 @@ impl LevelManager {
         self.level_index = 0;
         self.player_checkpoint_opt = None;
         self.completed_levels = Vec::new();
-        data.world
-            .write_resource::<Stats>()
-            .levels
-            .reset_current_stats();
+        let mut stats = data.world.write_resource::<Stats>();
+        stats.levels.reset_current_stats();
+        stats.wins = 0;
     }
 }
 

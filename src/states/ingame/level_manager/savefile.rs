@@ -16,6 +16,12 @@ pub struct SavefileData {
 pub struct LevelsData {
     pub current:     String,
     pub completed:   Vec<String>,
-    pub times:       HashMap<String, Time>,
-    pub global_time: Option<Time>,
+    pub times:       HashMap<String, TimeData>,
+    pub global_time: Option<TimeData>,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct TimeData {
+    pub general: Time,
+    pub first:   Time,
 }
