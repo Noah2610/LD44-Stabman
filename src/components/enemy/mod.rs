@@ -1,15 +1,17 @@
+pub mod charger_data;
+pub mod facing;
+pub mod turret_data;
+
 pub mod prelude {
+    pub use super::charger_data::EnemyAiChargerData;
+    pub use super::turret_data::EnemyAiTurretData;
     pub use super::Enemy;
     pub use super::EnemyAi;
-    pub use super::EnemyAiChargerData;
-    pub use super::EnemyAiTurretData;
     pub use super::EnemyType;
     pub use super::Facing;
 }
 
-use std::time::{Duration, Instant};
-
-use deathframe::geo::Side;
+pub use facing::Facing;
 
 use super::component_prelude::*;
 use super::Player;
@@ -19,53 +21,11 @@ use crate::settings::SettingsEnemy;
 // (to avoid alternating Flipped state, when crossing)
 const TRIGGER_DISTANCE_DEADZONE: (f32, f32) = (16.0, 16.0);
 
-#[derive(Clone, PartialEq, Default)]
-pub struct EnemyAiChargerData {
-    pub is_moving:                        bool,
-    pub velocity:                         Vector,
-    pub stop_moving_when_colliding_sides: Option<Vec<Side>>,
-}
-
-#[derive(Clone, PartialEq)]
-pub enum Facing {
-    Left,
-    Right,
-}
-
-impl Default for Facing {
-    fn default() -> Self {
-        Facing::Left
-    }
-}
-
-#[derive(Clone, PartialEq)]
-pub struct EnemyAiTurretData {
-    pub facing:           Facing,
-    pub shot_interval_ms: u64,
-    pub bullet_velocity:  Vector,
-    pub bullet_size:      Vector,
-    pub bullet_lifetime:  Duration,
-    pub last_shot_at:     Instant,
-}
-
-impl Default for EnemyAiTurretData {
-    fn default() -> Self {
-        Self {
-            facing:           Default::default(),
-            shot_interval_ms: Default::default(),
-            bullet_velocity:  Default::default(),
-            bullet_size:      Default::default(),
-            bullet_lifetime:  Duration::new(5, 0),
-            last_shot_at:     Instant::now(),
-        }
-    }
-}
-
 #[derive(Clone, PartialEq)]
 pub enum EnemyAi {
     Tracer,
-    Charger(EnemyAiChargerData),
-    Turret(EnemyAiTurretData),
+    Charger(charger_data::EnemyAiChargerData),
+    Turret(turret_data::EnemyAiTurretData),
 }
 
 impl Component for EnemyAi {
