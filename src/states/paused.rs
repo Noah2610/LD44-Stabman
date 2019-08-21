@@ -1,4 +1,5 @@
 use super::state_prelude::*;
+use amethyst::ecs::{Join, WriteStorage};
 
 const UI_RON_PATH: &str = "ui/paused.ron";
 
@@ -37,9 +38,20 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Paused {
         self.create_ui(&mut data);
 
         // Pause timers
-        let mut timers = data.world.write_resource::<Timers>();
-        timers.level.pause().unwrap();
-        timers.global.as_mut().map(|timer| timer.pause().unwrap());
+        {
+            let mut timers = data.world.write_resource::<Timers>();
+            timers.level.pause().unwrap();
+            timers.global.as_mut().map(|timer| timer.pause().unwrap());
+        }
+
+        // Pause all turret timers
+        data.world.exec(|mut enemy_ais: WriteStorage<EnemyAi>| {
+            (&mut enemy_ais).join().for_each(|enemy_ai| {
+                if let EnemyAi::Turret(ai_data) = enemy_ai {
+                    ai_data.shot_timer.pause().unwrap();
+                }
+            });
+        });
     }
 
     fn on_stop(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
@@ -51,9 +63,20 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Paused {
         }
 
         // Resume timers
-        let mut timers = data.world.write_resource::<Timers>();
-        timers.level.resume().unwrap();
-        timers.global.as_mut().map(|timer| timer.resume().unwrap());
+        {
+            let mut timers = data.world.write_resource::<Timers>();
+            timers.level.resume().unwrap();
+            timers.global.as_mut().map(|timer| timer.resume().unwrap());
+        }
+
+        // Resume all turret timers
+        data.world.exec(|mut enemy_ais: WriteStorage<EnemyAi>| {
+            (&mut enemy_ais).join().for_each(|enemy_ai| {
+                if let EnemyAi::Turret(ai_data) = enemy_ai {
+                    ai_data.shot_timer.resume().unwrap();
+                }
+            });
+        });
     }
 
     fn handle_event(
