@@ -21,7 +21,7 @@ use crate::settings::SettingsEnemy;
 // (to avoid alternating Flipped state, when crossing)
 const TRIGGER_DISTANCE_DEADZONE: (f32, f32) = (16.0, 16.0);
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone)]
 pub enum EnemyAi {
     Tracer,
     Charger(charger_data::EnemyAiChargerData),

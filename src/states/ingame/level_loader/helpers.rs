@@ -1,5 +1,6 @@
 use amethyst::ecs::World;
 use amethyst::renderer::{SpriteRender, SpriteSheetHandle};
+use climer::{Time, Timer};
 use deathframe::geo::prelude::*;
 use deathframe::handlers::SpriteSheetHandles;
 use json::JsonValue;
@@ -174,15 +175,14 @@ pub fn enemy_components_from(
                         sprite_number: 0,
                     })
                 };
+                let shot_interval_ms =
+                    settings.enemies.turret_data.shot_interval_ms;
                 (
                     EnemyType::Turret,
                     settings.enemies.turret.clone(),
                     EnemyAi::Turret(EnemyAiTurretData {
                         facing,
-                        shot_interval_ms: settings
-                            .enemies
-                            .turret_data
-                            .shot_interval_ms,
+                        shot_interval_ms,
                         bullet_velocity: settings
                             .enemies
                             .turret_data
@@ -191,6 +191,15 @@ pub fn enemy_components_from(
                         bullet_lifetime: Duration::from_millis(
                             settings.enemies.turret_data.bullet_lifetime_ms,
                         ),
+                        shot_timer: Timer::builder()
+                            .time(
+                                Time::builder()
+                                    .milliseconds(shot_interval_ms)
+                                    .build(),
+                            )
+                            .quiet(true)
+                            .build()
+                            .unwrap(),
                         ..Default::default()
                     }),
                     (spritesheet_handle.clone(), sprite_render),

@@ -19,13 +19,10 @@ pub(super) fn run(
     );
 
     if enemy.in_trigger_distance(distance_to_player) {
-        let now = Instant::now();
-        if now - ai_data.last_shot_at
-            >= Duration::from_millis(ai_data.shot_interval_ms)
-        {
+        ai_data.shot_timer.update().unwrap();
+        if ai_data.shot_timer.state.is_finished() {
             // Shoot bullet
             animations_container.play("shooting");
-            ai_data.last_shot_at = now;
             bullet_creator.push(BulletComponents {
                 bullet:    Bullet::new()
                     .owner(BulletOwner::Enemy)
@@ -50,6 +47,9 @@ pub(super) fn run(
                 ),
                 size:      Size::from(ai_data.bullet_size),
             });
+
+            // Restart timer
+            ai_data.shot_timer.start().unwrap();
         }
     }
 }

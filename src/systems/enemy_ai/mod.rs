@@ -28,6 +28,8 @@ impl<'a> System<'a> for EnemyAiSystem {
         ReadStorage<'a, Solid<SolidTag>>,
         ReadStorage<'a, Gravity>,
         ReadStorage<'a, Invincible>,
+        ReadStorage<'a, Loadable>,
+        ReadStorage<'a, Loaded>,
         WriteStorage<'a, Enemy>,
         WriteStorage<'a, EnemyAi>,
         WriteStorage<'a, Player>,
@@ -52,6 +54,8 @@ impl<'a> System<'a> for EnemyAiSystem {
             solids,
             gravities,
             invincibles,
+            loadables,
+            loadeds,
             mut enemies,
             mut enemy_ais,
             mut players,
@@ -91,6 +95,8 @@ impl<'a> System<'a> for EnemyAiSystem {
                 enemy_solid,
                 enemy_gravity_opt,
                 enemy_invincible_opt,
+                enemy_loadable_opt,
+                enemy_loaded_opt,
             ) in (
                 &entities,
                 &mut enemies,
@@ -105,95 +111,103 @@ impl<'a> System<'a> for EnemyAiSystem {
                 &solids,
                 (&gravities).maybe(),
                 invincibles.maybe(),
+                loadables.maybe(),
+                loadeds.maybe(),
             )
                 .join()
             {
-                let sides_touching = SidesTouching::new(
-                    &entities,
-                    enemy_collision,
-                    enemy_solid,
-                    &collisions,
-                    &solids,
-                );
-
-                // Run AI specific code
-                match enemy_ai {
-                    EnemyAi::Tracer => tracer::run(
-                        dt,
-                        &player_data,
-                        enemy,
-                        enemy_transform,
-                        enemy_velocity,
-                        enemy_decr_vel,
-                    ),
-                    EnemyAi::Charger(data) => charger::run(
-                        dt,
-                        &player_data,
-                        enemy,
-                        data,
-                        enemy_transform,
-                        enemy_velocity,
-                        enemy_decr_vel,
+                if let (Some(_), Some(_)) | (None, None) =
+                    (enemy_loadable_opt, enemy_loaded_opt)
+                {
+                    let sides_touching = SidesTouching::new(
+                        &entities,
                         enemy_collision,
                         enemy_solid,
-                        &entities,
+                        &collisions,
                         &solids,
-                    ),
-                    EnemyAi::Turret(data) => turret::run(
-                        dt,
-                        &player_data,
-                        enemy,
-                        data,
-                        enemy_transform,
-                        enemy_animations_container,
-                        &mut bullet_creator,
-                    ),
-                }
+                    );
 
-                // Reset velocity when enemy is touching a solid
-                if (sides_touching.is_touching_left && enemy_velocity.x < 0.0)
-                    || (sides_touching.is_touching_right
-                        && enemy_velocity.x > 0.0)
-                {
-                    enemy_velocity.x = 0.0;
-                }
-                if (sides_touching.is_touching_bottom && enemy_velocity.y < 0.0)
-                    || (sides_touching.is_touching_top
-                        && enemy_velocity.y > 0.0)
-                {
-                    enemy_velocity.y = 0.0;
-                }
-
-                // Flip sprite
-                if enemy_velocity.x > 0.0 {
-                    if enemy_flipped == &mut Flipped::Horizontal {
-                        *enemy_flipped = Flipped::None;
+                    // Run AI specific code
+                    match enemy_ai {
+                        EnemyAi::Tracer => tracer::run(
+                            dt,
+                            &player_data,
+                            enemy,
+                            enemy_transform,
+                            enemy_velocity,
+                            enemy_decr_vel,
+                        ),
+                        EnemyAi::Charger(data) => charger::run(
+                            dt,
+                            &player_data,
+                            enemy,
+                            data,
+                            enemy_transform,
+                            enemy_velocity,
+                            enemy_decr_vel,
+                            enemy_collision,
+                            enemy_solid,
+                            &entities,
+                            &solids,
+                        ),
+                        EnemyAi::Turret(data) => turret::run(
+                            dt,
+                            &player_data,
+                            enemy,
+                            data,
+                            enemy_transform,
+                            enemy_animations_container,
+                            &mut bullet_creator,
+                        ),
                     }
-                    enemy_animations_container.set_if_has("walking");
-                } else if enemy_velocity.x < 0.0 {
-                    if enemy_flipped == &mut Flipped::None {
-                        *enemy_flipped = Flipped::Horizontal;
+
+                    // Reset velocity when enemy is touching a solid
+                    if (sides_touching.is_touching_left
+                        && enemy_velocity.x < 0.0)
+                        || (sides_touching.is_touching_right
+                            && enemy_velocity.x > 0.0)
+                    {
+                        enemy_velocity.x = 0.0;
                     }
-                    enemy_animations_container.set_if_has("walking");
-                } else {
-                    enemy_animations_container.set_if_has("idle");
-                }
+                    if (sides_touching.is_touching_bottom
+                        && enemy_velocity.y < 0.0)
+                        || (sides_touching.is_touching_top
+                            && enemy_velocity.y > 0.0)
+                    {
+                        enemy_velocity.y = 0.0;
+                    }
 
-                // Kill the enemies when they fall below the death_floor
-                if enemy_transform.translation().y < settings.death_floor {
-                    enemy.health = 0;
-                }
+                    // Flip sprite
+                    if enemy_velocity.x > 0.0 {
+                        if enemy_flipped == &mut Flipped::Horizontal {
+                            *enemy_flipped = Flipped::None;
+                        }
+                        enemy_animations_container.set_if_has("walking");
+                    } else if enemy_velocity.x < 0.0 {
+                        if enemy_flipped == &mut Flipped::None {
+                            *enemy_flipped = Flipped::Horizontal;
+                        }
+                        enemy_animations_container.set_if_has("walking");
+                    } else {
+                        enemy_animations_container.set_if_has("idle");
+                    }
 
-                // Handle enemy death
-                if enemy_invincible_opt.is_none() && enemy.is_dead() {
-                    player_data.player.add_health(enemy.reward);
-                    entities.delete(enemy_entity).unwrap();
-                    // Increase stats kill count
-                    if let Some(level) = current_level_name.0.as_ref() {
-                        stats
-                            .level_mut(level)
-                            .kills
-                            .increase_for(&enemy.enemy_type);
+                    // Kill the enemies when they fall below the death_floor
+                    if enemy_transform.translation().y < settings.death_floor {
+                        enemy.health = 0;
+                    }
+
+                    // Handle enemy death
+                    if enemy_invincible_opt.is_none() && enemy.is_dead() {
+                        player_data.player.add_health(enemy.reward);
+                        entities.delete(enemy_entity).unwrap();
+                        // Increase stats kill count
+                        if let Some(level) = current_level_name.0.as_ref() {
+                            stats
+                                .level_mut(level)
+                                .kills
+                                .increase_for(&enemy.enemy_type);
+                        }
                     }
                 }
             }

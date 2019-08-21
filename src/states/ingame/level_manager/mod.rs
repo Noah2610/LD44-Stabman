@@ -88,6 +88,15 @@ impl LevelManager {
             });
         }
 
+        // Start all turret timers
+        data.world.exec(|mut enemy_ais: WriteStorage<EnemyAi>| {
+            (&mut enemy_ais).join().for_each(|enemy_ai| {
+                if let EnemyAi::Turret(ai_data) = enemy_ai {
+                    ai_data.shot_timer.start().unwrap();
+                }
+            });
+        });
+
         {
             // (Re)start level timer
             let mut timers = data.world.write_resource::<Timers>();
