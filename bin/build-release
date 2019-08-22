@@ -44,6 +44,8 @@ set -e
 LOGFILE="${ROOT}/logs/$( basename "$0" ).log"
 WINDOWS_TARGET="x86_64-pc-windows-gnu"
 INCLUDE_FILES=()
+[ -f "${ROOT}/README.md" ]      && INCLUDE_FILES+=("${ROOT}/README.md")
+[ -f "${ROOT}/LICENSE" ]      && INCLUDE_FILES+=("${ROOT}/LICENSE")
 [ -f "${ROOT}/resolution.txt" ] && INCLUDE_FILES+=("${ROOT}/resolution.txt")
 
 function get_latest_version {

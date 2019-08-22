@@ -83,8 +83,45 @@ Jam-version binaries are available via Google Drive:
 | Windows  | [Google Drive][bin-jam-windows] |
 | Linux    | [Google Drive][bin-jam-linux] |
 
+---
+
+## Development
+### Tools Used
+- __[Rust]__, programming language
+- __[Amethyst]__, engine
+- __[Deathframe]__, framework
+- __[Vim]__, code editor
+- __[GitHub]__, git repository hosting
+- __[Gimp]__, tile/background/menu graphics
+- __[Aseprite]__, sprite graphics
+- __[Bosca Ceoil][BoscaCeoil]__, music
+- __[FL Studio][FLStudio]__, music
+- __[Tiled]__, level design
+- __[Google Drive][GoogleDrive]__, file sharing
+- __[Trello]__, task management
+- __[Figma]__, stats menu design
+
+---
+
+## License
+Distributed under the terms of the [MIT License][mit-license].
+
 [ludumdare]:       https://ldjam.com/events/ludum-dare/44/veggietartar
 [LD44-release]:    https://github.com/Noah2610/LD44/tree/LD44-release
 [bin-jam-windows]: https://drive.google.com/file/d/1RtQ8vsJFH75WyZHTa1W_vxzchw6OhA7Y/view
 [bin-jam-linux]:   https://drive.google.com/file/d/1xffSHQmDppZ4KGcbApzIFt4l_XvT2pX2/view
 [bin-dir]:         https://drive.google.com/open?id=1XNMvBsOJkbbii6jp9T7Du9mNnso00Axn
+[Rust]:            https://www.rust-lang.org/
+[Amethyst]:        https://amethyst.rs/
+[Deathframe]:      https://github.com/Noah2610/deathframe
+[Vim]:             https://www.vim.org/
+[GitHub]:          https://github.com/Noah2610/LD44
+[Gimp]:            https://www.gimp.org/
+[Aseprite]:        https://www.aseprite.org/
+[BoscaCeoil]:      https://boscaceoil.net/
+[FLStudio]:        https://www.image-line.com/flstudio
+[Tiled]:           https://www.mapeditor.org/
+[GoogleDrive]:     https://drive.google.com/
+[Trello]:          https://trello.com/b/hkBWXYt9
+[Figma]:           https://www.figma.com/
+[mit-license]:     https://github.com/Noah2610/LD44/blob/master/LICENSE
