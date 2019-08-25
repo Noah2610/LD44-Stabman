@@ -29,6 +29,8 @@ You can change bindings in this file however you want; the syntax _should_ be se
 But careful: if you make a syntax error, the game will crash. Start the game from a console to see the error messages.
 
 __Note:__  
+Controller support is not enabled by default.  
+(*__TODO:__ Provide builds with controller support*).  
 For the controller buttons we are using the Xbox naming scheme.  
 So the `A` button would be the `X` button on a DualShock controller, etc.
 
