@@ -195,6 +195,7 @@ pub struct SettingsHarmful {
 pub struct SettingsEntityLoader {
     pub load_distance:                  (f32, f32),
     pub enemy_load_distance_difference: (f32, f32),
+    pub bullet_load_distance:           (f32, f32),
 }
 
 #[derive(Clone, Deserialize)]

@@ -37,6 +37,7 @@ pub mod prelude {
 }
 
 mod system_prelude {
+    pub use amethyst::ecs::World;
     pub use deathframe::geo::Side;
     pub use deathframe::handlers::SpriteSheetHandles;
     pub use deathframe::systems::system_prelude::*;

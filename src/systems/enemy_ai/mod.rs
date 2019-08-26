@@ -3,7 +3,6 @@ mod tracer;
 mod turret;
 
 use deathframe::geo::Vector;
-use std::time::Instant;
 
 use super::system_prelude::*;
 use crate::settings::prelude::*;
@@ -26,7 +25,6 @@ impl<'a> System<'a> for EnemyAiSystem {
         ReadStorage<'a, Transform>,
         ReadStorage<'a, Collision>,
         ReadStorage<'a, Solid<SolidTag>>,
-        ReadStorage<'a, Gravity>,
         ReadStorage<'a, Invincible>,
         ReadStorage<'a, Loadable>,
         ReadStorage<'a, Loaded>,
@@ -52,7 +50,6 @@ impl<'a> System<'a> for EnemyAiSystem {
             transforms,
             collisions,
             solids,
-            gravities,
             invincibles,
             loadables,
             loadeds,
@@ -79,21 +76,19 @@ impl<'a> System<'a> for EnemyAiSystem {
             },
         ) {
             let dt = time.delta_seconds();
-            let now = Instant::now();
 
             for (
                 enemy_entity,
                 enemy,
                 enemy_ai,
                 enemy_transform,
-                enemy_velocity,
+                mut enemy_velocity_opt,
                 enemy_flipped,
-                enemy_decr_vel,
+                mut enemy_decr_vel_opt,
                 // enemy_max_vel,
                 enemy_animations_container,
-                enemy_collision,
-                enemy_solid,
-                enemy_gravity_opt,
+                mut enemy_collision_opt,
+                mut enemy_solid_opt,
                 enemy_invincible_opt,
                 enemy_loadable_opt,
                 enemy_loaded_opt,
@@ -102,14 +97,13 @@ impl<'a> System<'a> for EnemyAiSystem {
                 &mut enemies,
                 &mut enemy_ais,
                 &transforms,
-                &mut velocities,
+                (&mut velocities).maybe(),
                 &mut flippeds,
-                &mut decrease_velocities,
+                (&mut decrease_velocities).maybe(),
                 // &mut max_velocities,
                 &mut animations_containers,
-                &collisions,
-                &solids,
-                (&gravities).maybe(),
+                (&collisions).maybe(),
+                (&solids).maybe(),
                 invincibles.maybe(),
                 loadables.maybe(),
                 loadeds.maybe(),
@@ -119,13 +113,20 @@ impl<'a> System<'a> for EnemyAiSystem {
                 if let (Some(_), Some(_)) | (None, None) =
                     (enemy_loadable_opt, enemy_loaded_opt)
                 {
-                    let sides_touching = SidesTouching::new(
-                        &entities,
-                        enemy_collision,
-                        enemy_solid,
-                        &collisions,
-                        &solids,
-                    );
+                    let sides_touching_opt =
+                        if let (Some(enemy_collision), Some(enemy_solid)) =
+                            (enemy_collision_opt, enemy_solid_opt)
+                        {
+                            Some(SidesTouching::new(
+                                &entities,
+                                enemy_collision,
+                                enemy_solid,
+                                &collisions,
+                                &solids,
+                            ))
+                        } else {
+                            None
+                        };
 
                     // Run AI specific code
                     match enemy_ai {
@@ -134,8 +135,12 @@ impl<'a> System<'a> for EnemyAiSystem {
                             &player_data,
                             enemy,
                             enemy_transform,
-                            enemy_velocity,
-                            enemy_decr_vel,
+                            enemy_velocity_opt
+                                .as_mut()
+                                .expect("Enemy Tracer AI needs Velocity"),
+                            enemy_decr_vel_opt.as_mut().expect(
+                                "Enemy Tracer AI needs DecreaseVelocity",
+                            ),
                         ),
                         EnemyAi::Charger(data) => charger::run(
                             dt,
@@ -143,10 +148,18 @@ impl<'a> System<'a> for EnemyAiSystem {
                             enemy,
                             data,
                             enemy_transform,
-                            enemy_velocity,
-                            enemy_decr_vel,
-                            enemy_collision,
-                            enemy_solid,
+                            enemy_velocity_opt
+                                .as_mut()
+                                .expect("Enemy Charger AI needs Veclocity"),
+                            enemy_decr_vel_opt.as_mut().expect(
+                                "Enemy Charger AI needs DecreaseVelocity",
+                            ),
+                            enemy_collision_opt
+                                .as_mut()
+                                .expect("Enemy Charger AI needs Collision"),
+                            enemy_solid_opt
+                                .as_mut()
+                                .expect("Enemy Charger AI needs Solid"),
                             &entities,
                             &solids,
                         ),
@@ -162,34 +175,40 @@ impl<'a> System<'a> for EnemyAiSystem {
                     }
 
                     // Reset velocity when enemy is touching a solid
-                    if (sides_touching.is_touching_left
-                        && enemy_velocity.x < 0.0)
-                        || (sides_touching.is_touching_right
-                            && enemy_velocity.x > 0.0)
-                    {
-                        enemy_velocity.x = 0.0;
-                    }
-                    if (sides_touching.is_touching_bottom
-                        && enemy_velocity.y < 0.0)
-                        || (sides_touching.is_touching_top
-                            && enemy_velocity.y > 0.0)
-                    {
-                        enemy_velocity.y = 0.0;
-                    }
+                    if let Some(enemy_velocity) = enemy_velocity_opt.as_mut() {
+                        if let Some(sides_touching) =
+                            sides_touching_opt.as_ref()
+                        {
+                            if (sides_touching.is_touching_left
+                                && enemy_velocity.x < 0.0)
+                                || (sides_touching.is_touching_right
+                                    && enemy_velocity.x > 0.0)
+                            {
+                                enemy_velocity.x = 0.0;
+                            }
+                            if (sides_touching.is_touching_bottom
+                                && enemy_velocity.y < 0.0)
+                                || (sides_touching.is_touching_top
+                                    && enemy_velocity.y > 0.0)
+                            {
+                                enemy_velocity.y = 0.0;
+                            }
+                        }
 
-                    // Flip sprite
-                    if enemy_velocity.x > 0.0 {
-                        if enemy_flipped == &mut Flipped::Horizontal {
-                            *enemy_flipped = Flipped::None;
+                        // Flip sprite
+                        if enemy_velocity.x > 0.0 {
+                            if enemy_flipped == &mut Flipped::Horizontal {
+                                *enemy_flipped = Flipped::None;
+                            }
+                            enemy_animations_container.set_if_has("walking");
+                        } else if enemy_velocity.x < 0.0 {
+                            if enemy_flipped == &mut Flipped::None {
+                                *enemy_flipped = Flipped::Horizontal;
+                            }
+                            enemy_animations_container.set_if_has("walking");
+                        } else {
+                            enemy_animations_container.set_if_has("idle");
                         }
-                        enemy_animations_container.set_if_has("walking");
-                    } else if enemy_velocity.x < 0.0 {
-                        if enemy_flipped == &mut Flipped::None {
-                            *enemy_flipped = Flipped::Horizontal;
-                        }
-                        enemy_animations_container.set_if_has("walking");
-                    } else {
-                        enemy_animations_container.set_if_has("idle");
                     }
 
                     // Kill the enemies when they fall below the death_floor

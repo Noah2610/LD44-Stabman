@@ -707,11 +707,6 @@ impl LevelLoader {
                 .create_entity()
                 .with(transform)
                 .with(Size::from(*size))
-                .with(Velocity::default())
-                .with(DecreaseVelocity::from(enemy_settings.decr_velocity))
-                .with(Collision::new())
-                .with(CheckCollision)
-                .with(Solid::new(SolidTag::Enemy))
                 .with(ScaleOnce)
                 .with(
                     HeartsContainer::new()
@@ -723,21 +718,34 @@ impl LevelLoader {
                         .heart_size(heart_size)
                         .build(),
                 )
-                .with(Enemy::new(enemy_type.clone(), enemy_settings))
+                .with(Enemy::new(enemy_type.clone(), enemy_settings.clone()))
                 .with(sprite_render)
                 .with(flipped_opt.unwrap_or(Flipped::None))
                 .with(animations_container)
                 .with(Transparent)
-                .with(enemy_ai)
-                .with(Harmable)
-                .with(Loadable);
+                .with(enemy_ai);
 
             entity = match enemy_type {
                 EnemyType::Flying => entity,
                 EnemyType::Turret => {
                     entity.with(NoAttack::default()).with(Invincible::default())
                 }
-                _ => entity.with(Gravity::from(settings.enemies.gravity)),
+                enemy_type => {
+                    let mut e = entity
+                        .with(Harmable)
+                        .with(Velocity::default())
+                        .with(DecreaseVelocity::from(
+                            enemy_settings.decr_velocity,
+                        ))
+                        .with(Collision::new())
+                        .with(CheckCollision)
+                        .with(Solid::new(SolidTag::Enemy))
+                        .with(Loadable);
+                    if enemy_type != EnemyType::Flying {
+                        e = e.with(Gravity::from(settings.enemies.gravity));
+                    }
+                    e
+                }
             };
 
             entity.build();

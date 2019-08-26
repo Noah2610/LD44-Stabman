@@ -5,6 +5,7 @@ pub struct BulletCreatorSystem;
 
 impl<'a> System<'a> for BulletCreatorSystem {
     type SystemData = (
+        ReadExpect<'a, Settings>,
         Write<'a, BulletCreator>,
         Entities<'a>,
         ReadExpect<'a, SpriteSheetHandles>,
@@ -18,11 +19,13 @@ impl<'a> System<'a> for BulletCreatorSystem {
         WriteStorage<'a, Animation>,
         WriteStorage<'a, Transparent>,
         WriteStorage<'a, Flipped>,
+        WriteStorage<'a, Loader>,
     );
 
     fn run(
         &mut self,
         (
+            settings,
             mut bullet_creator,
             entities,
             spritesheet_handles,
@@ -36,6 +39,7 @@ impl<'a> System<'a> for BulletCreatorSystem {
             mut animations,
             mut transparents,
             mut flippeds,
+            mut loaders,
         ): Self::SystemData,
     ) {
         while let Some(BulletComponents {
@@ -75,6 +79,16 @@ impl<'a> System<'a> for BulletCreatorSystem {
             animations.insert(entity, animation).unwrap();
             transparents.insert(entity, Transparent).unwrap();
             flippeds.insert(entity, flipped).unwrap();
+            // TODO: Maybe an extra loading distance is not necessary for the Loader component?
+            //       Maybe it is enough if entities get loaded once they are in collision with the bullet?
+            // loaders.insert(entity, Loader::default()).unwrap();
+            loaders
+                .insert(entity, Loader {
+                    distance: Some(
+                        settings.entity_loader.bullet_load_distance.into(),
+                    ),
+                })
+                .unwrap();
         }
     }
 }

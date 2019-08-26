@@ -1,10 +1,5 @@
 use super::system_prelude::*;
 
-enum LoadAction {
-    Load(Entity),
-    Unload(Entity),
-}
-
 #[derive(Default)]
 pub struct LoaderSystem;
 
@@ -13,6 +8,7 @@ impl<'a> System<'a> for LoaderSystem {
     type SystemData = (
         ReadExpect<'a, Settings>,
         Entities<'a>,
+        Write<'a, World>,
         ReadStorage<'a, Camera>,
         ReadStorage<'a, Loader>,
         ReadStorage<'a, Transform>,
@@ -27,6 +23,7 @@ impl<'a> System<'a> for LoaderSystem {
         (
             settings,
             entities,
+            mut world,
             cameras,
             loaders,
             transforms,
@@ -36,6 +33,8 @@ impl<'a> System<'a> for LoaderSystem {
             mut loadeds,
         ): Self::SystemData,
     ) {
+        let mut entities_loader = EntitiesLoader::default();
+
         for (camera_opt, loader, loader_transform, loader_size_opt) in
             (cameras.maybe(), &loaders, &transforms, sizes.maybe()).join()
         {
@@ -53,7 +52,6 @@ impl<'a> System<'a> for LoaderSystem {
                     }
                 }
             };
-            let mut entities_to_load_or_unload: Vec<LoadAction> = Vec::new();
 
             for (entity, transform, size_opt, _, loaded_opt, enemy_opt) in (
                 &entities,
@@ -122,31 +120,66 @@ impl<'a> System<'a> for LoaderSystem {
                         (if distance.0 <= load_distance.0
                             && distance.1 <= load_distance.1
                         {
-                            entities_to_load_or_unload
-                                .push(LoadAction::Load(entity));
+                            entities_loader.load(entity);
                         })
                     }
                     Some(_) => {
                         (if distance.0 > load_distance.0
                             || distance.1 > load_distance.1
                         {
-                            entities_to_load_or_unload
-                                .push(LoadAction::Unload(entity));
+                            entities_loader.unload(entity);
                         })
                     }
                 }
             }
+        }
 
-            for load_action in entities_to_load_or_unload {
-                match load_action {
-                    LoadAction::Load(entity) => {
-                        loadeds.insert(entity, Loaded).unwrap();
-                    }
-                    LoadAction::Unload(entity) => {
-                        loadeds.remove(entity);
-                    }
+        entities_loader.work(&mut world, &mut loadeds);
+    }
+}
+
+#[derive(Default)]
+struct EntitiesLoader {
+    to_load:   Vec<Entity>,
+    to_unload: Vec<Entity>,
+}
+
+impl EntitiesLoader {
+    pub fn load(&mut self, entity: Entity) {
+        if !self.to_load.contains(&entity) {
+            self.to_load.push(entity);
+        }
+        if let Some(index) = self.to_unload.iter().enumerate().find_map(
+            |(index, entity_to_unload)| {
+                if entity_to_unload == &entity {
+                    Some(index)
+                } else {
+                    None
                 }
+            },
+        ) {
+            self.to_unload.remove(index);
+        }
+    }
+
+    pub fn unload(&mut self, entity: Entity) {
+        // Only unload if it isn't already staged for loading.
+        if !self.to_load.contains(&entity) && !self.to_unload.contains(&entity)
+        {
+            self.to_unload.push(entity);
+        }
+    }
+
+    pub fn work(self, world: &mut World, loadeds: &mut WriteStorage<Loaded>) {
+        for entity in self.to_load {
+            loadeds.insert(entity, Loaded).unwrap();
+        }
+        for entity in self.to_unload {
+            if world.is_alive(entity) {
+                loadeds.remove(entity);
             }
         }
+
+        world.maintain();
     }
 }
