@@ -8,7 +8,7 @@ impl<'a> System<'a> for LoaderSystem {
     type SystemData = (
         ReadExpect<'a, Settings>,
         Entities<'a>,
-        Write<'a, World>,
+        Read<'a, LoadingLevel>,
         ReadStorage<'a, Camera>,
         ReadStorage<'a, Loader>,
         ReadStorage<'a, Transform>,
@@ -23,7 +23,7 @@ impl<'a> System<'a> for LoaderSystem {
         (
             settings,
             entities,
-            mut world,
+            loading_level,
             cameras,
             loaders,
             transforms,
@@ -33,6 +33,11 @@ impl<'a> System<'a> for LoaderSystem {
             mut loadeds,
         ): Self::SystemData,
     ) {
+        // Don't do anything if level is loading.
+        if loading_level.0 {
+            return;
+        }
+
         let mut entities_loader = EntitiesLoader::default();
 
         for (camera_opt, loader, loader_transform, loader_size_opt) in
@@ -134,7 +139,7 @@ impl<'a> System<'a> for LoaderSystem {
             }
         }
 
-        entities_loader.work(&mut world, &mut loadeds);
+        entities_loader.work(&mut loadeds);
     }
 }
 
@@ -170,16 +175,12 @@ impl EntitiesLoader {
         }
     }
 
-    pub fn work(self, world: &mut World, loadeds: &mut WriteStorage<Loaded>) {
+    pub fn work(self, loadeds: &mut WriteStorage<Loaded>) {
+        for entity in self.to_unload {
+            loadeds.remove(entity);
+        }
         for entity in self.to_load {
             loadeds.insert(entity, Loaded).unwrap();
         }
-        for entity in self.to_unload {
-            if world.is_alive(entity) {
-                loadeds.remove(entity);
-            }
-        }
-
-        world.maintain();
     }
 }
