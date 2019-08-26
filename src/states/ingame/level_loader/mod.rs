@@ -324,14 +324,6 @@ impl LevelLoader {
         let mut transform = Transform::default();
         transform.set_z(CAMERA_Z);
 
-        let mut camera = Camera::new()
-            .base_speed({ settings.camera.base_speed })
-            .deadzone({ settings.camera.deadzone });
-
-        if let Some(player_id) = self.player_id {
-            camera = camera.follow(player_id);
-        }
-
         let window_size = {
             let dim = data
                 .data
@@ -351,6 +343,21 @@ impl LevelLoader {
             window_size.0 * settings.camera.inner_size_mult.0,
             window_size.1 * settings.camera.inner_size_mult.1,
         );
+
+        let mut camera = Camera::new()
+            .base_speed({ settings.camera.base_speed })
+            .deadzone({ settings.camera.deadzone });
+
+        if let Some(player_id) = self.player_id {
+            camera = camera.follow(player_id);
+        }
+        if let Some(EntityData {
+            pos: player_pos, ..
+        }) = self.player_data.as_ref()
+        {
+            transform.set_x(player_pos.0 - size.0 * 0.5);
+            transform.set_y(player_pos.1 - size.1 * 0.5);
+        }
 
         let mut entity_builder = data
             .world

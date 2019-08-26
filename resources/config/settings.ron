@@ -320,6 +320,6 @@ Settings(
     /// Noclip settings; only in development mode.
     noclip: (
         acceleration: (800.0, 800.0),
-        max_velocity: (Some(1000.0), Some(1000.0)),
+        max_velocity: (Some(2000.0), Some(2000.0)),
     )
 )
