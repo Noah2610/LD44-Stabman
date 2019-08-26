@@ -15,7 +15,7 @@ pub mod prelude {
 }
 
 mod state_prelude {
-    pub use amethyst::assets::{AssetStorage, Loader};
+    pub use amethyst::assets::{AssetStorage, Loader as AssetLoader};
     pub use amethyst::ecs::{Entities, Entity, World};
     pub use amethyst::input::is_close_requested;
     pub use amethyst::prelude::*;

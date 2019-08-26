@@ -8,6 +8,7 @@ mod heart;
 mod hearts_container;
 mod invincible;
 mod item;
+mod loader;
 mod no_attack;
 mod noclip;
 mod player;
@@ -28,6 +29,7 @@ pub mod prelude {
     pub use super::hearts_container::prelude::*;
     pub use super::invincible::Invincible;
     pub use super::item::prelude::*;
+    pub use super::loader::Loader;
     pub use super::no_attack::NoAttack;
     pub use super::noclip::Noclip;
     pub use super::player::Player;

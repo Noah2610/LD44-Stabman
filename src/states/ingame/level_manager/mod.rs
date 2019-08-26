@@ -663,7 +663,7 @@ fn get_font<T>(font: T, world: &World) -> amethyst::ui::FontHandle
 where
     T: ToString,
 {
-    world.read_resource::<Loader>().load(
+    world.read_resource::<AssetLoader>().load(
         resource(font),
         TtfFormat,
         Default::default(),

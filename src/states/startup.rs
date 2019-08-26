@@ -29,7 +29,7 @@ impl Startup {
             .dimensions
             .unwrap_or((1200, 800));
 
-        let font = world.read_resource::<Loader>().load(
+        let font = world.read_resource::<AssetLoader>().load(
             resource(settings.loading_text.font_file),
             TtfFormat,
             Default::default(),

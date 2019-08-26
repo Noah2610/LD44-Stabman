@@ -14,6 +14,7 @@ impl<'a> System<'a> for LoaderSystem {
         ReadExpect<'a, Settings>,
         Entities<'a>,
         ReadStorage<'a, Camera>,
+        ReadStorage<'a, Loader>,
         ReadStorage<'a, Transform>,
         ReadStorage<'a, Size>,
         ReadStorage<'a, Enemy>,
@@ -27,6 +28,7 @@ impl<'a> System<'a> for LoaderSystem {
             settings,
             entities,
             cameras,
+            loaders,
             transforms,
             sizes,
             enemies,
@@ -34,12 +36,22 @@ impl<'a> System<'a> for LoaderSystem {
             mut loadeds,
         ): Self::SystemData,
     ) {
-        if let Some((_, camera_transform, camera_size)) =
-            (&cameras, &transforms, &sizes).join().next()
+        for (camera_opt, loader, loader_transform, loader_size_opt) in
+            (cameras.maybe(), &loaders, &transforms, sizes.maybe()).join()
         {
-            let camera_pos = {
-                let pos = camera_transform.translation();
-                (pos.x + camera_size.w * 0.5, pos.y + camera_size.h * 0.5)
+            let loader_pos = {
+                let pos = loader_transform.translation();
+                match camera_opt.as_ref() {
+                    None => (pos.x, pos.y),
+                    // If the loader is the camera, then its position's origin is bottom-left,
+                    // so we need to change the position we are working with accordingly.
+                    Some(_) => {
+                        let size = loader_size_opt.expect(
+                            "The camera needs to have a size as a loader",
+                        );
+                        (pos.x + size.w * 0.5, pos.y + size.h * 0.5)
+                    }
+                }
             };
             let mut entities_to_load_or_unload: Vec<LoadAction> = Vec::new();
 
@@ -70,26 +82,39 @@ impl<'a> System<'a> for LoaderSystem {
                 // };
                 let size =
                     size_opt.map(|s| s.into()).unwrap_or(Vector::new(0.0, 0.0));
-                let load_distance = match enemy_opt {
-                    None => {
-                        let difference = settings
-                            .entity_loader
-                            .enemy_load_distance_difference;
-                        (
-                            camera_size.w * 0.5 + size.0 * 0.5 + difference.0,
-                            camera_size.h * 0.5 + size.1 * 0.5 + difference.1,
-                        )
+                let load_distance = {
+                    let loader_distance = match loader.distance.as_ref() {
+                        None => {
+                            let loader_size = loader_size_opt.expect(
+                                "Loader needs to either have its `distance` \
+                                 field be Some or it needs to have a size \
+                                 component",
+                            );
+                            (
+                                loader_size.w * 0.5 + size.0 * 0.5,
+                                loader_size.h * 0.5 + size.1 * 0.5,
+                            )
+                        }
+                        Some(distance) => (distance.0, distance.1),
+                    };
+                    match enemy_opt {
+                        None => {
+                            let difference = settings
+                                .entity_loader
+                                .enemy_load_distance_difference;
+                            (
+                                loader_distance.0 + difference.0,
+                                loader_distance.1 + difference.1,
+                            )
+                        }
+                        Some(_) => loader_distance,
                     }
-                    Some(_) => (
-                        camera_size.w * 0.5 + size.0 * 0.5,
-                        camera_size.h * 0.5 + size.1 * 0.5,
-                    ),
                 };
 
                 let pos = transform.translation();
                 let distance = (
-                    (camera_pos.0 - pos.x).abs(),
-                    (camera_pos.1 - pos.y).abs(),
+                    (loader_pos.0 - pos.x).abs(),
+                    (loader_pos.1 - pos.y).abs(),
                 );
 
                 match loaded_opt {
