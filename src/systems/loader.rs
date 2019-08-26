@@ -8,7 +8,7 @@ enum LoadAction {
 #[derive(Default)]
 pub struct LoaderSystem;
 
-/// Loads loadable entities when they are within a certain range to the camera's center.
+/// Loads loadable entities when they are within the camera.
 impl<'a> System<'a> for LoaderSystem {
     type SystemData = (
         ReadExpect<'a, Settings>,
@@ -43,9 +43,10 @@ impl<'a> System<'a> for LoaderSystem {
             };
             let mut entities_to_load_or_unload: Vec<LoadAction> = Vec::new();
 
-            for (entity, transform, _, loaded_opt, enemy_opt) in (
+            for (entity, transform, size_opt, _, loaded_opt, enemy_opt) in (
                 &entities,
                 &transforms,
+                sizes.maybe(),
                 &loadables,
                 loadeds.maybe(),
                 enemies.maybe(),
@@ -67,17 +68,22 @@ impl<'a> System<'a> for LoaderSystem {
                 //                 .1,
                 //     ),
                 // };
+                let size =
+                    size_opt.map(|s| s.into()).unwrap_or(Vector::new(0.0, 0.0));
                 let load_distance = match enemy_opt {
                     None => {
                         let difference = settings
                             .entity_loader
                             .enemy_load_distance_difference;
                         (
-                            camera_size.w * 0.5 + difference.0,
-                            camera_size.h * 0.5 + difference.1,
+                            camera_size.w * 0.5 + size.0 * 0.5 + difference.0,
+                            camera_size.h * 0.5 + size.1 * 0.5 + difference.1,
                         )
                     }
-                    Some(_) => (camera_size.w * 0.5, camera_size.h * 0.5),
+                    Some(_) => (
+                        camera_size.w * 0.5 + size.0 * 0.5,
+                        camera_size.h * 0.5 + size.1 * 0.5,
+                    ),
                 };
 
                 let pos = transform.translation();
