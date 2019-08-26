@@ -125,12 +125,12 @@ fn build_game_data<'a, 'b>(
         .dispatcher("paused")?
         .dispatcher("continue_or_new_game_menu")?
         .dispatcher("win_game_menu")?
+        .with_bundle("ingame", audio_bundle)? // initialize before input_bundle; https://github.com/amethyst/amethyst/issues/1779
         .with_core_bundle(transform_bundle)?
         .with_core_bundle(render_bundle)?
         .with_core_bundle(input_bundle)?
         .with_core_bundle(ui_bundle)?
         .with_core_bundle(fps_bundle)?
-        .with_bundle("ingame", audio_bundle)?
         .with_core(InputManagerSystem, "input_manager_system", &[
             "input_system",
         ])?
