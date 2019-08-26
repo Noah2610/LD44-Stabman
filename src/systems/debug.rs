@@ -7,21 +7,21 @@ use super::system_prelude::*;
 // 1280 / 720 = 1.777778
 // 720 / 1280 = 0.5625
 
-// const CAMERA_RESIZE_STEP: (f32, f32) = (8.0, 8.0);
-// const CAMERA_RESIZE_MAX: (f32, f32) = (500.0, 500.0);
-// const CAMERA_RESIZE_MIN: (f32, f32) = (-200.0, -200.0);
+// const fn tup_for_res(res: (f32, f32), num: f32) -> (f32, f32) {
+//     let scale = res.1 / res.0;
+//     (num, num * scale)
+// }
+
+// const RES: (f32, f32) = (1280.0, 720.0);
+// const CAMERA_RESIZE_STEP: (f32, f32) = tup_for_res(RES, 50.0);
+// const CAMERA_RESIZE_STEP: (f32, f32) = (50.0, 30.0);
+// const CAMERA_RESIZE_MAX: (f32, f32) = tup_for_res(RES, 1000.0);
+// const CAMERA_RESIZE_MIN: (f32, f32) = tup_for_res(RES, -800.0);
 // const CAMERA_RESIZE_EVERY_MS: u64 = 10;
 
-const fn tup_for_res(res: (f32, f32), num: f32) -> (f32, f32) {
-    let scale = res.1 / res.0;
-    (num, num * scale)
-}
-
-const RES: (f32, f32) = (1280.0, 720.0);
-// const CAMERA_RESIZE_STEP: (f32, f32) = tup_for_res(RES, 50.0);
 const CAMERA_RESIZE_STEP: (f32, f32) = (50.0, 30.0);
-const CAMERA_RESIZE_MAX: (f32, f32) = tup_for_res(RES, 1000.0);
-const CAMERA_RESIZE_MIN: (f32, f32) = tup_for_res(RES, -800.0);
+const CAMERA_RESIZE_MAX: (f32, f32) = (1000.0, 562.5);
+const CAMERA_RESIZE_MIN: (f32, f32) = (-800.0, -450.0);
 const CAMERA_RESIZE_EVERY_MS: u64 = 10;
 
 enum CameraResizeDir {
