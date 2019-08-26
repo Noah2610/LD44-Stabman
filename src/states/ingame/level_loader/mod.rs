@@ -362,12 +362,25 @@ impl LevelLoader {
         let mut entity_builder = data
             .world
             .create_entity()
+            // TODO
+            // Instead of having the left-bottom point be (0, 0), have it be (-size.w/2, -size.h/2) (adjusting other sides accordingly).
+            // That way, the camera's position would be in the center!
             .with(AmethystCamera::from(Projection::orthographic(
                 0.0,    // Left
                 size.0, // Right
                 0.0,    // Bottom (!)
                 size.1, // Top    (!)
             )))
+            // .with(AmethystCamera::from(Projection::orthographic(
+            //     -size.0 * 0.5, // Left
+            //     size.0 * 0.5,  // Right
+            //     -size.1 * 0.5, // Bottom (!)
+            //     size.1 * 0.5,  // Top    (!)
+            // )))
+            // .with(AmethystCamera::from(Projection::perspective(
+            //     4.0, // aspect
+            //     3.5, // fov
+            // )))
             .with(camera.build())
             .with(transform)
             .with(Size::from(size))

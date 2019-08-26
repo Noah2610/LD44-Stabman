@@ -1,8 +1,12 @@
+// TODO
+#![feature(const_fn)]
+
 extern crate amethyst;
 extern crate base64;
 extern crate climer;
 extern crate deathframe;
 extern crate json;
+extern crate rand;
 extern crate regex;
 #[macro_use]
 extern crate serde;
