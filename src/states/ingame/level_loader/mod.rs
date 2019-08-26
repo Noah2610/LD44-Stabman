@@ -739,7 +739,6 @@ impl LevelLoader {
                 .with(enemy_ai);
 
             entity = match enemy_type {
-                EnemyType::Flying => entity,
                 EnemyType::Turret => {
                     entity.with(NoAttack::default()).with(Invincible::default())
                 }
