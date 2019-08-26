@@ -55,6 +55,10 @@ impl LevelManager {
         &mut self,
         data: &mut StateData<CustomGameData<CustomData>>,
     ) {
+        // Set LoadingLevel resource to `true`, to let the LoaderSystem know
+        // that it should stop running.
+        data.world.write_resource::<LoadingLevel>().0 = true;
+
         // First, remove all existing entities, which do not have `DontDeleteOnNextLevel`.
         data.world.exec(
             |(entities, dont_deletes, players): (
@@ -158,6 +162,9 @@ impl LevelManager {
         // Set the CurrentLevelName resource
         data.world.write_resource::<CurrentLevelName>().0 =
             Some(self.level_name());
+
+        // Set LoadingLevel resource to `false` again.
+        data.world.write_resource::<LoadingLevel>().0 = false;
     }
 
     pub fn is_first_level(&self) -> bool {

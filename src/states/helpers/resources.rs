@@ -14,3 +14,6 @@ pub struct Timers {
 
 #[derive(Default)]
 pub struct CurrentLevelName(pub Option<String>);
+
+#[derive(Default)]
+pub struct LoadingLevel(pub bool);
