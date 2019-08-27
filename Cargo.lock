@@ -2,7 +2,7 @@
 # It is not intended for manual editing.
 [[package]]
 name = "LD44"
-version = "0.2.20"
+version = "0.2.21"
 dependencies = [
  "amethyst 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "base64 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)",
