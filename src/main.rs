@@ -29,8 +29,10 @@ use amethyst::renderer::{
     ColorMask,
     DepthMode,
     DisplayConfig,
+    DrawDebugLines,
     DrawFlat2D,
     Pipeline,
+    PosColorNorm,
     RenderBundle,
     Stage,
     ALPHA,
@@ -91,18 +93,18 @@ fn build_game_data<'a, 'b>(
     };
 
     // Pipeline
-    let pipeline = Pipeline::build().with_stage(
-        Stage::with_backbuffer()
-            .clear_target([0.2, 0.2, 0.2, 1.0], 10.0)
-            .with_pass(DrawFlat2D::new().with_transparency(
-                ColorMask::all(),
-                ALPHA,
-                // NOTE: I have no idea what this `DepthMode` does, as it isn't documented,
-                //       but sprite ordering via their z positions only works with this `DepthMode` variant.
-                Some(DepthMode::LessEqualWrite),
-            ))
-            .with_pass(DrawUi::new()), // NOTE: "It's recommended this be your last pass."
-    );
+    let stage = Stage::with_backbuffer()
+        .clear_target([0.2, 0.2, 0.2, 1.0], 10.0)
+        .with_pass(DrawFlat2D::new().with_transparency(
+            ColorMask::all(),
+            ALPHA,
+            // NOTE: I have no idea what this `DepthMode` does, as it isn't documented,
+            //       but sprite ordering via their z positions only works with this `DepthMode` variant.
+            Some(DepthMode::LessEqualWrite),
+        ))
+        .with_pass(DrawUi::new()); // NOTE: "It's recommended this be your last pass."
+                                   // .with_pass(DrawDebugLines::<PosColorNorm>::new()); // TODO
+    let pipeline = Pipeline::build().with_stage(stage);
 
     // Bundles
     let transform_bundle = TransformBundle::new();

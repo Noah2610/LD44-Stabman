@@ -88,6 +88,12 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Startup {
         data.world.add_resource(CurrentLevelName::default());
         data.world.add_resource(LoadingLevel::default());
 
+        // TODO
+        // data.world
+        //     .add_resource(DebugLines::new().with_capacity(200));
+        // data.world
+        //     .add_resource(DebugLinesParams { line_width: 1.0 });
+
         self.initialize_loading_text(&mut data);
     }
 

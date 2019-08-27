@@ -120,24 +120,64 @@ impl<'a> System<'a> for LoaderSystem {
                     (loader_pos.1 - pos.y).abs(),
                 );
 
+                // if distance.0 <= load_distance.0
+                //     && distance.1 <= load_distance.1
+                // {
+                //     entities_loader.load(entity);
+                // } else {
+                //     entities_loader.unload(entity);
+                // }
+                let in_distance = distance.0 <= load_distance.0
+                    && distance.1 <= load_distance.1;
                 match loaded_opt {
-                    None => {
-                        (if distance.0 <= load_distance.0
-                            && distance.1 <= load_distance.1
-                        {
-                            entities_loader.load(entity);
-                        })
+                    None if in_distance => {
+                        entities_loader.load(entity);
                     }
                     Some(_) => {
-                        (if distance.0 > load_distance.0
-                            || distance.1 > load_distance.1
-                        {
+                        if in_distance {
+                            entities_loader.maintain_loaded(entity);
+                        } else {
                             entities_loader.unload(entity);
-                        })
+                        }
                     }
+                    _ => (), // Do nothing
                 }
             }
         }
+
+        // {
+        //     // TODO
+        //     use amethyst::core::nalgebra::Point3;
+        //     use amethyst::renderer::Rgba;
+
+        //     let mut draw_x = |pos: (f32, f32), color: Rgba| {
+        //         const Z: f32 = 9.0;
+        //         const LEN: f32 = 8.0;
+        //         let start = Point3::new(pos.0 - LEN, pos.1 - LEN, Z);
+        //         let end = Point3::new(pos.0 + LEN, pos.1 + LEN, Z);
+        //         debug_lines.draw_line(start, end, color);
+        //         let start = Point3::new(pos.0 - LEN, pos.1 + LEN, Z);
+        //         let end = Point3::new(pos.0 + LEN, pos.1 - LEN, Z);
+        //         debug_lines.draw_line(start, end, color);
+        //     };
+
+        //     for (entity, transform) in (&entities, &transforms).join() {
+        //         let pos = {
+        //             let trans = transform.translation();
+        //             (trans.x, trans.y)
+        //         };
+        //         for to_load in entities_loader.to_load.iter() {
+        //             if to_load.id() == entity.id() {
+        //                 draw_x(pos, Rgba::GREEN);
+        //             }
+        //         }
+        //         for to_unload in entities_loader.to_unload.iter() {
+        //             if to_unload.id() == entity.id() {
+        //                 draw_x(pos, Rgba::RED);
+        //             }
+        //         }
+        //     }
+        // }
 
         entities_loader.work(&mut loadeds);
     }
@@ -145,25 +185,16 @@ impl<'a> System<'a> for LoaderSystem {
 
 #[derive(Default)]
 struct EntitiesLoader {
-    to_load:   Vec<Entity>,
-    to_unload: Vec<Entity>,
+    to_load:            Vec<Entity>,
+    to_unload:          Vec<Entity>,
+    to_maintain_loaded: Vec<Entity>,
 }
 
 impl EntitiesLoader {
     pub fn load(&mut self, entity: Entity) {
         if !self.to_load.contains(&entity) {
             self.to_load.push(entity);
-        }
-        if let Some(index) = self.to_unload.iter().enumerate().find_map(
-            |(index, entity_to_unload)| {
-                if entity_to_unload == &entity {
-                    Some(index)
-                } else {
-                    None
-                }
-            },
-        ) {
-            self.to_unload.remove(index);
+            self.maintain_loaded(entity);
         }
     }
 
@@ -175,12 +206,24 @@ impl EntitiesLoader {
         }
     }
 
+    pub fn maintain_loaded(&mut self, entity: Entity) {
+        if !self.to_maintain_loaded.contains(&entity) {
+            self.to_maintain_loaded.push(entity);
+        }
+    }
+
     pub fn work(self, loadeds: &mut WriteStorage<Loaded>) {
         for entity in self.to_unload {
-            loadeds.remove(entity);
+            if loadeds.contains(entity) {
+                if !self.to_maintain_loaded.contains(&entity) {
+                    loadeds.remove(entity);
+                }
+            }
         }
         for entity in self.to_load {
-            loadeds.insert(entity, Loaded).unwrap();
+            if !loadeds.contains(entity) {
+                loadeds.insert(entity, Loaded).unwrap();
+            }
         }
     }
 }

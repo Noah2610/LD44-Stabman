@@ -21,6 +21,8 @@ mod state_prelude {
     pub use amethyst::prelude::*;
     pub use amethyst::renderer::{
         Camera as AmethystCamera,
+        DebugLines,
+        DebugLinesParams,
         DisplayConfig,
         PngFormat,
         Projection,
