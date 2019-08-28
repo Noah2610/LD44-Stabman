@@ -40,8 +40,14 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Paused {
         // Pause timers
         {
             let mut timers = data.world.write_resource::<Timers>();
-            timers.level.pause().unwrap();
-            timers.global.as_mut().map(|timer| timer.pause().unwrap());
+            if timers.level.state.is_running() {
+                timers.level.pause().unwrap();
+            }
+            timers.global.as_mut().map(|timer| {
+                if timer.state.is_running() {
+                    timer.pause().unwrap()
+                }
+            });
         }
 
         // Pause all turret timers
@@ -65,8 +71,14 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Paused {
         // Resume timers
         {
             let mut timers = data.world.write_resource::<Timers>();
-            timers.level.resume().unwrap();
-            timers.global.as_mut().map(|timer| timer.resume().unwrap());
+            if timers.level.state.is_paused() {
+                timers.level.resume().unwrap();
+            }
+            timers.global.as_mut().map(|timer| {
+                if timer.state.is_paused() {
+                    timer.resume().unwrap()
+                }
+            });
         }
 
         // Resume all turret timers

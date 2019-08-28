@@ -93,6 +93,10 @@ fn build_game_data<'a, 'b>(
     };
 
     // Pipeline
+    // let mut color_mask = ColorMask::empty();
+    // color_mask.insert(ColorMask::RED);
+    // color_mask.insert(ColorMask::GREEN);
+    // color_mask.insert(ColorMask::BLUE);
     let stage = Stage::with_backbuffer()
         .clear_target([0.2, 0.2, 0.2, 1.0], 10.0)
         .with_pass(DrawFlat2D::new().with_transparency(

@@ -215,7 +215,7 @@ impl LevelManager {
             let mut timers = data.world.write_resource::<Timers>();
             timers.level.finish().unwrap();
             let time = timers.level.time_output();
-            println!("LEVEL TIME: {}", &time);
+            println!("LEVEL TIME: {}", &time); // TODO
             let time_entry = self
                 .level_times
                 .entry(level_name.clone())
@@ -255,7 +255,8 @@ impl LevelManager {
     }
 
     fn win_game(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
-        println!("You win!");
+        println!("You win!"); // TODO
+
         // Stop global timer
         {
             let is_first_loop = self.is_first_loop(data);
@@ -264,7 +265,7 @@ impl LevelManager {
             if let Some(global_timer) = timers.global.as_mut() {
                 global_timer.finish().unwrap();
                 let time = global_timer.time_output();
-                println!("GLOBAL TIME: {}", &time);
+                println!("GLOBAL TIME: {}", &time); // TODO
                 if self.global_time.is_none() {
                     self.global_time = Some(TimeData {
                         general: time,

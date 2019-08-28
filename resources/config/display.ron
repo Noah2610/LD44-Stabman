@@ -4,7 +4,6 @@
   max_dimensions: Some((1280, 720)),
   min_dimensions: Some((1280, 720)),
   maximized:      false,
-  resizable:      true,
   fullscreen:     false,
   multisampling:  0,
   visibility:     true,
