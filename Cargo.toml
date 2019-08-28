@@ -6,7 +6,7 @@ edition = "2018"
 description = "Our Ludum Dare 44 Game Jam Entry"
 
 [dependencies]
-amethyst   = "0.10.0"
+amethyst   = { version = "0.10.0", features = [] }
 base64     = "0.10.1"
 bitflags   = "=1.0.4"  # https://github.com/rust-lang/rust/issues/59134#issuecomment-489430178
 json       = "0.11.13"
@@ -18,6 +18,10 @@ serde_json = "1.0.39"
 
 deathframe = "0.1.4"
 climer     = { version = "0.4.0", features = ["serialize"] }
+
+[features]
+nightly    = ["amethyst/nightly"]
+controller = ["amethyst/sdl_controller"]
 
 [replace]
 "lewton:0.9.4" = { git = "https://github.com/Noah2610/lewton", branch = "custom-0.9.3" } # cross-compilation to windows doesn't work with lewton 0.9.4
