@@ -189,7 +189,7 @@ Settings(
             decr_velocity:         (1000.0, 1000.0),
             affected_by_knockback: true,
         ),
-        charger:  (
+        charger: (
             health:                2,
             damage:                2,
             reward:                1,
@@ -197,7 +197,7 @@ Settings(
             trigger_distance:      (256.0, 32.0),
             acceleration:          (500.0, 0.0),
             max_velocity:          (Some(200.0), Some(500.0)),
-            decr_velocity:         (100.0, 1000.0),
+            decr_velocity:         (300.0, 1000.0),
             affected_by_knockback: true,
         ),
         flying:  (
@@ -208,7 +208,7 @@ Settings(
             trigger_distance:      (256.0, 192.0),
             acceleration:          (500.0, 100.0),
             max_velocity:          (Some(25.0), Some(25.0)),
-            decr_velocity:         (100.0, 100.0),
+            decr_velocity:         (300.0, 300.0),
             affected_by_knockback: true,
         ),
         reaper:  (
