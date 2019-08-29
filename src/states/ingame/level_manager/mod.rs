@@ -111,6 +111,11 @@ impl LevelManager {
                     timer.resume().unwrap();
                 }
             });
+            // Start global timer, if this is the first level
+            if self.is_first_level() {
+                timers.global = Some(Timer::default());
+                timers.global.as_mut().map(|timer| timer.start().unwrap());
+            }
         }
 
         // Create timer UI (if level has been completed before)
@@ -281,8 +286,6 @@ impl LevelManager {
                     }
                 });
             }
-
-            timers.global = Some(Timer::default());
         }
 
         // Reset current death counters from stats,

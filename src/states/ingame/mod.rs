@@ -79,7 +79,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
 
         // Stop timers
         let mut timers = data.world.write_resource::<Timers>();
-        timers.global = None;
+        timers.global.as_mut().map(|timer| timer.stop().unwrap());
         timers.level.stop().unwrap();
     }
 

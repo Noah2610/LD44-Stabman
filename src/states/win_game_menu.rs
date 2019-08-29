@@ -1,20 +1,26 @@
 use super::state_prelude::*;
+use amethyst::assets::ProgressCounter;
+use amethyst::ecs::{Join, ReadStorage, WriteStorage};
+use amethyst::ui::{UiText, UiTransform};
+use std::collections::HashMap;
 
 const UI_RON_PATH: &str = "ui/win_game_menu.ron";
 
 #[derive(Default)]
 pub struct WinGameMenu {
-    campaign:     CampaignType,
-    ui_entities:  Vec<Entity>,
-    ui_reader_id: Option<ReaderId<UiEvent>>,
+    campaign:            CampaignType,
+    ui_entities:         Vec<Entity>,
+    ui_reader_id:        Option<ReaderId<UiEvent>>,
+    ui_creator_progress: Option<ProgressCounter>,
 }
 
 impl WinGameMenu {
     pub fn new(campaign: CampaignType) -> Self {
         Self {
-            campaign:     campaign,
-            ui_entities:  Vec::new(),
-            ui_reader_id: None,
+            campaign:            campaign,
+            ui_entities:         Vec::new(),
+            ui_reader_id:        None,
+            ui_creator_progress: None,
         }
     }
 
@@ -40,13 +46,51 @@ impl WinGameMenu {
             None
         }
     }
+
+    fn populate_ui_texts(
+        &self,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
+        let mut stats_texts = HashMap::<String, String>::new();
+
+        // Times
+        {
+            let timers = data.world.read_resource::<Timers>();
+            if let Some(global_time) = &timers.global {
+                stats_texts.insert(
+                    "stats_global_time".to_string(),
+                    global_time.time_output().to_string(),
+                );
+            }
+        }
+
+        data.world.exec(
+            |(ui_transforms, mut ui_texts): (
+                ReadStorage<UiTransform>,
+                WriteStorage<UiText>,
+            )| {
+                for ui_transform in ui_transforms.join() {
+                    dbg!(&ui_transform.id);
+                }
+
+                for (ui_transform, ui_text) in
+                    (&ui_transforms, &mut ui_texts).join()
+                {
+                    if let Some(append_text) = stats_texts.get(&ui_transform.id)
+                    {
+                        ui_text.text += append_text;
+                    }
+                }
+            },
+        );
+    }
 }
 
 impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
     for WinGameMenu
 {
     fn on_start(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
-        self.create_ui(&mut data);
+        self.ui_creator_progress = Some(self.create_ui(&mut data));
     }
 
     fn on_stop(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
@@ -72,7 +116,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
 
     fn update(
         &mut self,
-        data: StateData<CustomGameData<CustomData>>,
+        mut data: StateData<CustomGameData<CustomData>>,
     ) -> Trans<CustomGameData<'a, 'b, CustomData>, StateEvent> {
         data.data
             .update(&data.world, "continue_or_new_game_menu")
@@ -80,6 +124,15 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
         if let Some(trans) = self.handle_keys(&data) {
             return trans;
         }
+
+        if let Some(progress) = self.ui_creator_progress.take() {
+            if progress.is_complete() {
+                self.populate_ui_texts(&mut data);
+            } else {
+                self.ui_creator_progress = Some(progress);
+            }
+        }
+
         Trans::None
     }
 
@@ -95,6 +148,38 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
 }
 
 impl Menu for WinGameMenu {
+    // fn created_ui_entity(
+    //     &mut self,
+    //     data: &mut StateData<CustomGameData<CustomData>>,
+    //     created_entity: Entity,
+    // ) {
+    //     use amethyst::ecs::{Join, ReadStorage, WriteStorage};
+    //     use amethyst::ui::{UiText, UiTransform};
+
+    //     data.world.exec(
+    //         |(entities, ui_transforms, mut ui_texts): (
+    //             Entities,
+    //             ReadStorage<UiTransform>,
+    //             WriteStorage<UiText>,
+    //         )| {
+    //             for (entity, ui_transform, ui_text) in
+    //                 (&entities, &ui_transforms, &mut ui_texts).join()
+    //             {
+    //                 dbg!(&ui_transform.id);
+    //                 if entity == created_entity {
+    //                     match ui_transform.id.as_str() {
+    //                         "stats_global_time" => {
+    //                             ui_text.text = "CHANGED!".to_string();
+    //                         }
+    //                         _ => (),
+    //                     }
+    //                     break;
+    //                 }
+    //             }
+    //         },
+    //     );
+    // }
+
     fn event_triggered<'a, 'b>(
         &mut self,
         _data: &mut StateData<CustomGameData<CustomData>>,
