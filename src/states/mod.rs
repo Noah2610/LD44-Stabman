@@ -14,7 +14,7 @@ pub mod prelude {
     pub use super::win_game_menu::WinGameMenu;
 }
 
-mod state_prelude {
+pub mod state_prelude {
     pub use amethyst::assets::{AssetStorage, Loader as AssetLoader};
     pub use amethyst::ecs::{Entities, Entity, World};
     pub use amethyst::input::is_close_requested;
@@ -56,6 +56,7 @@ mod state_prelude {
     pub use super::prelude::*;
     pub use crate::bullet_creator::prelude::*;
     pub use crate::components::prelude::*;
+    pub use crate::level_manager::prelude::*;
     pub use crate::resource_helpers::*;
     pub use crate::settings::prelude::*;
     pub use crate::world_helpers::*;

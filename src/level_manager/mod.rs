@@ -1,3 +1,4 @@
+mod level_loader;
 mod savefile;
 
 use std::collections::HashMap;
@@ -7,8 +8,8 @@ use amethyst::ecs::{Entities, Join, ReadStorage, WriteStorage};
 
 use climer::Time;
 
-use super::super::state_prelude::*;
-use super::level_loader::LevelLoader;
+use crate::states::state_prelude::*;
+use level_loader::LevelLoader;
 use savefile::TimeData;
 
 const TIMER_Z: f32 = 10.0;
@@ -21,10 +22,10 @@ pub struct LevelManager {
     pub settings:          SettingsLevelManagerCampaign,
     pub level_index:       usize,
     pub has_won_game:      bool,
+    pub level_times:       HashMap<String, TimeData>,
+    pub global_time:       Option<TimeData>,
     player_checkpoint_opt: Option<Player>,
     completed_levels:      Vec<String>,
-    level_times:           HashMap<String, TimeData>,
-    global_time:           Option<TimeData>,
     current_song:          Option<String>,
 }
 
@@ -38,10 +39,10 @@ impl LevelManager {
             settings:              settings,
             level_index:           0,
             has_won_game:          false,
-            player_checkpoint_opt: None,
-            completed_levels:      Vec::new(),
             level_times:           HashMap::new(),
             global_time:           None,
+            player_checkpoint_opt: None,
+            completed_levels:      Vec::new(),
             current_song:          None,
         };
         level_manager.load_from_savefile(data);

@@ -49,19 +49,45 @@ impl WinGameMenu {
 
     fn populate_ui_texts(
         &self,
-        data: &mut StateData<CustomGameData<CustomData>>,
+        mut data: &mut StateData<CustomGameData<CustomData>>,
     ) {
         let mut stats_texts = HashMap::<String, String>::new();
 
-        // Times
+        let mut level_manager = {
+            let settings = data.world.settings();
+            let level_manager_settings = match self.campaign {
+                CampaignType::Normal => settings.level_manager.normal,
+                CampaignType::Bonus => settings.level_manager.bonus,
+            };
+            LevelManager::new(&mut data, level_manager_settings, false)
+        };
+
+        // Times - current
         {
             let timers = data.world.read_resource::<Timers>();
             if let Some(global_time) = &timers.global {
                 stats_texts.insert(
-                    "stats_global_time".to_string(),
+                    "stats_global_time_current".to_string(),
                     global_time.time_output().to_string(),
                 );
             }
+        }
+        // Times - best
+        if let Some(global_time_data) = level_manager.global_time {
+            stats_texts.insert(
+                "stats_global_time_best".to_string(),
+                global_time_data.general.to_string(),
+            );
+        }
+        // Stats
+        {
+            let stats = data.world.read_resource::<Stats>();
+            let deaths = stats
+                .levels
+                .0
+                .values()
+                .fold(0, |acc, level| acc + level.deaths.current);
+            stats_texts.insert("stats_deaths".to_string(), deaths.to_string());
         }
 
         data.world.exec(
@@ -148,38 +174,6 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
 }
 
 impl Menu for WinGameMenu {
-    // fn created_ui_entity(
-    //     &mut self,
-    //     data: &mut StateData<CustomGameData<CustomData>>,
-    //     created_entity: Entity,
-    // ) {
-    //     use amethyst::ecs::{Join, ReadStorage, WriteStorage};
-    //     use amethyst::ui::{UiText, UiTransform};
-
-    //     data.world.exec(
-    //         |(entities, ui_transforms, mut ui_texts): (
-    //             Entities,
-    //             ReadStorage<UiTransform>,
-    //             WriteStorage<UiText>,
-    //         )| {
-    //             for (entity, ui_transform, ui_text) in
-    //                 (&entities, &ui_transforms, &mut ui_texts).join()
-    //             {
-    //                 dbg!(&ui_transform.id);
-    //                 if entity == created_entity {
-    //                     match ui_transform.id.as_str() {
-    //                         "stats_global_time" => {
-    //                             ui_text.text = "CHANGED!".to_string();
-    //                         }
-    //                         _ => (),
-    //                     }
-    //                     break;
-    //                 }
-    //             }
-    //         },
-    //     );
-    // }
-
     fn event_triggered<'a, 'b>(
         &mut self,
         _data: &mut StateData<CustomGameData<CustomData>>,

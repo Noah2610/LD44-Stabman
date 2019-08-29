@@ -1,8 +1,4 @@
-mod level_loader;
-mod level_manager;
-
 use super::state_prelude::*;
-use level_manager::prelude::*;
 
 pub struct Ingame {
     campaign:      CampaignType,

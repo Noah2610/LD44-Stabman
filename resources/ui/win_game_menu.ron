@@ -84,17 +84,55 @@ Container(
             children: [
                 Text(
                     transform: (
-                        id:             "stats_global_time",
+                        id:             "stats_global_time_current",
                         x:              272.0, // 256 + 16
-                        y:              -72.0, // -64 - 8
+                        y:              -40.0, // -32 - 8
                         width:          512.0,
-                        height:         128.0,
+                        height:         64.0,
                         anchor:         TopLeft,
                         mouse_reactive: false,
                         percent:        false,
                     ),
                     text: (
-                        text:      "Global Time: ",
+                        text:      "Game Time: ",
+                        font:      File("resources/fonts/undefined-medium.ttf", Ttf, ()),
+                        font_size: 20.0,
+                        color:     (0.4, 1.0, 0.8, 1.0),
+                        align:     TopLeft,
+                    ),
+                ),
+                Text(
+                    transform: (
+                        id:             "stats_global_time_best",
+                        x:              272.0,  // 256 + 16
+                        y:              -104.0, // -64 - 32 - 8
+                        width:          512.0,
+                        height:         64.0,
+                        anchor:         TopLeft,
+                        mouse_reactive: false,
+                        percent:        false,
+                    ),
+                    text: (
+                        text:      "Best Game Time: ",
+                        font:      File("resources/fonts/undefined-medium.ttf", Ttf, ()),
+                        font_size: 20.0,
+                        color:     (0.4, 1.0, 0.8, 1.0),
+                        align:     TopLeft,
+                    ),
+                ),
+                Text(
+                    transform: (
+                        id:             "stats_deaths",
+                        x:              -144.0, // -128 - 16
+                        y:              -40.0,  // -32 - 8
+                        width:          256.0,
+                        height:         64.0,
+                        anchor:         TopRight,
+                        mouse_reactive: false,
+                        percent:        false,
+                    ),
+                    text: (
+                        text:      "Deaths: ",
                         font:      File("resources/fonts/undefined-medium.ttf", Ttf, ()),
                         font_size: 20.0,
                         color:     (0.4, 1.0, 0.8, 1.0),

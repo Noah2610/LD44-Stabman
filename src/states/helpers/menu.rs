@@ -1,5 +1,5 @@
 use super::super::state_prelude::*;
-use amethyst::assets::{Progress, ProgressCounter};
+use amethyst::assets::ProgressCounter;
 use amethyst::ecs::{Entities, Join, ReadStorage, Write};
 
 pub trait Menu {
@@ -24,13 +24,6 @@ pub trait Menu {
         event_name: String,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>>;
 
-    // fn created_ui_entity(
-    //     &mut self,
-    //     _data: &mut StateData<CustomGameData<CustomData>>,
-    //     _entity: Entity,
-    // ) {
-    // }
-
     fn create_ui(
         &mut self,
         data: &mut StateData<CustomGameData<CustomData>>,
@@ -43,49 +36,6 @@ pub trait Menu {
         self.ui_entities_mut().push(menu_entity);
 
         progress
-
-        // TODO
-        // {
-        //     let children = data.world.exec(
-        //         |(entities, parents): (Entities, ReadStorage<Parent>)| {
-        //             let mut all_children = Vec::new();
-        //             let mut checked_parent_entities = Vec::new();
-        //             let mut current_parent_entity = Some(menu_entity);
-        //             while let Some(parent_entity) = current_parent_entity {
-        //                 checked_parent_entities.push(parent_entity);
-
-        //                 // Find children of current parent entity.
-        //                 let mut children = (&entities, &parents)
-        //                     .join()
-        //                     .filter_map(|(entity, parent)| {
-        //                         if parent.entity == parent_entity {
-        //                             dbg!("FOUND CHILD");
-        //                             Some(entity)
-        //                         } else {
-        //                             None
-        //                         }
-        //                     })
-        //                     .collect();
-        //                 all_children.append(&mut children);
-
-        //                 // Find new parent entity to find children of, which hasn't been checked yet.
-        //                 current_parent_entity = all_children
-        //                     .iter()
-        //                     .find(|entity| {
-        //                         !checked_parent_entities.contains(entity)
-        //                     })
-        //                     .map(Clone::clone);
-        //             }
-
-        //             all_children
-        //         },
-        //     );
-
-        //     for child in children {
-        //         dbg!("CHILD");
-        //         self.created_ui_entity(data, child);
-        //     }
-        // }
     }
 
     fn delete_ui(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {

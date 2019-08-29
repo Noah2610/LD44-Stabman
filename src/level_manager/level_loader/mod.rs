@@ -7,10 +7,10 @@ use amethyst::ecs::world::Index;
 use deathframe::geo::{Anchor, Rect, Vector};
 use json::JsonValue;
 
-use super::super::state_prelude::*;
 use crate::components::prelude::*;
 use crate::settings::SettingsLevelManagerCampaign;
 use crate::solid_tag::SolidTag;
+use crate::states::state_prelude::*;
 use helpers::*;
 
 const PROPERTY_Z_KEY: &str = "z";

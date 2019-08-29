@@ -9,6 +9,7 @@ extern crate serde;
 
 mod bullet_creator;
 mod components;
+mod level_manager;
 mod resolution_parser;
 mod resource_helpers;
 mod settings;

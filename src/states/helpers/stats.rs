@@ -19,7 +19,7 @@ impl Stats {
 }
 
 #[derive(Default, Clone, Serialize, Deserialize)]
-pub struct StatsLevels(HashMap<String, StatsLevel>);
+pub struct StatsLevels(pub HashMap<String, StatsLevel>);
 
 impl StatsLevels {
     pub fn reset_current_stats(&mut self) {
