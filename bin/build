@@ -10,14 +10,12 @@
 #     Comma-separated list of features to be build with.
 #     DEFAULT: "nightly"
 
-# shellcheck source=./util.sh
+# shellcheck source=./util.sh source=./share.sh
 _dir="$( dirname "$0" )"
 [ -f "${_dir}/util.sh" ] || bash "${_dir}/download-util.sh" || exit 1
 source "${_dir}/util.sh"
+source "${_dir}/share.sh"
 unset _dir
-
-LOGFILE="${ROOT}/logs/$( basename "$0" ).log"
-RUST_VERSION="nightly-2019-03-01"
 
 function build {
   check "cargo"
@@ -34,7 +32,5 @@ function build {
     $cmd
   fi
 }
-
-[ -z "$RUN_FEATURES" ] && RUN_FEATURES="nightly"
 
 build "$@"
