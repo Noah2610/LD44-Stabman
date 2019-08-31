@@ -106,7 +106,11 @@ Jam-version binaries are available via Google Drive:
 ---
 
 ## License
-Distributed under the terms of the [MIT License][mit-license].
+Distributed under the terms of the [MIT License][mit-license].  
+
+This project uses and redistributes an unchanged copy of [SDL2],  
+for controller support with [amethyst]'s `sdl_controller` feature.  
+`SDL2.dll` is distributed under the [zlib license][SDL2-license].
 
 [ludumdare]:       https://ldjam.com/events/ludum-dare/44/veggietartar
 [LD44-release]:    https://github.com/Noah2610/LD44/tree/LD44-release
@@ -127,3 +131,5 @@ Distributed under the terms of the [MIT License][mit-license].
 [Trello]:          https://trello.com/b/hkBWXYt9
 [Figma]:           https://www.figma.com/
 [mit-license]:     https://github.com/Noah2610/LD44/blob/master/LICENSE
+[SDL2]:            https://www.libsdl.org/
+[SDL2-license]:    https://www.libsdl.org/license.php
