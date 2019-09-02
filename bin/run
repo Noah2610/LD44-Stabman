@@ -14,29 +14,17 @@
 #     Comma-separated list of features to be build with.
 #     DEFAULT: "nightly"
 
-# shellcheck source=./util.sh source=./share.sh
+
+# shellcheck source=./share.sh
 _dir="$( dirname "$0" )"
-[ -f "${_dir}/util.sh" ] || bash "${_dir}/download-util.sh" || exit 1
-source "${_dir}/util.sh"
 source "${_dir}/share.sh"
 unset _dir
 
 function run {
-  check "cargo"
-  local features_str
-  local features=("$RUN_FEATURES")
-  features_str="$( join_by ',' "${features[@]}" )"
-  local cmd="cargo +$RUST_VERSION run --features $features_str $*"
-  local run_msg
-  run_msg="$( colored "$COLOR_MSG_STRONG" "RUNNING:" ) $( colored "$COLOR_CODE" "$cmd" )"
-  echo -e "$run_msg"
-  if should_run_in_terminal; then
-    run_terminal "DEV='$RUN_DEV' $cmd"
-  else
-    DEV="$RUN_DEV" $cmd
-  fi
+  cargo_cmd "run" "$*"
 }
 
 [ -z "$RUN_DEV" ] && RUN_DEV="1"
+export DEV="$RUN_DEV"
 
 run "$@"
