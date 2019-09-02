@@ -159,8 +159,6 @@ function build_release {
 #   local target
 #   local spacing
 function build_release_for_linux {
-  exclude_file "SDL2.dll"
-
   msg "${spacing}Compiling..."
   try_run "cargo +${RELEASE_RUST_VERSION} build --release $*"
 
@@ -176,9 +174,12 @@ function build_release_for_linux {
 
   if should_build_with_controller; then
     msg "${spacing}Compiling with controller support..."
-    local exec_file="${RELEASE_DIR}/${RELEASE_FILE_PREFIX}${target}${RELEASE_FILE_SUFFIX}-${RELEASE_VERSION}${CONTROLLER_SUPPORT_SUFFIX}"
+    cd "${RELEASE_DIR}"
+    local exec_file="${RELEASE_FILE_PREFIX}${target}${RELEASE_FILE_SUFFIX}-${RELEASE_VERSION}${CONTROLLER_SUPPORT_SUFFIX}"
     try_run "cargo +${RELEASE_RUST_VERSION} build --release --features controller $*"
     try_run "cp ${ROOT}/target/release/${RELEASE_EXE_NAME} ${exec_file}"
+    try_run "zip -r ${exec_file}.zip ${exec_file}"
+    try_run "rm -f ${exec_file}"
   fi
 }
 
@@ -188,8 +189,6 @@ function build_release_for_linux {
 #   local target
 #   local spacing
 function build_release_for_windows {
-  include_file "SDL2.dll"
-
   msg "${spacing}Compiling..."
   try_run "cargo +${RELEASE_RUST_VERSION} build --release --target ${WINDOWS_TARGET} $*"
 
@@ -205,9 +204,14 @@ function build_release_for_windows {
 
   if should_build_with_controller; then
     msg "${spacing}Compiling with controller support..."
-    local exec_file="${RELEASE_DIR}/${RELEASE_FILE_PREFIX}${target}${RELEASE_FILE_SUFFIX}-${RELEASE_VERSION}${CONTROLLER_SUPPORT_SUFFIX}"
+    cd "${RELEASE_DIR}"
+    local sdl2_file="SDL2.dll"
+    local exec_file="${RELEASE_FILE_PREFIX}${target}${RELEASE_FILE_SUFFIX}-${RELEASE_VERSION}${CONTROLLER_SUPPORT_SUFFIX}.exe"
     try_run "cargo +${RELEASE_RUST_VERSION} build --release --target ${WINDOWS_TARGET} --features controller $*"
-    try_run "cp ${ROOT}/target/${WINDOWS_TARGET}/release/${RELEASE_EXE_NAME}.exe ${exec_file}.exe"
+    try_run "cp ${ROOT}/target/${WINDOWS_TARGET}/release/${RELEASE_EXE_NAME}.exe ${exec_file}"
+    try_run "cp ${ROOT}/${sdl2_file} ${sdl2_file}"
+    try_run "zip -r ${exec_file}.zip ${exec_file} ${sdl2_file}"
+    try_run "rm -f ${exec_file} ${sdl2_file}"
   fi
 }
 
