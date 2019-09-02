@@ -8,6 +8,10 @@ use amethyst::utils::application_root_dir;
 use crate::LOGFILE;
 
 pub fn on_panic(info: &std::panic::PanicInfo) {
+    // Print panic to stderr, as usual.
+    let panic_msg = format!("{:#?}", info);
+    eprintln!("{}", &panic_msg);
+
     let logfile_path = format!("{}/{}", application_root_dir(), LOGFILE);
     let logfile_path = Path::new(&logfile_path);
 
@@ -49,13 +53,14 @@ pub fn on_panic(info: &std::panic::PanicInfo) {
         date_string,
         "====================".to_string(),
     ];
-    if let Some(location) = info.location() {
-        output.push(location.to_string());
-    }
-    if let Some(payload) = info.payload().downcast_ref::<&str>() {
-        output.push(payload.to_string());
-    }
-    output.push(String::from("\n\n"));
+    // if let Some(location) = info.location() {
+    //     output.push(location.to_string());
+    // }
+    // if let Some(payload) = info.payload().downcast_ref::<&str>() {
+    //     output.push(payload.to_string());
+    // }
+    output.push(panic_msg);
+    output.push(String::from("\n"));
 
     // Print panic info to file.
     if let Err(err) = logfile.write(output.join("\n").as_bytes()) {
