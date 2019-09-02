@@ -9,6 +9,7 @@ description = "Our Ludum Dare 44 Game Jam Entry"
 amethyst   = { version = "0.10.0", features = [] }
 base64     = "0.10.1"
 bitflags   = "=1.0.4"  # https://github.com/rust-lang/rust/issues/59134#issuecomment-489430178
+chrono     = "0.4.8"
 json       = "0.11.13"
 rand       = "0.6.5"
 regex      = "1.1.5"
