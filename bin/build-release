@@ -1,8 +1,10 @@
 #!/bin/bash
 # Build the project in release mode.
-# The generated release directory and zip file name is in the for of:
+# The generated release directory and zip file name is in the format of:
 #   "${RELEASE_FILE_PREFIX}${<target-name>}${RELEASE_FILE_SUFFIX}-${RELEASE_VERSION}"
+#
 # All command-line arguments are passed to the executed `cargo` command.
+#
 # Optional environment variables:
 #   $RELEASE_TARGETS
 #     A space-separated list of build target identifiers;
@@ -32,6 +34,15 @@
 #     Can be anything that can be passed to `rustup run VERSION`,
 #     for example: "stable", "nightly", "1.34.2", "2019-01-01"
 #     DEFAULT: "1.34.2"
+#   $RELEASE_WITH_CONTROLLER
+#     If an additional executable with enabled controller support
+#     shall be built in addition to the regular one.
+#     Enabled if value is non-empty and not "0".
+#     The extra executable will not be bundled with the generated zip archive,
+#     instead it is placed in the releases directory on its own, with the name in the form of:
+#       "${RELEASE_FILE_PREFIX}${<target-name>}${RELEASE_FILE_SUFFIX}-${RELEASE_VERSION}${CONTROLLER_SUPPORT_SUFFIX}(.exe)"
+#     The ".exe" at the end is only appended for windows executables.
+#     DEFAULT: "0"
 
 # shellcheck source=./share.sh
 _dir="$( dirname "$0" )"
@@ -41,6 +52,7 @@ unset _dir
 set -e
 
 WINDOWS_TARGET="x86_64-pc-windows-gnu"
+CONTROLLER_SUPPORT_SUFFIX="-with-controller"
 INCLUDE_FILES=()
 
 function include_file {
@@ -152,7 +164,7 @@ function build_release_for_linux {
   msg "${spacing}Compiling..."
   try_run "cargo +${RELEASE_RUST_VERSION} build --release $*"
 
-  target_dir="${RELEASE_DIR}/${filename}"
+  local target_dir="${RELEASE_DIR}/${filename}"
   mkdir "$target_dir"
 
   msg "${spacing}Copying executable and resources..."
@@ -161,6 +173,13 @@ function build_release_for_linux {
   try_run "cp ${INCLUDE_FILES[*]} $target_dir"
 
   mk_archive "$target_dir"
+
+  if should_build_with_controller; then
+    msg "${spacing}Compiling with controller support..."
+    local exec_file="${RELEASE_DIR}/${RELEASE_FILE_PREFIX}${target}${RELEASE_FILE_SUFFIX}-${RELEASE_VERSION}${CONTROLLER_SUPPORT_SUFFIX}"
+    try_run "cargo +${RELEASE_RUST_VERSION} build --release --features controller $*"
+    try_run "cp ${ROOT}/target/release/${RELEASE_EXE_NAME} ${exec_file}"
+  fi
 }
 
 # Pre-set local variables:
@@ -172,9 +191,9 @@ function build_release_for_windows {
   include_file "SDL2.dll"
 
   msg "${spacing}Compiling..."
-  try_run "cargo +${RELEASE_RUST_VERSION} build --release --target $WINDOWS_TARGET $*"
+  try_run "cargo +${RELEASE_RUST_VERSION} build --release --target ${WINDOWS_TARGET} $*"
 
-  target_dir="${RELEASE_DIR}/${filename}"
+  local target_dir="${RELEASE_DIR}/${filename}"
   mkdir "$target_dir"
 
   msg "${spacing}Copying executable and resources..."
@@ -183,18 +202,30 @@ function build_release_for_windows {
   try_run "cp ${INCLUDE_FILES[*]} $target_dir"
 
   mk_archive "$target_dir"
+
+  if should_build_with_controller; then
+    msg "${spacing}Compiling with controller support..."
+    local exec_file="${RELEASE_DIR}/${RELEASE_FILE_PREFIX}${target}${RELEASE_FILE_SUFFIX}-${RELEASE_VERSION}${CONTROLLER_SUPPORT_SUFFIX}"
+    try_run "cargo +${RELEASE_RUST_VERSION} build --release --target ${WINDOWS_TARGET} --features controller $*"
+    try_run "cp ${ROOT}/target/${WINDOWS_TARGET}/release/${RELEASE_EXE_NAME}.exe ${exec_file}.exe"
+  fi
+}
+
+function should_build_with_controller {
+  [ -n "$RELEASE_WITH_CONTROLLER" ] && [ "$RELEASE_WITH_CONTROLLER" != "0" ]
 }
 
 # Set global settings variables.
 [ -z "$RELEASE_TARGETS" ] && RELEASE_TARGETS="linux windows"
 RELEASE_TARGETS=($RELEASE_TARGETS)
-[ -z "$RELEASE_DIR" ]           && RELEASE_DIR="${ROOT}/releases"
-[ -d "$RELEASE_DIR" ]           || mkdir -p "$RELEASE_DIR"
-[ -z "$RELEASE_VERSION" ]       && RELEASE_VERSION="$( get_latest_version )"
-[ -z "$RELEASE_FILE_PREFIX" ]   && RELEASE_FILE_PREFIX="ld44-postjam-"
-[ -z "$RELEASE_FILE_SUFFIX" ]   && RELEASE_FILE_SUFFIX=""
-[ -z "$RELEASE_EXE_NAME" ]      && RELEASE_EXE_NAME="LD44"
-[ -z "$RELEASE_RESOURCES_DIR" ] && RELEASE_RESOURCES_DIR="${ROOT}/resources"
-[ -z "$RELEASE_RUST_VERSION" ]  && RELEASE_RUST_VERSION="1.34.2"
+[ -z "$RELEASE_DIR" ]             && RELEASE_DIR="${ROOT}/releases"
+[ -d "$RELEASE_DIR" ]             || mkdir -p "$RELEASE_DIR"
+[ -z "$RELEASE_VERSION" ]         && RELEASE_VERSION="$( get_latest_version )"
+[ -z "$RELEASE_FILE_PREFIX" ]     && RELEASE_FILE_PREFIX="ld44-postjam-"
+[ -z "$RELEASE_FILE_SUFFIX" ]     && RELEASE_FILE_SUFFIX=""
+[ -z "$RELEASE_EXE_NAME" ]        && RELEASE_EXE_NAME="LD44"
+[ -z "$RELEASE_RESOURCES_DIR" ]   && RELEASE_RESOURCES_DIR="${ROOT}/resources"
+[ -z "$RELEASE_RUST_VERSION" ]    && RELEASE_RUST_VERSION="1.34.2"
+[ -z "$RELEASE_WITH_CONTROLLER" ] && RELEASE_WITH_CONTROLLER="0"
 
 build_release "$@"
