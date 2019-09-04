@@ -11,7 +11,7 @@
 #     then the `$DEV` variable is set and passed to the executable.
 #     DEFAULT: "1"
 #   $RUN_FEATURES
-#     Comma-separated list of features to be build with.
+#     Comma-separated list of features to build with.
 #     DEFAULT: "nightly,debug"
 
 
