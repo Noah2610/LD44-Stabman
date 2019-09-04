@@ -162,8 +162,10 @@ function build_release {
 #   local target
 #   local spacing
 function build_release_for_linux {
+  local features_arg=""
+  [ -n "$RELEASE_FEATURES" ] && features_arg="--features ${RELEASE_FEATURES}"
   msg "${spacing}Compiling..."
-  try_run "cargo +${RELEASE_RUST_VERSION} build --release --features ${RELEASE_FEATURES} $*"
+  try_run "cargo +${RELEASE_RUST_VERSION} build --release ${features_arg} $*"
 
   local target_dir="${RELEASE_DIR}/${filename}"
   mkdir "$target_dir"
@@ -180,10 +182,10 @@ function build_release_for_linux {
     cd "${RELEASE_DIR}"
     local exec_file="${RELEASE_FILE_PREFIX}${target}${RELEASE_FILE_SUFFIX}-${RELEASE_VERSION}${CONTROLLER_SUPPORT_SUFFIX}"
     local features
-    if [ -z "$RELEASE_FEATURES" ]; then
-      features="controller"
-    else
+    if [ -n "$RELEASE_FEATURES" ]; then
       features="${RELEASE_FEATURES},controller"
+    else
+      features="controller"
     fi
     try_run "cargo +${RELEASE_RUST_VERSION} build --release --features $features $*"
     try_run "cp ${ROOT}/target/release/${RELEASE_EXE_NAME} ${exec_file}"
@@ -198,8 +200,10 @@ function build_release_for_linux {
 #   local target
 #   local spacing
 function build_release_for_windows {
+  local features_arg=""
+  [ -n "$RELEASE_FEATURES" ] && features_arg="--features ${RELEASE_FEATURES}"
   msg "${spacing}Compiling..."
-  try_run "cargo +${RELEASE_RUST_VERSION} build --release --target ${WINDOWS_TARGET} --features ${RELEASE_FEATURES} $*"
+  try_run "cargo +${RELEASE_RUST_VERSION} build --release --target ${WINDOWS_TARGET} ${features_arg} $*"
 
   local target_dir="${RELEASE_DIR}/${filename}"
   mkdir "$target_dir"
@@ -217,10 +221,10 @@ function build_release_for_windows {
     local sdl2_file="SDL2.dll"
     local exec_file="${RELEASE_FILE_PREFIX}${target}${RELEASE_FILE_SUFFIX}-${RELEASE_VERSION}${CONTROLLER_SUPPORT_SUFFIX}.exe"
     local features
-    if [ -z "$RELEASE_FEATURES" ]; then
-      features="controller"
-    else
+    if [ -n "$RELEASE_FEATURES" ]; then
       features="${RELEASE_FEATURES},controller"
+    else
+      features="controller"
     fi
     try_run "cargo +${RELEASE_RUST_VERSION} build --release --target ${WINDOWS_TARGET} --features $features $*"
     try_run "cp ${ROOT}/target/${WINDOWS_TARGET}/release/${RELEASE_EXE_NAME}.exe ${exec_file}"
