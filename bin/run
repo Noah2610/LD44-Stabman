@@ -12,7 +12,7 @@
 #     DEFAULT: "1"
 #   $RUN_FEATURES
 #     Comma-separated list of features to be build with.
-#     DEFAULT: "nightly"
+#     DEFAULT: "nightly,debug"
 
 
 # shellcheck source=./share.sh

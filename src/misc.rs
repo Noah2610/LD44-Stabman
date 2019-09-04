@@ -1,21 +1,22 @@
-use std::fs::{create_dir, OpenOptions};
-use std::io::Write;
-use std::path::Path;
-use std::process::exit;
-
-use amethyst::utils::application_root_dir;
-
-use crate::LOGFILE;
-
+#[cfg(feature = "debug")]
 pub fn on_panic(info: &std::panic::PanicInfo) {
+    use std::fs::{create_dir, OpenOptions};
+    use std::io::Write;
+    use std::path::Path;
+    use std::process::exit;
+
+    use amethyst::utils::application_root_dir;
+
+    const PANIC_LOGFILE: &str = "logs/panic.log";
+
     // Print panic to stderr, as usual.
-    let panic_msg = format!("{:#?}", info);
+    let panic_msg = format!("{:#}\n{:#?}", info, backtrace::Backtrace::new());
     eprintln!("{}", &panic_msg);
 
-    let logfile_path = format!("{}/{}", application_root_dir(), LOGFILE);
+    let logfile_path = format!("{}/{}", application_root_dir(), PANIC_LOGFILE);
     let logfile_path = Path::new(&logfile_path);
 
-    // Create `LOGFILE`'s parent directory if it does not exist.
+    // Create `PANIC_LOGFILE`'s parent directory if it does not exist.
     if let Some(logdir_path) = logfile_path.parent() {
         if !logdir_path.exists() {
             if let Err(_) = create_dir(logdir_path) {

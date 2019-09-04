@@ -1,12 +1,15 @@
 extern crate amethyst;
 extern crate base64;
-extern crate chrono;
 extern crate climer;
 extern crate deathframe;
 extern crate json;
 extern crate regex;
 #[macro_use]
 extern crate serde;
+#[cfg(feature = "debug")]
+extern crate backtrace;
+#[cfg(feature = "debug")]
+extern crate chrono;
 
 mod bullet_creator;
 mod components;
@@ -48,7 +51,6 @@ use deathframe::handlers::AudioHandles;
 use resource_helpers::*;
 use systems::prelude::*;
 
-const LOGFILE: &str = "logs/panic.log";
 const FPS: u32 = 60;
 const SLEEP_AND_YIELD_MS: u64 = 2;
 
@@ -58,6 +60,7 @@ pub struct CustomData {
 }
 
 fn main() -> Result<(), String> {
+    #[cfg(feature = "debug")]
     std::panic::set_hook(Box::new(misc::on_panic));
 
     init_game().map_err(|e| e.to_string())

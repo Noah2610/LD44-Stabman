@@ -31,4 +31,4 @@ function cargo_cmd {
 LOGFILE="${ROOT}/logs/$( basename "$0" ).log"
 RUST_VERSION="nightly-2019-03-01"
 
-[ -z "$RUN_FEATURES" ] && RUN_FEATURES="nightly"
+[ -z "$RUN_FEATURES" ] && RUN_FEATURES="nightly,debug"
