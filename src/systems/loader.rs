@@ -9,6 +9,7 @@ impl<'a> System<'a> for LoaderSystem {
         ReadExpect<'a, Settings>,
         Entities<'a>,
         Read<'a, LoadingLevel>,
+        Write<'a, World>,
         ReadStorage<'a, Camera>,
         ReadStorage<'a, Loader>,
         ReadStorage<'a, Transform>,
@@ -24,6 +25,7 @@ impl<'a> System<'a> for LoaderSystem {
             settings,
             entities,
             loading_level,
+            mut world,
             cameras,
             loaders,
             transforms,
@@ -179,7 +181,7 @@ impl<'a> System<'a> for LoaderSystem {
         //     }
         // }
 
-        entities_loader.work(&mut loadeds);
+        entities_loader.work(&mut loadeds, &mut world);
     }
 }
 
@@ -212,7 +214,7 @@ impl EntitiesLoader {
         }
     }
 
-    pub fn work(self, loadeds: &mut WriteStorage<Loaded>) {
+    pub fn work(self, loadeds: &mut WriteStorage<Loaded>, world: &mut World) {
         for entity in self.to_unload {
             if loadeds.contains(entity) {
                 if !self.to_maintain_loaded.contains(&entity) {
@@ -225,5 +227,6 @@ impl EntitiesLoader {
                 loadeds.insert(entity, Loaded).unwrap();
             }
         }
+        world.maintain();
     }
 }

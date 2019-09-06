@@ -7,8 +7,8 @@
     ),
     (
       name: "walking",
-      default_delay_ms: Some(1000),
-      sprite_ids: [2],
+      default_delay_ms: Some(250),
+      sprite_ids: [2, 3],
     ),
   ],
   current: Some("idle"),
