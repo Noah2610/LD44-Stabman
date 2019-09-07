@@ -14,31 +14,84 @@ Container(
     ),
     // TODO: UiImageBuilder
     background: (
-        image: Data(
-            Rgba((0.0, 0.0, 0.0, 0.5), (channel: Srgb)),
-        ),
+        image: File("resources/textures/ui/bg_paused_menu.png", Png, (channel: Srgb)),
     ),
     children: [
+        // UiWidget::Text
+        Text(
+            transform: (
+                id:             "you_win_text",
+                x:              0.0,
+                y:              0.0,
+                width:          1024.0,
+                height:         256.0,
+                anchor:         TopMiddle,
+                mouse_reactive: true,
+                percent:        false,
+            ),
+            text: (
+                text:      "Thank You For Playing <3",
+                // color:     (0.3176470588235294, 0.0196078431372549, 0.12156862745098039, 1.0),
+                color:     (0.22745098039215686, 0.00784313725490196, 0.03137254901960784, 1.0),
+                font:      File("resources/fonts/square.ttf", Ttf, ()),
+                font_size: 48.0,
+                align:     BottomMiddle,
+            ),
+        ),
+
         // UiWidget::Button
         Button(
             // UiTransformBuilder
             transform: (
                 id:             "continue_button",
-                x:              -256.0,
-                y:              0.0,
-                width:          128.0,
-                height:         64.0,
+                x:              0.0,
+                y:              96.0,
+                width:          224.0,
+                height:         112.0,
                 anchor:         Middle,
                 mouse_reactive: true,
             ),
             // UiButtonBuilder
             button: (
-                text:              "CONTINUE FROM START",
+                text:              "CONTINUE?",
                 font:              File("resources/fonts/square.ttf", Ttf, ()),
                 font_size:         32.0,
                 normal_text_color: (0.2, 0.2, 1.0, 1.0),
                 hover_text_color:  (0.4, 0.4, 1.0, 1.0),
                 press_text_color:  (0.6, 0.6, 1.0, 1.0),
+                normal_image:      File(
+                    "resources/textures/ui/button.png",
+                    Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                hover_image:       File(
+                    "resources/textures/ui/button.png",
+                    Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                press_image:       File(
+                    "resources/textures/ui/button.png",
+                    Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
             ),
         ),
         // UiWidget::Button
@@ -46,100 +99,55 @@ Container(
             // UiTransformBuilder
             transform: (
                 id:             "quit_button",
-                x:              256.0,
-                y:              0.0,
-                width:          192.0,
-                height:         64.0,
+                x:              0.0,
+                y:              -96.0,
+                width:          224.0,
+                height:         112.0,
                 anchor:         Middle,
                 mouse_reactive: true,
             ),
             // UiButtonBuilder
             button: (
-                text:              "TO MAIN MENU",
+                text:              "MAIN MENU",
                 font:              File("resources/fonts/square.ttf", Ttf, ()),
                 font_size:         32.0,
                 normal_text_color: (0.2, 0.2, 1.0, 1.0),
                 hover_text_color:  (0.4, 0.4, 1.0, 1.0),
                 press_text_color:  (0.6, 0.6, 1.0, 1.0),
-            ),
-        ),
-        // STATS DISPLAY
-        Container(
-            transform: (
-                id:             "stats_texts",
-                x:              0.0,
-                y:              0.0,
-                width:          1.0,
-                height:         1.0,
-                anchor:         Middle,
-                mouse_reactive: false,
-                percent:        true,
-            ),
-            // TODO: UiImageBuilder
-            background: (
-                image: Data(
-                    Rgba((0.1, 0.0, 0.0, 0.8), (channel: Srgb)),
+                normal_image:      File(
+                    "resources/textures/ui/button.png",
+                    Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                hover_image:       File(
+                    "resources/textures/ui/button.png",
+                    Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                press_image:       File(
+                    "resources/textures/ui/button.png",
+                    Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
                 ),
             ),
-            children: [
-                Text(
-                    transform: (
-                        id:             "stats_global_time_current",
-                        x:              272.0, // 256 + 16
-                        y:              -40.0, // -32 - 8
-                        width:          512.0,
-                        height:         64.0,
-                        anchor:         TopLeft,
-                        mouse_reactive: false,
-                        percent:        false,
-                    ),
-                    text: (
-                        text:      "Game Time: ",
-                        font:      File("resources/fonts/undefined-medium.ttf", Ttf, ()),
-                        font_size: 20.0,
-                        color:     (0.4, 1.0, 0.8, 1.0),
-                        align:     TopLeft,
-                    ),
-                ),
-                Text(
-                    transform: (
-                        id:             "stats_global_time_best",
-                        x:              272.0,  // 256 + 16
-                        y:              -104.0, // -64 - 32 - 8
-                        width:          512.0,
-                        height:         64.0,
-                        anchor:         TopLeft,
-                        mouse_reactive: false,
-                        percent:        false,
-                    ),
-                    text: (
-                        text:      "Best Game Time: ",
-                        font:      File("resources/fonts/undefined-medium.ttf", Ttf, ()),
-                        font_size: 20.0,
-                        color:     (0.4, 1.0, 0.8, 1.0),
-                        align:     TopLeft,
-                    ),
-                ),
-                Text(
-                    transform: (
-                        id:             "stats_deaths",
-                        x:              -144.0, // -128 - 16
-                        y:              -40.0,  // -32 - 8
-                        width:          256.0,
-                        height:         64.0,
-                        anchor:         TopRight,
-                        mouse_reactive: false,
-                        percent:        false,
-                    ),
-                    text: (
-                        text:      "Deaths: ",
-                        font:      File("resources/fonts/undefined-medium.ttf", Ttf, ()),
-                        font_size: 20.0,
-                        color:     (0.4, 1.0, 0.8, 1.0),
-                        align:     TopLeft,
-                    ),
-                ),
-            ]
-        ),
+        )
     ],
 )
