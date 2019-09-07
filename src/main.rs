@@ -104,7 +104,7 @@ fn build_game_data<'a, 'b>(
     };
 
     // Pipeline
-    // let mut color_mask = ColorMask::empty();
+    let mut color_mask = ColorMask::empty();
     // color_mask.insert(ColorMask::RED);
     // color_mask.insert(ColorMask::GREEN);
     // color_mask.insert(ColorMask::BLUE);

@@ -77,8 +77,9 @@ pub struct SettingsLoadingText {
 
 #[derive(Clone, Deserialize)]
 pub struct SettingsLevelManager {
-    pub normal: SettingsLevelManagerCampaign,
-    pub bonus:  SettingsLevelManagerCampaign,
+    pub normal:  SettingsLevelManagerCampaign,
+    pub bonus_a: SettingsLevelManagerCampaign,
+    pub bonus_b: SettingsLevelManagerCampaign,
 }
 
 #[derive(Clone, Deserialize)]

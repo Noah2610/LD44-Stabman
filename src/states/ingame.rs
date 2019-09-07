@@ -41,7 +41,8 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
         let settings = data.world.settings();
         let level_manager_settings = match self.campaign {
             CampaignType::Normal => settings.level_manager.normal,
-            CampaignType::Bonus => settings.level_manager.bonus,
+            CampaignType::BonusA => settings.level_manager.bonus_a,
+            CampaignType::BonusB => settings.level_manager.bonus_b,
         };
         self.level_manager = Some(LevelManager::new(
             &mut data,

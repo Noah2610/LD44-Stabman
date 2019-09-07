@@ -123,8 +123,11 @@ impl Menu for MainMenu {
             "start_button_normal" => {
                 start_with_campaign = Some(CampaignType::Normal);
             }
-            "start_button_bonus" => {
-                start_with_campaign = Some(CampaignType::Bonus);
+            "start_button_bonus_a" => {
+                start_with_campaign = Some(CampaignType::BonusA);
+            }
+            "start_button_bonus_b" => {
+                start_with_campaign = Some(CampaignType::BonusB);
             }
             "quit_button" => return Some(Trans::Quit),
             _ => (),
@@ -164,7 +167,8 @@ fn savefile_exists_for(campaign: &CampaignType, settings: &Settings) -> bool {
 
     let savefile_relative = match campaign {
         CampaignType::Normal => &settings.level_manager.normal.savefile_path,
-        CampaignType::Bonus => &settings.level_manager.bonus.savefile_path,
+        CampaignType::BonusA => &settings.level_manager.bonus_a.savefile_path,
+        CampaignType::BonusB => &settings.level_manager.bonus_b.savefile_path,
     };
     let savefile_path =
         format!("{}/{}", application_root_dir(), savefile_relative);

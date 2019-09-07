@@ -127,18 +127,18 @@ Settings(
             ),
         ),
 
-        /// LevelManager settings for bonus campaign
-        bonus: (
-            levels_dir: "levels/bonus",
+        /// LevelManager settings for bonus_a campaign
+        bonus_a: (
+            levels_dir: "levels/bonus_a",
             level_names: (
-                "bonus_1.json", "bonus_2.json", "bonus_3.json",
+                "bonus_a_1.json", "bonus_a_2.json", "bonus_a_3.json",
             ),
             song_names: (
                 "level_1.ogg", "level_2.ogg", "level_3.ogg",
             ),
             tile_size: (32.0, 32.0),
             /// Relative path to the save file
-            savefile_path: "savefile_bonus",
+            savefile_path: "savefile_bonus_a",
             /// Health to replenish on death
             health_increase_on_death: 2,
             /// Settings for the _level_ speedrun timer UI
@@ -173,7 +173,55 @@ Settings(
             ),
             /// If the time of both timers should be printed to the console, in regular intervals
             timers_print_to_stdout: false,
-        )
+        ),
+
+        /// LevelManager settings for bonus_b campaign
+        bonus_b: (
+            levels_dir: "levels/bonus_b",
+            level_names: (
+                "bonus_b_1.json", "bonus_b_2.json", "bonus_b_3.json",
+            ),
+            song_names: (
+                "level_1.ogg", "level_2.ogg", "level_3.ogg",
+            ),
+            tile_size: (32.0, 32.0),
+            /// Relative path to the save file
+            savefile_path: "savefile_bonus_b",
+            /// Health to replenish on death
+            health_increase_on_death: 2,
+            /// Settings for the _level_ speedrun timer UI
+            level_timer_ui: (
+                text_prefix: "Level time: ",
+                font_file:   "fonts/undefined-medium.ttf",
+                font_size:   24.0,
+                font_color:  [1.0, 1.0, 1.0, 0.5],
+                offset:      (8.0, -8.0),
+                highscore: (
+                    text_prefix: "Level time PB: ",
+                    font_file:   "fonts/undefined-medium.ttf",
+                    font_size:   12.0,
+                    font_color:  [0.8, 0.8, 0.8, 0.5],
+                    offset:      (0.0, -24.0), // Relative to parent timer UI
+                ),
+            ),
+            /// Settings for the _global_ speedrun timer UI
+            global_timer_ui: (
+                text_prefix: "Game time: ",
+                font_file:   "fonts/undefined-medium.ttf",
+                font_size:   16.0,
+                font_color:  [1.0, 1.0, 1.0, 0.5],
+                offset:      (8.0, -48.0),
+                highscore: (
+                    text_prefix: "Game time PB: ",
+                    font_file:   "fonts/undefined-medium.ttf",
+                    font_size:   12.0,
+                    font_color:  [0.8, 0.8, 0.8, 0.5],
+                    offset:      (0.0, -16.0), // Relative to parent timer UI
+                ),
+            ),
+            /// If the time of both timers should be printed to the console, in regular intervals
+            timers_print_to_stdout: false,
+        ),
     ),
 
     enemies: (

@@ -11,7 +11,8 @@ use amethyst::ui::{Anchor as AmethystAnchor, UiTransform};
 #[derive(Clone)]
 pub enum CampaignType {
     Normal,
-    Bonus,
+    BonusA,
+    BonusB,
 }
 
 impl Default for CampaignType {
