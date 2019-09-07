@@ -87,8 +87,8 @@ Settings(
             ),
             song_names: (
                 "level_1.ogg", "level_1.ogg", "level_1.ogg",
-                "level_2.ogg", "level_2.ogg", "level_3.ogg",
-                "level_3.ogg", "level_4.ogg", "level_5.ogg", "level_6.ogg",
+                "level_2.ogg", "level_3.ogg", "level_3.ogg",
+                "level_6.ogg", "level_6.ogg", "level_4.ogg", "level_4.ogg",
             ),
             tile_size: (32.0, 32.0),
             /// Relative path to the save file

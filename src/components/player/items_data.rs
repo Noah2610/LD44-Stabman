@@ -35,10 +35,19 @@ pub struct ItemsDataWallJump {
     pub can_wall_jump: bool,
 }
 
-#[derive(Clone, Default, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct ItemsDataKnockback {
     pub velocity:      Vector,
     pub has_knockback: bool,
+}
+
+impl Default for ItemsDataKnockback {
+    fn default() -> Self {
+        Self {
+            velocity:      Vector::new(0.0, 0.0),
+            has_knockback: true,
+        }
+    }
 }
 
 #[derive(Clone, Default, Serialize, Deserialize)]
