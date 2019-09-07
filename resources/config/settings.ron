@@ -134,7 +134,7 @@ Settings(
                 "bonus_a_1.json", "bonus_a_2.json", "bonus_a_3.json",
             ),
             song_names: (
-                "level_1.ogg", "level_2.ogg", "level_3.ogg",
+                "level_7.ogg", "level_7.ogg", "level_7.ogg",
             ),
             tile_size: (32.0, 32.0),
             /// Relative path to the save file
@@ -182,7 +182,7 @@ Settings(
                 "bonus_b_1.json", "bonus_b_2.json", "bonus_b_3.json",
             ),
             song_names: (
-                "level_1.ogg", "level_2.ogg", "level_3.ogg",
+                "level_8.ogg", "level_8.ogg", "level_8.ogg",
             ),
             tile_size: (32.0, 32.0),
             /// Relative path to the save file
