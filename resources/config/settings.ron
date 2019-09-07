@@ -81,10 +81,9 @@ Settings(
         normal: (
             levels_dir: "levels/normal",
             level_names: (
-                "overworld_1.json",
-                // "overworld_1.json", "overworld_2.json", "overworld_3.json",
-                // "graveyard_1.json", "graveyard_2.json", "graveyard_3.json",
-                // "graveyard_4.json", "graveyard_5.json", "graveyard_6.json", "graveyard_7.json",
+                "overworld_1.json", "overworld_2.json", "overworld_3.json",
+                "graveyard_1.json", "graveyard_2.json", "graveyard_3.json",
+                "graveyard_4.json", "graveyard_5.json", "graveyard_6.json", "graveyard_7.json",
             ),
             song_names: (
                 "level_1.ogg", "level_1.ogg", "level_1.ogg",
