@@ -1,14 +1,14 @@
 use super::state_prelude::*;
 
-const UI_RON_PATH: &str = "ui/main_menu.ron";
+const UI_RON_PATH: &str = "ui/bonus_select_menu.ron";
 
 #[derive(Default)]
-pub struct MainMenu {
+pub struct BonusSelectMenu {
     ui_entities:  Vec<Entity>,
     ui_reader_id: Option<ReaderId<UiEvent>>,
 }
 
-impl MainMenu {
+impl BonusSelectMenu {
     fn handle_keys<'a, 'b>(
         &self,
         data: &StateData<CustomGameData<CustomData>>,
@@ -16,12 +16,12 @@ impl MainMenu {
         let settings = data.world.settings();
         let input_manager = data.world.input_manager();
 
-        // Quit game
+        // Back to main menu
         if input_manager.is_up("decline") {
-            Some(Trans::Quit)
-        // Start game
+            Some(Trans::Pop)
+        // Start bonus_a
         } else if input_manager.is_up("accept") {
-            Some(self.trans_for_campaign(CampaignType::default(), &settings))
+            Some(self.trans_for_campaign(CampaignType::BonusA, &settings))
         } else {
             None
         }
@@ -49,12 +49,10 @@ impl MainMenu {
 }
 
 impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
-    for MainMenu
+    for BonusSelectMenu
 {
     fn on_start(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
         self.create_ui(&mut data);
-        // Always set `ToMainMenu` resource to `false`
-        data.world.write_resource::<ToMainMenu>().0 = false;
     }
 
     fn on_stop(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
@@ -63,8 +61,6 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
 
     fn on_resume(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
         self.create_ui(&mut data);
-        // Always set `ToMainMenu` resource to `false`
-        data.world.write_resource::<ToMainMenu>().0 = false;
     }
 
     fn on_pause(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
@@ -92,7 +88,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
         &mut self,
         data: StateData<CustomGameData<CustomData>>,
     ) -> Trans<CustomGameData<'a, 'b, CustomData>, StateEvent> {
-        data.data.update(&data.world, "main_menu").unwrap();
+        data.data.update(&data.world, "bonus_select_menu").unwrap();
         if let Some(trans) = self.handle_keys(&data) {
             return trans;
         }
@@ -110,42 +106,30 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
     }
 }
 
-impl Menu for MainMenu {
+impl Menu for BonusSelectMenu {
     fn event_triggered<'a, 'b>(
         &mut self,
         data: &mut StateData<CustomGameData<CustomData>>,
         event_name: String,
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
-        enum CampainOrTrans<'a, 'b> {
-            Campaign(CampaignType),
-            Trans(Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>),
-        }
-
         let settings = data.world.settings();
-        let start_with_campaign = match event_name.as_ref() {
-            "start_bonus_select_menu" => {
-                let state = Box::new(BonusSelectMenu::default());
-                Some(CampainOrTrans::Trans(Trans::Push(state)))
-            }
-            "start_button_normal" => {
-                Some(CampainOrTrans::Campaign(CampaignType::Normal))
-            }
+        let mut start_with_campaign = None;
+
+        match event_name.as_ref() {
             "start_button_bonus_a" => {
-                Some(CampainOrTrans::Campaign(CampaignType::BonusA))
+                start_with_campaign = Some(CampaignType::BonusA);
             }
             "start_button_bonus_b" => {
-                Some(CampainOrTrans::Campaign(CampaignType::BonusB))
+                start_with_campaign = Some(CampaignType::BonusB);
             }
-            "quit_button" => Some(CampainOrTrans::Trans(Trans::Quit)),
-            _ => None,
+            "quit_button" => return Some(Trans::Pop),
+            _ => (),
         };
 
-        match start_with_campaign {
-            Some(CampainOrTrans::Campaign(campaign)) => {
-                Some(self.trans_for_campaign(campaign, &settings))
-            }
-            Some(CampainOrTrans::Trans(trans)) => Some(trans),
-            None => None,
+        if let Some(campaign) = start_with_campaign {
+            Some(self.trans_for_campaign(campaign, &settings))
+        } else {
+            None
         }
     }
 

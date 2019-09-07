@@ -30,7 +30,6 @@ impl WinGameMenu {
     ) -> Option<Trans<CustomGameData<'a, 'b, CustomData>, StateEvent>> {
         let input_manager = data.world.input_manager();
 
-        // TODO
         // Back to main menu - pop off
         if input_manager.is_up("decline") {
             Some(Trans::Pop)

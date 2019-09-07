@@ -1,3 +1,4 @@
+mod bonus_select_menu;
 mod continue_or_new_game_menu;
 mod ingame;
 mod main_menu;
@@ -6,6 +7,7 @@ mod startup;
 mod win_game_menu;
 
 pub mod prelude {
+    pub use super::bonus_select_menu::BonusSelectMenu;
     pub use super::continue_or_new_game_menu::ContinueOrNewGameMenu;
     pub use super::ingame::Ingame;
     pub use super::main_menu::MainMenu;
