@@ -111,6 +111,7 @@ impl Menu for ContinueOrNewGameMenu {
                     .new_game(true)
                     .build(),
             ))),
+            "back_button" => Some(Trans::Pop),
             _ => None,
         }
     }

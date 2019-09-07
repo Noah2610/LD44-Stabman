@@ -34,7 +34,7 @@ Container(
         Button(
             // UiTransformBuilder
             transform: (
-                id:             "start_button_normal",
+                id:             "quit_button",
                 x:              -0.34,
                 y:              -0.007,
                 width:          0.08,
@@ -45,7 +45,7 @@ Container(
             ),
             // UiButtonBuilder
             button: (
-                text:              "START",
+                text:              "QUIT",
                 font:              File("resources/fonts/square.ttf", Ttf, ()),
                 font_size:         20.0,
                 normal_text_color: (1.0, 1.0, 1.0, 0.5),
@@ -62,7 +62,7 @@ Container(
         Button(
             // UiTransformBuilder
             transform: (
-                id:             "start_button_bonus_a",
+                id:             "start_button_normal",
                 x:              -0.34,
                 y:              -0.13,
                 width:          0.08,
@@ -73,7 +73,7 @@ Container(
             ),
             // UiButtonBuilder
             button: (
-                text:              "BONUS",
+                text:              "START",
                 font:              File("resources/fonts/square.ttf", Ttf, ()),
                 font_size:         20.0,
                 normal_text_color: (1.0, 1.0, 1.0, 0.5),
@@ -90,7 +90,7 @@ Container(
         Button(
             // UiTransformBuilder
             transform: (
-                id:             "quit_button",
+                id:             "start_button_bonus_a",
                 x:              -0.432,
                 y:              -0.16,
                 width:          0.075,
@@ -101,7 +101,7 @@ Container(
             ),
             // UiButtonBuilder
             button: (
-                text:              "QUIT",
+                text:              "BONUS",
                 font:              File("resources/fonts/square.ttf", Ttf, ()),
                 font_size:         20.0,
                 normal_text_color: (1.0, 1.0, 1.0, 0.5),

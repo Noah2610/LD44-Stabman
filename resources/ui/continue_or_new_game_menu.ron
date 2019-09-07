@@ -1,67 +1,116 @@
 #![enable(implicit_some)]
 // UiWidget::Container
 Container(
+    /// BACKGROUND
     // UiTransformBuilder
     transform: (
         id:             "continue_or_new_game_menu",
         x:              0.0,
         y:              0.0,
-        width:          0.8,
-        height:         0.8,
+        width:          1.0,
+        height:         1.0,
         anchor:         Middle,
         mouse_reactive: false,
         percent:        true,
     ),
-    // TODO: UiImageBuilder
+    // UiImageBuilder
     background: (
-        image: Data(
-            Rgba((0.0, 0.0, 0.0, 0.8), (channel: Srgb)),
+        image: File(
+            "resources/textures/ui/bg_main_menu.png",
+            Png,
+            (
+                channel: Srgb,
+                sampler: (
+                    filter: Scale,
+                    wrap_mode: (Clamp, Clamp, Clamp),
+                )
+            ),
         ),
     ),
+
     children: [
+        /// START NORMAL
+        // UiWidget::Button
+        Button(
+            // UiTransformBuilder
+            transform: (
+                id:             "back_button",
+                x:              -0.34,
+                y:              -0.007,
+                width:          0.08,
+                height:         0.12,
+                anchor:         Middle,
+                mouse_reactive: true,
+                percent:        true,
+            ),
+            // UiButtonBuilder
+            button: (
+                text:              "BACK",
+                font:              File("resources/fonts/square.ttf", Ttf, ()),
+                font_size:         20.0,
+                normal_text_color: (1.0, 1.0, 1.0, 0.5),
+                hover_text_color:  (1.0, 1.0, 1.0, 1.0),
+                press_text_color:  (1.0, 1.0, 1.0, 1.0),
+                //normal_image:      File("resources/textures/ui/button_play.png", Png, (channel: Srgb)),
+                //hover_image:       File("resources/textures/ui/button_play.png", Png, (channel: Srgb)),
+                //press_image:       File("resources/textures/ui/button_play.png", Png, (channel: Srgb)),
+            ),
+        ),
+
+        /// START BONUS
         // UiWidget::Button
         Button(
             // UiTransformBuilder
             transform: (
                 id:             "continue_button",
-                x:              -256.0,
-                y:              0.0,
-                width:          128.0,
-                height:         64.0,
+                x:              -0.34,
+                y:              -0.13,
+                width:          0.08,
+                height:         0.08,
                 anchor:         Middle,
                 mouse_reactive: true,
+                percent:        true,
             ),
             // UiButtonBuilder
             button: (
                 text:              "CONTINUE",
                 font:              File("resources/fonts/square.ttf", Ttf, ()),
-                font_size:         32.0,
-                normal_text_color: (0.2, 0.2, 1.0, 1.0),
-                hover_text_color:  (0.4, 0.4, 1.0, 1.0),
-                press_text_color:  (0.6, 0.6, 1.0, 1.0),
+                font_size:         20.0,
+                normal_text_color: (1.0, 1.0, 1.0, 0.5),
+                hover_text_color:  (1.0, 1.0, 1.0, 1.0),
+                press_text_color:  (1.0, 1.0, 1.0, 1.0),
+                // normal_image:      File("resources/textures/ui/bg_main_menu.png", Png, (channel: Srgb)),
+                // hover_image:       File("resources/textures/ui/bg_main_menu.png", Png, (channel: Srgb)),
+                // press_image:       File("resources/textures/ui/bg_main_menu.png", Png, (channel: Srgb)),
             ),
         ),
+
+        /// QUIT
         // UiWidget::Button
         Button(
             // UiTransformBuilder
             transform: (
                 id:             "new_game_button",
-                x:              256.0,
-                y:              0.0,
-                width:          192.0,
-                height:         64.0,
+                x:              -0.432,
+                y:              -0.16,
+                width:          0.075,
+                height:         0.11,
                 anchor:         Middle,
                 mouse_reactive: true,
+                percent:        true,
             ),
             // UiButtonBuilder
             button: (
                 text:              "NEW GAME",
                 font:              File("resources/fonts/square.ttf", Ttf, ()),
-                font_size:         32.0,
-                normal_text_color: (0.2, 0.2, 1.0, 1.0),
-                hover_text_color:  (0.4, 0.4, 1.0, 1.0),
-                press_text_color:  (0.6, 0.6, 1.0, 1.0),
+                font_size:         20.0,
+                normal_text_color: (1.0, 1.0, 1.0, 0.5),
+                hover_text_color:  (1.0, 1.0, 1.0, 1.0),
+                press_text_color:  (1.0, 1.0, 1.0, 1.0),
+                // normal_image:      File("resources/textures/ui/button_quit.png", Png, (channel: Srgb)),
+                // hover_image:       File("resources/textures/ui/button_quit.png", Png, (channel: Srgb)),
+                // press_image:       File("resources/textures/ui/button_quit.png", Png, (channel: Srgb)),
             ),
-        )
+        ),
     ],
 )
