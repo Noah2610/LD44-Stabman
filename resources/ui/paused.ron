@@ -6,23 +6,26 @@ Container(
         id:             "paused_menu",
         x:              0.0,
         y:              0.0,
-        width:          960.0,
-        height:         540.0,
+        width:          1.0,
+        height:         1.0,
         anchor:         Middle,
         mouse_reactive: false,
+        percent:        true,
     ),
     // TODO: UiImageBuilder
-    background: None,
+    background: (
+        image: File("resources/textures/ui/bg_paused_menu.png", Png, (channel: Srgb)),
+    ),
     children: [
         // UiWidget::Button
         Button(
             // UiTransformBuilder
             transform: (
                 id:             "pause_button",
-                x:              -256.0,
-                y:              0.0,
-                width:          128.0,
-                height:         64.0,
+                x:              0.0,
+                y:              96.0,
+                width:          224.0,
+                height:         112.0,
                 anchor:         Middle,
                 mouse_reactive: true,
             ),
@@ -34,6 +37,39 @@ Container(
                 normal_text_color: (0.2, 0.2, 1.0, 1.0),
                 hover_text_color:  (0.4, 0.4, 1.0, 1.0),
                 press_text_color:  (0.6, 0.6, 1.0, 1.0),
+                normal_image:      File(
+                    "resources/textures/ui/button.png",
+                    Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                hover_image:       File(
+                    "resources/textures/ui/button.png",
+                    Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                press_image:       File(
+                    "resources/textures/ui/button.png",
+                    Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
             ),
         ),
         // UiWidget::Button
@@ -41,21 +77,54 @@ Container(
             // UiTransformBuilder
             transform: (
                 id:             "quit_button",
-                x:              256.0,
-                y:              0.0,
-                width:          192.0,
-                height:         64.0,
+                x:              0.0,
+                y:              -96.0,
+                width:          224.0,
+                height:         112.0,
                 anchor:         Middle,
                 mouse_reactive: true,
             ),
             // UiButtonBuilder
             button: (
-                text:              "TO MAIN MENU",
+                text:              "MAIN MENU",
                 font:              File("resources/fonts/square.ttf", Ttf, ()),
                 font_size:         32.0,
                 normal_text_color: (0.2, 0.2, 1.0, 1.0),
                 hover_text_color:  (0.4, 0.4, 1.0, 1.0),
                 press_text_color:  (0.6, 0.6, 1.0, 1.0),
+                normal_image:      File(
+                    "resources/textures/ui/button.png",
+                    Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                hover_image:       File(
+                    "resources/textures/ui/button.png",
+                    Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                press_image:       File(
+                    "resources/textures/ui/button.png",
+                    Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
             ),
         )
     ],
