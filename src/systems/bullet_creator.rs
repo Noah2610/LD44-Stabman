@@ -87,6 +87,7 @@ impl<'a> System<'a> for BulletCreatorSystem {
                     distance: Some(
                         settings.entity_loader.bullet_load_distance.into(),
                     ),
+                    ..Default::default()
                 })
                 .unwrap();
         }

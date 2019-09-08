@@ -18,6 +18,8 @@ Settings(
         /// Pixel padding, in which camera will stop scrolling to player.
         /// The camera will always center within +- these amounts of pixels, (accuracy kinda).
         deadzone:        (16.0, 16.0),
+        /// Extra padding beyond the camera's size, in which entities are loaded.
+        loader_padding:  (32.0, 32.0),
     ),
 
     player: (

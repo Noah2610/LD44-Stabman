@@ -374,7 +374,10 @@ impl LevelLoader {
             .with(InnerSize(Size::from(inner_size)))
             .with(Velocity::default())
             .with(Collision::new())
-            .with(Loader::default());
+            .with(Loader {
+                padding: Some(settings.camera.loader_padding),
+                ..Default::default()
+            });
 
         if let Some(level_size) = self.level_size {
             // NOTE: Offset the values by half of camera's size,

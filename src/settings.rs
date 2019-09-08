@@ -38,6 +38,7 @@ pub struct SettingsCamera {
     pub inner_size_mult: Vector,
     pub base_speed:      Vector,
     pub deadzone:        Vector,
+    pub loader_padding:  Vector,
 }
 
 #[derive(Clone, Deserialize)]

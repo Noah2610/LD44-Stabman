@@ -70,23 +70,11 @@ impl<'a> System<'a> for LoaderSystem {
             )
                 .join()
             {
-                // let load_distance = match enemy_opt {
-                //     None => settings.entity_loader.load_distance,
-                //     Some(_) => (
-                //         settings.entity_loader.load_distance.0
-                //             - settings
-                //                 .entity_loader
-                //                 .enemy_load_distance_substraction
-                //                 .0,
-                //         settings.entity_loader.load_distance.1
-                //             - settings
-                //                 .entity_loader
-                //                 .enemy_load_distance_substraction
-                //                 .1,
-                //     ),
-                // };
                 let size =
                     size_opt.map(|s| s.into()).unwrap_or(Vector::new(0.0, 0.0));
+                let loader_padding_default = Vector::new(0.0, 0.0);
+                let loader_padding =
+                    loader.padding.as_ref().unwrap_or(&loader_padding_default);
                 let load_distance = {
                     let loader_distance = match loader.distance.as_ref() {
                         None => {
@@ -96,11 +84,18 @@ impl<'a> System<'a> for LoaderSystem {
                                  component",
                             );
                             (
-                                loader_size.w * 0.5 + size.0 * 0.5,
-                                loader_size.h * 0.5 + size.1 * 0.5,
+                                loader_size.w * 0.5
+                                    + size.0 * 0.5
+                                    + loader_padding.0,
+                                loader_size.h * 0.5
+                                    + size.1 * 0.5
+                                    + loader_padding.1,
                             )
                         }
-                        Some(distance) => (distance.0, distance.1),
+                        Some(distance) => (
+                            distance.0 + loader_padding.0,
+                            distance.1 + loader_padding.1,
+                        ),
                     };
                     match enemy_opt {
                         None => {
@@ -122,13 +117,6 @@ impl<'a> System<'a> for LoaderSystem {
                     (loader_pos.1 - pos.y).abs(),
                 );
 
-                // if distance.0 <= load_distance.0
-                //     && distance.1 <= load_distance.1
-                // {
-                //     entities_loader.load(entity);
-                // } else {
-                //     entities_loader.unload(entity);
-                // }
                 let in_distance = distance.0 <= load_distance.0
                     && distance.1 <= load_distance.1;
                 match loaded_opt {
