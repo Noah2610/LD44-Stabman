@@ -20,6 +20,7 @@ pub struct HeartsSystem {
 impl<'a> System<'a> for HeartsSystem {
     type SystemData = (
         Entities<'a>,
+        Write<'a, World>,
         Read<'a, SpriteSheetHandles>,
         ReadStorage<'a, Loadable>,
         ReadStorage<'a, Loaded>,
@@ -36,6 +37,7 @@ impl<'a> System<'a> for HeartsSystem {
         &mut self,
         (
             entities,
+            mut world,
             sprite_sheet_handles,
             loadables,
             loadeds,
@@ -49,6 +51,7 @@ impl<'a> System<'a> for HeartsSystem {
         ): Self::SystemData,
     ) {
         let mut hearts_containers_to_update = Vec::new();
+        let mut call_world_maintain = false;
 
         // Figure out which hearts_containers need updating
         for (
@@ -194,11 +197,13 @@ impl<'a> System<'a> for HeartsSystem {
                     }
 
                     HeartsUpdateAction::Recreate => {
+                        call_world_maintain = true;
                         // Delete existing heart entities
                         for heart_id in update_data.heart_ids.iter() {
-                            entities
-                                .delete(entities.entity(*heart_id))
-                                .unwrap();
+                            let heart_entity = entities.entity(*heart_id);
+                            if entities.is_alive(heart_entity) {
+                                entities.delete(heart_entity).unwrap();
+                            }
                         }
 
                         // Create new heart entities
@@ -254,6 +259,10 @@ impl<'a> System<'a> for HeartsSystem {
                     }
                 }
             });
+
+        if call_world_maintain {
+            world.maintain();
+        }
     }
 }
 

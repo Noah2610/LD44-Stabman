@@ -20,6 +20,7 @@ impl<'a> System<'a> for EnemyAiSystem {
         ReadExpect<'a, Settings>,
         Read<'a, Time>,
         Read<'a, CurrentLevelName>,
+        Write<'a, World>,
         Write<'a, BulletCreator>,
         Write<'a, Stats>,
         ReadStorage<'a, Transform>,
@@ -45,6 +46,7 @@ impl<'a> System<'a> for EnemyAiSystem {
             settings,
             time,
             current_level_name,
+            mut world,
             mut bullet_creator,
             mut stats,
             transforms,
@@ -76,6 +78,8 @@ impl<'a> System<'a> for EnemyAiSystem {
             },
         ) {
             let dt = time.delta_seconds();
+            // Call `world.maintain()` later if any enemies were deleted.
+            let mut call_world_maintain = false;
 
             for (
                 enemy_entity,
@@ -218,6 +222,7 @@ impl<'a> System<'a> for EnemyAiSystem {
 
                     // Handle enemy death
                     if enemy_invincible_opt.is_none() && enemy.is_dead() {
+                        call_world_maintain = true;
                         player_data.player.add_health(enemy.reward);
                         entities.delete(enemy_entity).unwrap();
                         // Increase stats kill count
@@ -229,6 +234,10 @@ impl<'a> System<'a> for EnemyAiSystem {
                         }
                     }
                 }
+            }
+
+            if call_world_maintain {
+                world.maintain();
             }
         }
     }

@@ -7,6 +7,7 @@ pub struct BulletSystem;
 impl<'a> System<'a> for BulletSystem {
     type SystemData = (
         Entities<'a>,
+        Write<'a, World>,
         ReadStorage<'a, Collision>,
         ReadStorage<'a, Solid<SolidTag>>,
         ReadStorage<'a, Invincible>,
@@ -20,6 +21,7 @@ impl<'a> System<'a> for BulletSystem {
         &mut self,
         (
             entities,
+            mut world,
             collisions,
             solids,
             invincibles,
@@ -30,6 +32,7 @@ impl<'a> System<'a> for BulletSystem {
         ): Self::SystemData,
     ) {
         let now = Instant::now();
+        let mut call_world_maintain = false;
 
         for (bullet_entity, bullet, bullet_collision) in
             (&entities, &mut bullets, &collisions).join()
@@ -89,6 +92,7 @@ impl<'a> System<'a> for BulletSystem {
                             player_velocity.y = knockback.1;
                         }
                         entities.delete(bullet_entity).unwrap();
+                        call_world_maintain = true;
                     }
                 }
             }
@@ -107,6 +111,7 @@ impl<'a> System<'a> for BulletSystem {
                         // deal damage to enemy and delete bullet entity.
                         enemy.take_damage(bullet.damage);
                         entities.delete(bullet_entity).unwrap();
+                        call_world_maintain = true;
                     }
                 }
             }
@@ -123,6 +128,7 @@ impl<'a> System<'a> for BulletSystem {
                     }) = bullet_collision.collision_with(solid_id)
                     {
                         entities.delete(bullet_entity).unwrap();
+                        call_world_maintain = true;
                     }
                 }
             }
@@ -130,7 +136,12 @@ impl<'a> System<'a> for BulletSystem {
             // Delete bullet when its lifetime ends
             if now.duration_since(bullet.created_at) >= bullet.lifetime {
                 entities.delete(bullet_entity).unwrap();
+                call_world_maintain = true;
             }
+        }
+
+        if call_world_maintain {
+            world.maintain();
         }
     }
 }
