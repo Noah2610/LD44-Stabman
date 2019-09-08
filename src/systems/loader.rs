@@ -135,40 +135,6 @@ impl<'a> System<'a> for LoaderSystem {
             }
         }
 
-        // {
-        //     // TODO
-        //     use amethyst::core::nalgebra::Point3;
-        //     use amethyst::renderer::Rgba;
-
-        //     let mut draw_x = |pos: (f32, f32), color: Rgba| {
-        //         const Z: f32 = 9.0;
-        //         const LEN: f32 = 8.0;
-        //         let start = Point3::new(pos.0 - LEN, pos.1 - LEN, Z);
-        //         let end = Point3::new(pos.0 + LEN, pos.1 + LEN, Z);
-        //         debug_lines.draw_line(start, end, color);
-        //         let start = Point3::new(pos.0 - LEN, pos.1 + LEN, Z);
-        //         let end = Point3::new(pos.0 + LEN, pos.1 - LEN, Z);
-        //         debug_lines.draw_line(start, end, color);
-        //     };
-
-        //     for (entity, transform) in (&entities, &transforms).join() {
-        //         let pos = {
-        //             let trans = transform.translation();
-        //             (trans.x, trans.y)
-        //         };
-        //         for to_load in entities_loader.to_load.iter() {
-        //             if to_load.id() == entity.id() {
-        //                 draw_x(pos, Rgba::GREEN);
-        //             }
-        //         }
-        //         for to_unload in entities_loader.to_unload.iter() {
-        //             if to_unload.id() == entity.id() {
-        //                 draw_x(pos, Rgba::RED);
-        //             }
-        //         }
-        //     }
-        // }
-
         entities_loader.work(&mut loadeds, &mut world);
     }
 }
