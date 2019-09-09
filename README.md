@@ -23,6 +23,8 @@ When you beat the game, you may choose to start from the beginning again, keepin
 Timers for the current level and for the whole game will also appear  
 once you start your second play-through on the same savefile.
 
+Most of what's written in this README is directed at the _post-jam_ version.
+
 ## Controls
 The exact controls are specified in the file `resources/config/bindings.ron`.  
 You can change bindings in this file however you want; the syntax _should_ be self-explanatory enough.  
@@ -59,6 +61,17 @@ There are two campaigns you can play:
   This campaign type is primarily just meant for us to play; but if you're enjoying the game,  
   and are feeling confident enough, feel free to give this mode a try \>:)
 
+## Changing the window resolution
+Included with the game's binary, is a file called `resolution.txt`.  
+You can specify a custom window resolution in this file.  
+Simply write your resolution in the format ...
+```
+WIDTH x HEIGHT
+```
+... where `WIDTH` and `HEIGHT` are positive integer numbers.  
+Any lines starting with `#` are seen as comments and are ignored.  
+See the `resolution.txt` file itself for more information and some preset resolutions.
+
 ## Post-Jam Version
 After the jam ended at the end of April, we continued working on the game  
 with the goal to release a finished product (like always).  
@@ -68,6 +81,8 @@ This time, we are proud to say, that we _actually finished this game_! (*__TODO:
 Post-jam-version binaries are also available on Google Drive.  
 You can pick the latest version for your platform from this [Google Drive directory][bin-dir].  
 (*__TODO:__ List latest versions here...*)
+
+---
 
 ## Jam Version
 To see the jam version, visit out our [Ludum Dare page][ludumdare], or  
