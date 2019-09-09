@@ -52,14 +52,16 @@ So the `A` button would be the `X` button on a DualShock controller, etc.
 | Quit to main menu from pause menu | `Escape`, `Q`, `Backspace` | `B`                                   |                                                                            |
 
 ## Campaign Types
-There are two campaigns you can play:
+There are three campaigns you can play:
 
-- __normal__ campaign  
-  The standard, recommended game.
-- __bonus__ campaign  
+- __normal__ campaign:  
+  The standard, recommended game.  
+  Includes __10 levels__; 3 in the _overworld theme_, and 7 in the _graveyard theme_.
+- __bonus\_a__ and __bonus\_b__ campaigns:  
   A collection of super hard levels, with the main focus on hardcore platforming.  
-  This campaign type is primarily just meant for us to play; but if you're enjoying the game,  
-  and are feeling confident enough, feel free to give this mode a try \>:)
+  These campaign types are primarily just meant for us to play; but if you're enjoying the game,  
+  and are feeling confident enough, feel free to give these a try __>:)__  
+  Each of the bonus campaigns includes __3 levels__.
 
 ## Changing the window resolution
 Included with the game's binary, is a file called `resolution.txt`.  
