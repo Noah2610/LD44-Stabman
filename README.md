@@ -118,7 +118,6 @@ Jam-version binaries are available via Google Drive:
 - __[Tiled]__, level design
 - __[Google Drive][GoogleDrive]__, file sharing
 - __[Trello]__, task management
-- __[Figma]__, stats menu design
 
 ---
 
@@ -146,7 +145,6 @@ for controller support with [amethyst]'s `sdl_controller` feature.
 [Tiled]:           https://www.mapeditor.org/
 [GoogleDrive]:     https://drive.google.com/
 [Trello]:          https://trello.com/b/hkBWXYt9
-[Figma]:           https://www.figma.com/
 [mit-license]:     https://github.com/Noah2610/LD44/blob/master/LICENSE
 [SDL2]:            https://www.libsdl.org/
 [SDL2-license]:    https://www.libsdl.org/license.php
