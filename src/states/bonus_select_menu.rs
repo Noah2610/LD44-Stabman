@@ -39,9 +39,9 @@ impl BonusSelectMenu {
         // Only start ContinueOrNewGameMenu if a savefile already exists,
         // otherwise start the game directly.
         if savefile_exists_for(&campaign, settings) {
-            Trans::Push(Box::new(ContinueOrNewGameMenu::new(campaign)))
+            Trans::Switch(Box::new(ContinueOrNewGameMenu::new(campaign)))
         } else {
-            Trans::Push(Box::new(
+            Trans::Switch(Box::new(
                 Ingame::builder().campaign(campaign).new_game(false).build(),
             ))
         }
