@@ -23,7 +23,6 @@ mod states;
 mod systems;
 mod world_helpers;
 
-use std::env;
 use std::time::Duration;
 
 use amethyst::audio::AudioBundle;
@@ -273,10 +272,17 @@ fn build_game_data<'a, 'b>(
     Ok(game_data)
 }
 
+#[cfg(feature = "debug")]
 pub fn in_development_mode() -> bool {
+    use std::env;
     const DEV_VAR_NAME: &str = "DEV";
     env::vars()
         .any(|(key, val)| key == DEV_VAR_NAME && !val.is_empty() && val != "0")
+}
+
+#[cfg(not(feature = "debug"))]
+pub fn in_development_mode() -> bool {
+    false
 }
 
 fn get_display_config() -> DisplayConfig {
