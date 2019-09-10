@@ -52,7 +52,7 @@ Container(
                         )
                     ),
                 ),
-                hover_image: File("resources/textures/ui/main_menu_button_back.png", Png,
+                hover_image: File("resources/textures/ui/main_menu_button_back_hover.png", Png,
                     (
                         channel: Srgb,
                         sampler: (
@@ -61,7 +61,7 @@ Container(
                         )
                     ),
                 ),
-                press_image: File("resources/textures/ui/main_menu_button_back.png", Png,
+                press_image: File("resources/textures/ui/main_menu_button_back_hover.png", Png,
                     (
                         channel: Srgb,
                         sampler: (
@@ -100,7 +100,7 @@ Container(
                         )
                     ),
                 ),
-                hover_image: File("resources/textures/ui/main_menu_button_bonus_a.png", Png,
+                hover_image: File("resources/textures/ui/main_menu_button_bonus_a_hover.png", Png,
                     (
                         channel: Srgb,
                         sampler: (
@@ -109,7 +109,7 @@ Container(
                         )
                     ),
                 ),
-                press_image: File("resources/textures/ui/main_menu_button_bonus_a.png", Png,
+                press_image: File("resources/textures/ui/main_menu_button_bonus_a_hover.png", Png,
                     (
                         channel: Srgb,
                         sampler: (
@@ -148,7 +148,7 @@ Container(
                         )
                     ),
                 ),
-                hover_image: File("resources/textures/ui/main_menu_button_bonus_b.png", Png,
+                hover_image: File("resources/textures/ui/main_menu_button_bonus_b_hover.png", Png,
                     (
                         channel: Srgb,
                         sampler: (
@@ -157,7 +157,7 @@ Container(
                         )
                     ),
                 ),
-                press_image: File("resources/textures/ui/main_menu_button_bonus_b.png", Png,
+                press_image: File("resources/textures/ui/main_menu_button_bonus_b_hover.png", Png,
                     (
                         channel: Srgb,
                         sampler: (
