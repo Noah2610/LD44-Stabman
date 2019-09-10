@@ -1,15 +1,16 @@
 extern crate amethyst;
+#[cfg(feature = "debug")]
+extern crate backtrace;
+#[cfg(feature = "encrypt_savefile")]
 extern crate base64;
+#[cfg(feature = "debug")]
+extern crate chrono;
 extern crate climer;
 extern crate deathframe;
 extern crate json;
 extern crate regex;
 #[macro_use]
 extern crate serde;
-#[cfg(feature = "debug")]
-extern crate backtrace;
-#[cfg(feature = "debug")]
-extern crate chrono;
 
 mod bullet_creator;
 mod components;

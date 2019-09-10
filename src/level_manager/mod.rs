@@ -684,6 +684,23 @@ where
     )
 }
 
+#[cfg(not(feature = "encrypt_savefile"))]
+fn encrypt<T>(raw: T) -> Result<String, String>
+where
+    T: ToString,
+{
+    Ok(raw.to_string())
+}
+
+#[cfg(not(feature = "encrypt_savefile"))]
+fn decrypt<T>(raw: T) -> Result<String, String>
+where
+    T: ToString,
+{
+    Ok(raw.to_string())
+}
+
+#[cfg(feature = "encrypt_savefile")]
 fn encrypt<T>(raw: T) -> Result<String, String>
 where
     T: ToString,
@@ -693,6 +710,7 @@ where
     Ok(encode(&raw.to_string()))
 }
 
+#[cfg(feature = "encrypt_savefile")]
 fn decrypt<T>(raw: T) -> Result<String, String>
 where
     T: ToString,
