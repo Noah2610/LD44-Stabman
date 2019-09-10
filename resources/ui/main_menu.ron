@@ -1,8 +1,5 @@
 #![enable(implicit_some)]
-// UiWidget::Container
 Container(
-    /// BACKGROUND
-    // UiTransformBuilder
     transform: (
         id:             "main_menu",
         x:              0.0,
@@ -13,7 +10,6 @@ Container(
         mouse_reactive: false,
         percent:        true,
     ),
-    // UiImageBuilder
     background: (
         image: File(
             "resources/textures/ui/bg_main_menu.png",
@@ -29,87 +25,147 @@ Container(
     ),
 
     children: [
-        /// START NORMAL
-        // UiWidget::Button
         Button(
-            // UiTransformBuilder
             transform: (
                 id:             "quit_button",
                 x:              -0.34,
                 y:              -0.007,
-                width:          0.08,
-                height:         0.12,
-                anchor:         Middle,
-                mouse_reactive: true,
-                percent:        true,
-            ),
-            // UiButtonBuilder
-            button: (
-                text:              "QUIT",
-                font:              File("resources/fonts/square.ttf", Ttf, ()),
-                font_size:         20.0,
-                normal_text_color: (1.0, 1.0, 1.0, 0.5),
-                hover_text_color:  (1.0, 1.0, 1.0, 1.0),
-                press_text_color:  (1.0, 1.0, 1.0, 1.0),
-                //normal_image:      File("resources/textures/ui/button_play.png", Png, (channel: Srgb)),
-                //hover_image:       File("resources/textures/ui/button_play.png", Png, (channel: Srgb)),
-                //press_image:       File("resources/textures/ui/button_play.png", Png, (channel: Srgb)),
-            ),
-        ),
-
-        /// START BONUS
-        // UiWidget::Button
-        Button(
-            // UiTransformBuilder
-            transform: (
-                id:             "start_button_normal",
-                x:              -0.34,
-                y:              -0.13,
-                width:          0.08,
+                width:          0.07,
                 height:         0.08,
                 anchor:         Middle,
                 mouse_reactive: true,
                 percent:        true,
             ),
-            // UiButtonBuilder
             button: (
-                text:              "START",
+                text:              "",
                 font:              File("resources/fonts/square.ttf", Ttf, ()),
                 font_size:         20.0,
                 normal_text_color: (1.0, 1.0, 1.0, 0.5),
-                hover_text_color:  (1.0, 1.0, 1.0, 1.0),
-                press_text_color:  (1.0, 1.0, 1.0, 1.0),
-                // normal_image:      File("resources/textures/ui/bg_main_menu.png", Png, (channel: Srgb)),
-                // hover_image:       File("resources/textures/ui/bg_main_menu.png", Png, (channel: Srgb)),
-                // press_image:       File("resources/textures/ui/bg_main_menu.png", Png, (channel: Srgb)),
+                // hover_text_color:  (1.0, 1.0, 1.0, 1.0),
+                // press_text_color:  (1.0, 1.0, 1.0, 1.0),
+                normal_image: File("resources/textures/ui/main_menu_button_exit.png", Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                hover_image: File("resources/textures/ui/main_menu_button_exit.png", Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                press_image: File("resources/textures/ui/main_menu_button_exit.png", Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
             ),
         ),
 
-        /// QUIT
-        // UiWidget::Button
         Button(
-            // UiTransformBuilder
+            transform: (
+                id:             "start_button_normal",
+                x:              -0.34,
+                y:              -0.13,
+                width:          0.07,
+                height:         0.07,
+                anchor:         Middle,
+                mouse_reactive: true,
+                percent:        true,
+            ),
+            button: (
+                text:              "",
+                font:              File("resources/fonts/square.ttf", Ttf, ()),
+                font_size:         20.0,
+                normal_text_color: (1.0, 1.0, 1.0, 0.5),
+                // hover_text_color:  (1.0, 1.0, 1.0, 1.0),
+                // press_text_color:  (1.0, 1.0, 1.0, 1.0),
+                normal_image: File("resources/textures/ui/main_menu_button_main.png", Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                hover_image: File("resources/textures/ui/main_menu_button_main.png", Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                press_image: File("resources/textures/ui/main_menu_button_main.png", Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+            ),
+        ),
+
+        Button(
             transform: (
                 id:             "start_bonus_select_menu",
                 x:              -0.432,
                 y:              -0.16,
                 width:          0.075,
-                height:         0.11,
+                height:         0.07,
                 anchor:         Middle,
                 mouse_reactive: true,
                 percent:        true,
             ),
-            // UiButtonBuilder
             button: (
-                text:              "BONUS",
+                text:              "",
                 font:              File("resources/fonts/square.ttf", Ttf, ()),
                 font_size:         20.0,
                 normal_text_color: (1.0, 1.0, 1.0, 0.5),
                 hover_text_color:  (1.0, 1.0, 1.0, 1.0),
                 press_text_color:  (1.0, 1.0, 1.0, 1.0),
-                // normal_image:      File("resources/textures/ui/button_quit.png", Png, (channel: Srgb)),
-                // hover_image:       File("resources/textures/ui/button_quit.png", Png, (channel: Srgb)),
-                // press_image:       File("resources/textures/ui/button_quit.png", Png, (channel: Srgb)),
+                normal_image: File("resources/textures/ui/main_menu_button_bonus.png", Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                hover_image: File("resources/textures/ui/main_menu_button_bonus.png", Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                press_image: File("resources/textures/ui/main_menu_button_bonus.png", Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
             ),
         ),
     ],

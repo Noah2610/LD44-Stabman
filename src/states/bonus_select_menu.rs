@@ -122,7 +122,7 @@ impl Menu for BonusSelectMenu {
             "start_button_bonus_b" => {
                 start_with_campaign = Some(CampaignType::BonusB);
             }
-            "quit_button" => return Some(Trans::Pop),
+            "back_button" => return Some(Trans::Pop),
             _ => (),
         };
 
