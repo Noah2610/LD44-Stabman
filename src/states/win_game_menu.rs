@@ -95,10 +95,6 @@ impl WinGameMenu {
                 ReadStorage<UiTransform>,
                 WriteStorage<UiText>,
             )| {
-                for ui_transform in ui_transforms.join() {
-                    dbg!(&ui_transform.id);
-                }
-
                 for (ui_transform, ui_text) in
                     (&ui_transforms, &mut ui_texts).join()
                 {
@@ -151,13 +147,14 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
             return trans;
         }
 
-        if let Some(progress) = self.ui_creator_progress.take() {
-            if progress.is_complete() {
-                self.populate_ui_texts(&mut data);
-            } else {
-                self.ui_creator_progress = Some(progress);
-            }
-        }
+        // TODO: Unused
+        // if let Some(progress) = self.ui_creator_progress.take() {
+        //     if progress.is_complete() {
+        //         self.populate_ui_texts(&mut data);
+        //     } else {
+        //         self.ui_creator_progress = Some(progress);
+        //     }
+        // }
 
         Trans::None
     }

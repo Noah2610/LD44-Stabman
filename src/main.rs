@@ -51,6 +51,11 @@ use deathframe::handlers::AudioHandles;
 use resource_helpers::*;
 use systems::prelude::*;
 
+pub mod meta {
+    pub const VERSION: &str = env!("CARGO_PKG_VERSION");
+    pub const NAME: &str = env!("CARGO_PKG_NAME");
+}
+
 const FPS: u32 = 60;
 const SLEEP_AND_YIELD_MS: u64 = 2;
 
@@ -63,7 +68,18 @@ fn main() -> Result<(), String> {
     #[cfg(feature = "debug")]
     std::panic::set_hook(Box::new(misc::on_panic));
 
+    print_welcome_message();
+
     init_game().map_err(|e| e.to_string())
+}
+
+fn print_welcome_message() {
+    let name_and_version = format!("{} v{}", meta::NAME, meta::VERSION);
+    println!(
+        "{}\n{}\nThanks for playing our game! <3",
+        name_and_version,
+        "-".repeat(name_and_version.len()),
+    );
 }
 
 fn init_game() -> amethyst::Result<()> {
@@ -104,7 +120,7 @@ fn build_game_data<'a, 'b>(
     };
 
     // Pipeline
-    let mut color_mask = ColorMask::empty();
+    // let mut color_mask = ColorMask::empty();
     // color_mask.insert(ColorMask::RED);
     // color_mask.insert(ColorMask::GREEN);
     // color_mask.insert(ColorMask::BLUE);
