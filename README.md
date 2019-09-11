@@ -1,6 +1,23 @@
 # LD44
 Originally, our [Ludum Dare 44 jam entry][ludumdare].  
 
+## Table of Contents
+- [Description](#description)
+- [Controls](#controls)
+- [Campaign Types](#campaign-types)
+- [Changing the window resolution](#changing-the-window-resolution)
+- [Post-Jam Version](#post-jam-version)
+  - [Post-Jam Version Downloads](#post-jam-version-downloads)
+- [Jam Version](#jam-version)
+  - [Jam Version Downloads](#jam-version-downloads)
+- [Development](#development)
+  - [Tools Used](#tools-used)
+- [Licensing](#licensing)
+  - [Fonts](#fonts)
+    - [Undefined Medium](#undefined-medium)
+    - [Ruji's Handwriting](#rujis-handwriting)
+  - [SDL2](#sdl2)
+
 ## Description
 The theme for _Ludum Dare 44_ was...  
 > Your life is currency
@@ -79,7 +96,7 @@ After the jam ended at the end of April, we continued working on the game
 with the goal to release a finished product (like always).  
 This time, we are proud to say, that we _actually finished this game_! (*__TODO:__ Not quite yet...*).
 
-### Downloads
+### Post-Jam Version Downloads
 Post-jam-version binaries are also available on Google Drive.  
 You can pick the latest version for your platform from this [Google Drive directory][bin-dir].  
 (*__TODO:__ List latest versions here...*)
@@ -94,7 +111,7 @@ As always with our jam games, we never properly finish.
 This jam's game was _especially unfinished_.  
 If you intend to check out our game, we recommend trying our post-jam version.
 
-### Downloads
+### Jam Version Downloads
 Jam-version binaries are available via Google Drive:
 
 | Platform | Download |
