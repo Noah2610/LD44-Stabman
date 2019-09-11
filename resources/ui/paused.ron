@@ -31,12 +31,12 @@ Container(
             ),
             // UiButtonBuilder
             button: (
-                text:              "RESUME",
-                font:              File("resources/fonts/square.ttf", Ttf, ()),
-                font_size:         32.0,
-                normal_text_color: (0.2, 0.2, 1.0, 1.0),
-                hover_text_color:  (0.4, 0.4, 1.0, 1.0),
-                press_text_color:  (0.6, 0.6, 1.0, 1.0),
+                text:              "Resume",
+                font:              File("resources/fonts/rujis-handwriting.ttf", Ttf, ()),
+                font_size:         40.0,
+                normal_text_color: (0.0, 0.0, 0.0, 1.0),
+                hover_text_color:  (0.4, 0.4, 0.4, 1.0),
+                press_text_color:  (0.4, 0.4, 0.4, 1.0),
                 normal_image:      File(
                     "resources/textures/ui/button.png",
                     Png,
@@ -86,12 +86,14 @@ Container(
             ),
             // UiButtonBuilder
             button: (
-                text:              "MAIN MENU",
-                font:              File("resources/fonts/square.ttf", Ttf, ()),
-                font_size:         32.0,
-                normal_text_color: (0.2, 0.2, 1.0, 1.0),
-                hover_text_color:  (0.4, 0.4, 1.0, 1.0),
-                press_text_color:  (0.6, 0.6, 1.0, 1.0),
+                text:              "Main Menu",
+                font:              File("resources/fonts/rujis-handwriting.ttf", Ttf, ()),
+                font_size:         40.0,
+                normal_text_color: (0.0, 0.0, 0.0, 1.0),
+                hover_text_color:  (0.4, 0.4, 0.4, 1.0),
+                press_text_color:  (0.4, 0.4, 0.4, 1.0),
+                // hover_text_color:  (0.4980392156862745, 0.0, 0.00784313725490196, 1.0),
+                // press_text_color:  (0.4980392156862745, 0.0, 0.00784313725490196, 1.0),
                 normal_image:      File(
                     "resources/textures/ui/button.png",
                     Png,

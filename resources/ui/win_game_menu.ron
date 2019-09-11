@@ -33,8 +33,8 @@ Container(
                 text:      "Thank You For Playing <3",
                 // color:     (0.3176470588235294, 0.0196078431372549, 0.12156862745098039, 1.0),
                 color:     (0.22745098039215686, 0.00784313725490196, 0.03137254901960784, 1.0),
-                font:      File("resources/fonts/square.ttf", Ttf, ()),
-                font_size: 48.0,
+                font:      File("resources/fonts/rujis-handwriting.ttf", Ttf, ()),
+                font_size: 50.0,
                 align:     BottomMiddle,
             ),
         ),
@@ -53,12 +53,12 @@ Container(
             ),
             // UiButtonBuilder
             button: (
-                text:              "CONTINUE?",
-                font:              File("resources/fonts/square.ttf", Ttf, ()),
-                font_size:         32.0,
-                normal_text_color: (0.2, 0.2, 1.0, 1.0),
-                hover_text_color:  (0.4, 0.4, 1.0, 1.0),
-                press_text_color:  (0.6, 0.6, 1.0, 1.0),
+                text:              "Continue?",
+                font:              File("resources/fonts/rujis-handwriting.ttf", Ttf, ()),
+                font_size:         40.0,
+                normal_text_color: (0.0, 0.0, 0.0, 1.0),
+                hover_text_color:  (0.4, 0.4, 0.4, 1.0),
+                press_text_color:  (0.4, 0.4, 0.4, 1.0),
                 normal_image:      File(
                     "resources/textures/ui/button.png",
                     Png,
@@ -108,12 +108,12 @@ Container(
             ),
             // UiButtonBuilder
             button: (
-                text:              "MAIN MENU",
-                font:              File("resources/fonts/square.ttf", Ttf, ()),
-                font_size:         32.0,
-                normal_text_color: (0.2, 0.2, 1.0, 1.0),
-                hover_text_color:  (0.4, 0.4, 1.0, 1.0),
-                press_text_color:  (0.6, 0.6, 1.0, 1.0),
+                text:              "Main Menu",
+                font:              File("resources/fonts/rujis-handwriting.ttf", Ttf, ()),
+                font_size:         40.0,
+                normal_text_color: (0.0, 0.0, 0.0, 1.0),
+                hover_text_color:  (0.4, 0.4, 0.4, 1.0),
+                press_text_color:  (0.4, 0.4, 0.4, 1.0),
                 normal_image:      File(
                     "resources/textures/ui/button.png",
                     Png,

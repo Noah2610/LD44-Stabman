@@ -38,7 +38,7 @@ Container(
             ),
             button: (
                 text:              "",
-                font:              File("resources/fonts/square.ttf", Ttf, ()),
+                font:              File("resources/fonts/rujis-handwriting.ttf", Ttf, ()),
                 font_size:         20.0,
                 normal_text_color: (1.0, 1.0, 1.0, 0.5),
                 // hover_text_color:  (1.0, 1.0, 1.0, 1.0),
@@ -86,7 +86,7 @@ Container(
             ),
             button: (
                 text:              "",
-                font:              File("resources/fonts/square.ttf", Ttf, ()),
+                font:              File("resources/fonts/rujis-handwriting.ttf", Ttf, ()),
                 font_size:         20.0,
                 normal_text_color: (1.0, 1.0, 1.0, 0.5),
                 // hover_text_color:  (1.0, 1.0, 1.0, 1.0),
@@ -134,11 +134,11 @@ Container(
             ),
             button: (
                 text:              "",
-                font:              File("resources/fonts/square.ttf", Ttf, ()),
+                font:              File("resources/fonts/rujis-handwriting.ttf", Ttf, ()),
                 font_size:         20.0,
                 normal_text_color: (1.0, 1.0, 1.0, 0.5),
-                hover_text_color:  (1.0, 1.0, 1.0, 1.0),
-                press_text_color:  (1.0, 1.0, 1.0, 1.0),
+                // hover_text_color:  (1.0, 1.0, 1.0, 1.0),
+                // press_text_color:  (1.0, 1.0, 1.0, 1.0),
                 normal_image: File("resources/textures/ui/main_menu_button_bonus.png", Png,
                     (
                         channel: Srgb,

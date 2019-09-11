@@ -121,30 +121,52 @@ Jam-version binaries are available via Google Drive:
 
 ---
 
-## License
-Distributed under the terms of the [MIT License][mit-license].  
+## Licensing
+This project, including all of its code and assets (such as images, audio, level files),  
+excluding fonts, are distributed under the terms of the [MIT License][MIT-license].  
 
+### Fonts
+The fonts (found under `resources/fonts`) remain unchanged,  
+and are licensed individually by their authors.
+
+#### Undefined Medium
+- Located at `resources/fonts/undefined-medium.ttf`
+- [OFL License][undefined-medium-license]
+- [Website][undefined-medium-website]
+- [GitHub Repository][undefined-medium-github]
+#### Ruji's Handwriting
+- Located at `resources/fonts/rujis-handwriting.ttf`
+- [OFL License][OFL-license]
+- [Author's Website][rujis-handwriting-website]
+
+
+### SDL2
 This project uses and redistributes an unchanged copy of [SDL2],  
 for controller support with [amethyst]'s `sdl_controller` feature.  
 `SDL2.dll` is distributed under the [zlib license][SDL2-license].
 
-[ludumdare]:       https://ldjam.com/events/ludum-dare/44/veggietartar
-[LD44-release]:    https://github.com/Noah2610/LD44/tree/LD44-release
-[bin-jam-windows]: https://drive.google.com/file/d/1RtQ8vsJFH75WyZHTa1W_vxzchw6OhA7Y/view
-[bin-jam-linux]:   https://drive.google.com/file/d/1xffSHQmDppZ4KGcbApzIFt4l_XvT2pX2/view
-[bin-dir]:         https://drive.google.com/open?id=1XNMvBsOJkbbii6jp9T7Du9mNnso00Axn
-[Rust]:            https://www.rust-lang.org/
-[Amethyst]:        https://amethyst.rs/
-[Deathframe]:      https://github.com/Noah2610/deathframe
-[Vim]:             https://www.vim.org/
-[GitHub]:          https://github.com/Noah2610/LD44
-[Gimp]:            https://www.gimp.org/
-[Aseprite]:        https://www.aseprite.org/
-[BoscaCeoil]:      https://boscaceoil.net/
-[FLStudio]:        https://www.image-line.com/flstudio
-[Tiled]:           https://www.mapeditor.org/
-[GoogleDrive]:     https://drive.google.com/
-[Trello]:          https://trello.com/b/hkBWXYt9
-[mit-license]:     https://github.com/Noah2610/LD44/blob/master/LICENSE
-[SDL2]:            https://www.libsdl.org/
-[SDL2-license]:    https://www.libsdl.org/license.php
+[ludumdare]:                 https://ldjam.com/events/ludum-dare/44/veggietartar
+[LD44-release]:              https://github.com/Noah2610/LD44/tree/LD44-release
+[bin-jam-windows]:           https://drive.google.com/file/d/1RtQ8vsJFH75WyZHTa1W_vxzchw6OhA7Y/view
+[bin-jam-linux]:             https://drive.google.com/file/d/1xffSHQmDppZ4KGcbApzIFt4l_XvT2pX2/view
+[bin-dir]:                   https://drive.google.com/open?id=1XNMvBsOJkbbii6jp9T7Du9mNnso00Axn
+[Rust]:                      https://www.rust-lang.org/
+[Amethyst]:                  https://amethyst.rs/
+[Deathframe]:                https://github.com/Noah2610/deathframe
+[Vim]:                       https://www.vim.org/
+[GitHub]:                    https://github.com/Noah2610/LD44
+[Gimp]:                      https://www.gimp.org/
+[Aseprite]:                  https://www.aseprite.org/
+[BoscaCeoil]:                https://boscaceoil.net/
+[FLStudio]:                  https://www.image-line.com/flstudio
+[Tiled]:                     https://www.mapeditor.org/
+[GoogleDrive]:               https://drive.google.com/
+[Trello]:                    https://trello.com/b/hkBWXYt9
+[MIT-license]:               https://github.com/Noah2610/LD44/blob/master/LICENSE
+[SDL2]:                      https://www.libsdl.org/
+[SDL2-license]:              https://www.libsdl.org/license.php
+[undefined-medium-website]:  https://undefined-medium.com/
+[undefined-medium-github]:   https://github.com/andirueckel/undefined-medium
+[undefined-medium-license]:  https://github.com/andirueckel/undefined-medium/blob/master/OFL.txt
+[OFL-license]:               https://scripts.sil.org/OFL
+[rujis-handwriting-website]: http://rujic.net/
