@@ -70,9 +70,8 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
             .map(|timer| timer.start().unwrap());
     }
 
-    fn on_stop(&mut self, data: StateData<CustomGameData<CustomData>>) {
-        // Delete _ALL_ entities
-        data.world.delete_all();
+    fn on_stop(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
+        self.level_manager_mut().on_stop(&mut data);
 
         // Stop timers
         let mut timers = data.world.write_resource::<Timers>();

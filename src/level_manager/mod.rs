@@ -260,6 +260,14 @@ impl LevelManager {
         self.play_current_song(data);
     }
 
+    pub fn on_stop(
+        &self,
+        mut data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
+        data.world.delete_all();
+        self.stop_song(&mut data);
+    }
+
     fn win_game(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
         println!("You win!"); // TODO
 
@@ -349,7 +357,7 @@ impl LevelManager {
 
     fn play_current_song(
         &mut self,
-        data: &mut StateData<CustomGameData<CustomData>>,
+        mut data: &mut StateData<CustomGameData<CustomData>>,
     ) {
         if !data.world.read_resource::<AudioSink>().empty()
             && !self.should_play_current_song()
@@ -357,12 +365,8 @@ impl LevelManager {
             return;
         }
 
-        let music_volume = data.world.settings().music_volume;
-        let output = data.world.read_resource::<Output>();
-        let mut sink = data.world.write_resource::<AudioSink>();
-        sink.stop();
-        *sink = AudioSink::new(&output);
-        sink.set_volume(music_volume);
+        self.stop_song(&mut data);
+        let sink = data.world.write_resource::<AudioSink>();
 
         let asset = data.world.read_resource::<AssetStorage<Source>>();
         let name = self.current_song_name();
@@ -391,6 +395,15 @@ impl LevelManager {
                 "Song name at index {} doesn't exist",
                 self.level_index
             ))
+    }
+
+    fn stop_song(&self, data: &mut StateData<CustomGameData<CustomData>>) {
+        let music_volume = data.world.settings().music_volume;
+        let output = data.world.read_resource::<Output>();
+        let mut sink = data.world.write_resource::<AudioSink>();
+        sink.stop();
+        *sink = AudioSink::new(&output);
+        sink.set_volume(music_volume);
     }
 
     fn set_player_checkpoint(
