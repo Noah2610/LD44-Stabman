@@ -43,8 +43,9 @@ pub struct ItemsDataKnockback {
 
 impl Default for ItemsDataKnockback {
     fn default() -> Self {
+        // NOTE: Default knockback velocity
         Self {
-            velocity:      Vector::new(0.0, 0.0),
+            velocity:      Vector::new(100.0, 25.0),
             has_knockback: true,
         }
     }

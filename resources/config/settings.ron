@@ -324,7 +324,7 @@ Settings(
         ),
 
         settings: (
-            knockback_strength:           (200.0, 75.0),
+            knockback_strength:           (150.0, 75.0),
             bullet_shoot_damage:          1,
             bullet_shoot_velocity:        (500.0, 0.0),
             bullet_shoot_size:            (16.0, 16.0),
