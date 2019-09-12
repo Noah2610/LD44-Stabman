@@ -131,6 +131,24 @@ impl PlayerDashSystem {
         player_gravity_opt: &mut Option<&mut Gravity>,
         player_sides_touching: &SidesTouching,
     ) {
+        let dash_axes_pressed_for_direction = |direction: &Direction| -> bool {
+            let (
+                (axis_x_name, expected_axis_x_sign),
+                (axis_y_name, expected_axis_y_sign),
+            ) = direction.axis();
+
+            let value_x = input_manager
+                .axis_value(axis_x_name)
+                .map(|x| if x != 0.0 { x.signum() as i8 } else { 0 })
+                .unwrap_or(0);
+            let value_y = input_manager
+                .axis_value(axis_y_name)
+                .map(|y| if y != 0.0 { y.signum() as i8 } else { 0 })
+                .unwrap_or(0);
+
+            value_x == expected_axis_x_sign && value_y == expected_axis_y_sign
+        };
+
         // If player has used up all their dashes, we don't need to bother checking.
         // Also only allow dashing in air (when set in settings).
         if !player.in_control
@@ -151,7 +169,9 @@ impl PlayerDashSystem {
 
             // With double-tap dashing
             if player.items_data.dash.double_tap {
-                if input_manager.is_down(action_name) {
+                if input_manager.is_down(action_name)
+                    || dash_axes_pressed_for_direction(&check_direction)
+                {
                     if let Some((last_direction, last_action_at)) =
                         self.last_action
                     {
@@ -178,7 +198,8 @@ impl PlayerDashSystem {
             // Without double-tap dashing
             } else {
                 if input_manager.is_down(ACTION_DASH_TRIGGER)
-                    && input_manager.is_pressed(action_name)
+                    && (input_manager.is_pressed(action_name)
+                        || dash_axes_pressed_for_direction(&check_direction))
                 {
                     self.start_dash(
                         &mut player,

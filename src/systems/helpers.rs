@@ -20,6 +20,8 @@ mod direction {
     pub const ACTION_DASH_DOWN: &str = "player_dash_down";
     pub const ACTION_DASH_LEFT: &str = "player_dash_left";
     pub const ACTION_DASH_RIGHT: &str = "player_dash_right";
+    pub const AXIS_DASH_X: &str = "player_dash_x";
+    pub const AXIS_DASH_Y: &str = "player_dash_y";
 
     #[derive(Clone, Copy, PartialEq, Debug)]
     pub enum Direction {
@@ -34,16 +36,31 @@ mod direction {
     }
 
     impl Direction {
-        pub fn action(&self) -> &'static str {
+        #[rustfmt::skip]
+        pub fn action(&self) -> &str {
             match self {
-                Direction::UpLeft => ACTION_DASH_UP_LEFT,
-                Direction::UpRight => ACTION_DASH_UP_RIGHT,
-                Direction::DownLeft => ACTION_DASH_DOWN_LEFT,
+                Direction::UpLeft    => ACTION_DASH_UP_LEFT,
+                Direction::UpRight   => ACTION_DASH_UP_RIGHT,
+                Direction::DownLeft  => ACTION_DASH_DOWN_LEFT,
                 Direction::DownRight => ACTION_DASH_DOWN_RIGHT,
-                Direction::Up => ACTION_DASH_UP,
-                Direction::Down => ACTION_DASH_DOWN,
-                Direction::Left => ACTION_DASH_LEFT,
-                Direction::Right => ACTION_DASH_RIGHT,
+                Direction::Up        => ACTION_DASH_UP,
+                Direction::Down      => ACTION_DASH_DOWN,
+                Direction::Left      => ACTION_DASH_LEFT,
+                Direction::Right     => ACTION_DASH_RIGHT,
+            }
+        }
+
+        #[rustfmt::skip]
+        pub fn axis(&self) -> ((&str, i8), (&str, i8)) {
+            match self {
+                Direction::UpLeft    => ((AXIS_DASH_X, -1), (AXIS_DASH_Y, -1)),
+                Direction::UpRight   => ((AXIS_DASH_X,  1), (AXIS_DASH_Y, -1)),
+                Direction::DownLeft  => ((AXIS_DASH_X, -1), (AXIS_DASH_Y,  1)),
+                Direction::DownRight => ((AXIS_DASH_X,  1), (AXIS_DASH_Y,  1)),
+                Direction::Up        => ((AXIS_DASH_X,  0), (AXIS_DASH_Y, -1)),
+                Direction::Down      => ((AXIS_DASH_X,  0), (AXIS_DASH_Y,  1)),
+                Direction::Left      => ((AXIS_DASH_X, -1), (AXIS_DASH_Y,  0)),
+                Direction::Right     => ((AXIS_DASH_X,  1), (AXIS_DASH_Y,  0)),
             }
         }
 

@@ -4,6 +4,10 @@
     "player_x_controller_stick": Controller(controller_id: 0, axis: LeftX, invert: false, dead_zone: 0.3),
     "player_x_controller_dpad":  Emulated(neg: Controller(0, DPadLeft), pos: Controller(0, DPadRight)),
 
+    // DASHES (for controller joystick)
+    "player_dash_x": Controller(controller_id: 0, axis: LeftX, invert: false, dead_zone: 0.5),
+    "player_dash_y": Controller(controller_id: 0, axis: LeftY, invert: false, dead_zone: 0.5),
+
     // TODO
     // NOCLIP (DEVELOPMENT)
     "noclip_x": Emulated(pos: Key(D), neg: Key(A)),
