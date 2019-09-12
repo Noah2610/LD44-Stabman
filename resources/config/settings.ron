@@ -1,5 +1,8 @@
 Settings(
-    music_volume: 0.5,
+    /// Default music volume.
+    music_volume:        0.5,
+    /// Music volume when ingame state is paused.
+    music_volume_paused: 0.1,
 
     /// Y level, at which to kill entities, when they dip below it.
     death_floor: -200.0,

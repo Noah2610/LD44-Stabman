@@ -25,6 +25,7 @@ pub struct Settings {
     pub enemies:                SettingsEnemies,
     pub items:                  SettingsItems,
     pub music_volume:           f32,
+    pub music_volume_paused:    f32,
     pub death_floor:            f32,
     pub harmful:                SettingsHarmful,
     pub entity_loader:          SettingsEntityLoader,

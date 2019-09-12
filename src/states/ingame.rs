@@ -50,36 +50,20 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
             self.new_game,
         ));
 
-        // Initialize global timer
-        // NOTE: This needs to happen before the level loads
-        if self.level_manager().is_first_level() {
-            let mut timers = data.world.write_resource::<Timers>();
-            let timer = climer::Timer::default();
-            timers.global = Some(timer);
-        }
-
-        self.level_manager_mut().load_current_level(&mut data);
-        // Force update `HealthDisplay`
-        data.world.write_resource::<UpdateHealthDisplay>().0 = true;
-
-        // Now start the global timer
-        data.world
-            .write_resource::<Timers>()
-            .global
-            .as_mut()
-            .map(|timer| timer.start().unwrap());
+        self.level_manager_mut().on_start(&mut data);
     }
 
     fn on_stop(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
-        self.level_manager_mut().on_stop(&mut data);
-
-        // Stop timers
-        let mut timers = data.world.write_resource::<Timers>();
-        timers.global.as_mut().map(|timer| timer.stop().unwrap());
-        timers.level.stop().unwrap();
+        self.level_manager().on_stop(&mut data);
     }
 
-    fn on_resume(&mut self, data: StateData<CustomGameData<CustomData>>) {
+    fn on_pause(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
+        self.level_manager().on_pause(&mut data);
+    }
+
+    fn on_resume(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
+        self.level_manager().on_resume(&mut data);
+
         // Return to main menu, if `Paused` state set the resource to do so
         self.to_main_menu = data.world.read_resource::<ToMainMenu>().0;
     }
