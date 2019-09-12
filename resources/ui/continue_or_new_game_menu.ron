@@ -28,10 +28,10 @@ Container(
         Button(
             transform: (
                 id:             "back_button",
-                x:              -0.34,
-                y:              -0.007,
-                width:          0.07,
-                height:         0.08,
+                x:              -0.34375,
+                y:              -0.003472,
+                width:          0.0703125,
+                height:         0.131945,
                 anchor:         Middle,
                 mouse_reactive: true,
                 percent:        true,
@@ -75,59 +75,11 @@ Container(
 
         Button(
             transform: (
-                id:             "continue_button",
-                x:              -0.34,
-                y:              -0.13,
-                width:          0.07,
-                height:         0.07,
-                anchor:         Middle,
-                mouse_reactive: true,
-                percent:        true,
-            ),
-            button: (
-                text:              "",
-                font:              File("resources/fonts/rujis-handwriting.ttf", Ttf, ()),
-                font_size:         20.0,
-                normal_text_color: (1.0, 1.0, 1.0, 0.5),
-                // hover_text_color:  (1.0, 1.0, 1.0, 1.0),
-                // press_text_color:  (1.0, 1.0, 1.0, 1.0),
-                normal_image: File("resources/textures/ui/main_menu_button_continue.png", Png,
-                    (
-                        channel: Srgb,
-                        sampler: (
-                            filter: Scale,
-                            wrap_mode: (Clamp, Clamp, Clamp),
-                        )
-                    ),
-                ),
-                hover_image: File("resources/textures/ui/main_menu_button_continue_hover.png", Png,
-                    (
-                        channel: Srgb,
-                        sampler: (
-                            filter: Scale,
-                            wrap_mode: (Clamp, Clamp, Clamp),
-                        )
-                    ),
-                ),
-                press_image: File("resources/textures/ui/main_menu_button_continue_hover.png", Png,
-                    (
-                        channel: Srgb,
-                        sampler: (
-                            filter: Scale,
-                            wrap_mode: (Clamp, Clamp, Clamp),
-                        )
-                    ),
-                ),
-            ),
-        ),
-
-        Button(
-            transform: (
                 id:             "new_game_button",
-                x:              -0.432,
-                y:              -0.16,
-                width:          0.075,
-                height:         0.07,
+                x:              -0.34375,
+                y:              -0.128472,
+                width:          0.0625,
+                height:         0.076389,
                 anchor:         Middle,
                 mouse_reactive: true,
                 percent:        true,
@@ -158,6 +110,54 @@ Container(
                     ),
                 ),
                 press_image: File("resources/textures/ui/main_menu_button_new_hover.png", Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+            ),
+        ),
+
+        Button(
+            transform: (
+                id:             "continue_button",
+                x:              -0.43359375,
+                y:              -0.1631945,
+                width:          0.0703125,
+                height:         0.104167,
+                anchor:         Middle,
+                mouse_reactive: true,
+                percent:        true,
+            ),
+            button: (
+                text:              "",
+                font:              File("resources/fonts/rujis-handwriting.ttf", Ttf, ()),
+                font_size:         20.0,
+                normal_text_color: (1.0, 1.0, 1.0, 0.5),
+                // hover_text_color:  (1.0, 1.0, 1.0, 1.0),
+                // press_text_color:  (1.0, 1.0, 1.0, 1.0),
+                normal_image: File("resources/textures/ui/main_menu_button_continue.png", Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                hover_image: File("resources/textures/ui/main_menu_button_continue_hover.png", Png,
+                    (
+                        channel: Srgb,
+                        sampler: (
+                            filter: Scale,
+                            wrap_mode: (Clamp, Clamp, Clamp),
+                        )
+                    ),
+                ),
+                press_image: File("resources/textures/ui/main_menu_button_continue_hover.png", Png,
                     (
                         channel: Srgb,
                         sampler: (
