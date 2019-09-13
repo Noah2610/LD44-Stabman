@@ -1,0 +1,248 @@
+#!/bin/bash
+# LD44 TAS
+
+# shellcheck source=./util.sh
+_dir="$( dirname "$0" )"
+[ -f "${_dir}/util.sh" ] || bash "${_dir}/download-util.sh" || exit 1
+source "${_dir}/util.sh"
+unset _dir
+
+check "xdotool"
+
+RUST_PROFILE="debug"
+GAME_ROOT="${ROOT}/../../target/${RUST_PROFILE}"
+check_dir "$GAME_ROOT"
+GAME_EXE="${GAME_ROOT}/LD44"
+START_GAME_DELAY_S=1
+
+KEY_TRIES=10
+KEYDOWN_TRIES=8
+KEYUP_TRIES=8
+
+WINDOW_NAME="Ludum Dare 44"
+WINDOW_ID=
+
+ATTACK_DELAY=0.4
+
+# movement
+KB_UP="w"
+KB_DOWN="s"
+KB_LEFT="a"
+KB_RIGHT="d"
+# jump
+KB_JUMP="k"
+# attack
+KB_ATTACK_LEFT="h"
+KB_ATTACK_RIGHT="l"
+# item pickup
+KB_PICKUP="e"
+
+function xkey {
+  for (( i = 0; i < KEY_TRIES; i++ )); do
+    xdotool key --window "$WINDOW_ID" "$@" || err "xdotool error"
+  done
+}
+
+function xdown {
+  for (( i = 0; i < KEYDOWN_TRIES; i++ )); do
+    xdotool keydown --window "$WINDOW_ID" "$@" || err "xdotool error"
+  done
+}
+
+function xup {
+  for (( i = 0; i < KEYUP_TRIES; i++ )); do
+    xdotool keyup --window "$WINDOW_ID" "$@" || err "xdotool error"
+  done
+}
+
+function delete_savefile {
+  local savefile="${GAME_ROOT}/savefile"
+  [ -f "$savefile" ] && rm "$savefile"
+}
+
+function start_game {
+  check_file "$GAME_EXE"
+  $GAME_EXE &
+  sleep "${START_GAME_DELAY_S}s"
+  WINDOW_ID="$( xdotool search --name "^${WINDOW_NAME}$" )"
+  [ -z "$WINDOW_ID" ] && err "Window with name '$WINDOW_NAME' not found"
+}
+
+# xdotool key input functions
+
+function input_start_game {
+  xkey Return
+}
+
+# input movements
+function input_go_up_start    { msg "UP" &    xdown "$KB_UP";    }
+function input_go_up_stop     { msg "up" &    xup   "$KB_UP";    }
+function input_go_down_start  { msg "DOWN" &  xdown "$KB_DOWN";  }
+function input_go_down_stop   { msg "down" &  xup   "$KB_DOWN";  }
+function input_go_left_start  { msg "LEFT" &  xdown "$KB_LEFT";  }
+function input_go_left_stop   { msg "left" &  xup   "$KB_LEFT";  }
+function input_go_right_start { msg "RIGHT" & xdown "$KB_RIGHT"; }
+function input_go_right_stop  { msg "right" & xup   "$KB_RIGHT"; }
+# input jump
+function input_jump_start { msg "JUMP" & xdown "$KB_JUMP"; }
+function input_jump_stop  { msg "jump" & xup   "$KB_JUMP"; }
+# input attack
+function input_attack_left  { msg "ATTACK LEFT" &  xkey "$KB_ATTACK_LEFT";  }
+function input_attack_right { msg "ATTACK RIGHT" & xkey "$KB_ATTACK_RIGHT"; }
+# input item pickup
+function input_pickup { msg "PICKUP" & xkey "$KB_PICKUP"; }
+
+delete_savefile
+start_game
+
+# TAS START
+input_start_game
+
+# wait to ensure the first level is loaded
+sleep 0.05
+
+input_go_right_start
+
+sleep 1.05s
+
+# platform
+input_jump_start
+sleep 1s
+input_jump_stop
+
+sleep 0.45s
+
+# charger
+input_jump_start
+sleep 0.5
+input_jump_stop
+
+sleep 1.6s
+
+# charger
+input_jump_start
+sleep 0.7
+input_jump_stop
+
+sleep 0.62
+
+# platform
+input_jump_start
+sleep 0.5
+input_jump_stop
+
+sleep 0.32
+
+# naga
+input_go_right_stop
+input_attack_right
+sleep "$ATTACK_DELAY"
+input_attack_right
+sleep "$ATTACK_DELAY"
+input_attack_right
+sleep "$ATTACK_DELAY"
+input_attack_right
+input_go_right_start
+
+sleep 1
+
+# charger
+input_jump_start
+sleep 0.5
+input_jump_stop
+
+sleep 0.25
+
+# platform
+input_jump_start
+sleep 1
+input_jump_stop
+
+sleep 0.65
+
+# platform downwards (jump over charger)
+input_jump_start
+sleep 1
+input_jump_stop
+
+sleep 0.4
+
+# charger
+input_jump_start
+sleep 0.5
+input_jump_stop
+
+sleep 0.25
+
+# platform
+input_jump_start
+sleep 0.5
+input_jump_stop
+
+sleep 0.18
+
+# charger on platform above
+input_go_right_stop
+input_jump_start
+sleep 0.02
+input_attack_right
+sleep 0.2
+input_jump_stop
+sleep 0.1
+input_attack_right
+# platform (where charger was)
+input_jump_start
+input_go_right_start
+sleep 0.2
+input_jump_stop
+
+# platform
+sleep 0.3
+input_jump_start
+sleep 0.5
+input_jump_stop
+
+sleep 0.1
+
+# jump over charger below
+input_jump_start
+sleep 0.1
+input_jump_stop
+
+sleep 1.1
+
+# pickup WallJump item
+input_pickup
+sleep 0.01
+input_pickup
+sleep 0.01
+input_pickup
+
+sleep 0.19
+
+# platform
+input_jump_start
+sleep 0.3
+input_jump_stop
+
+# wall jump
+input_jump_start
+sleep 0.1
+input_jump_stop
+sleep 0.05
+input_go_right_stop
+input_jump_start
+input_go_left_start
+sleep 0.07
+input_jump_stop
+input_go_left_stop
+input_jump_start
+input_go_right_start
+sleep 0.5
+input_jump_stop
+
+sleep 3
+
+# FINISH LEVEL 1
+
+sleep 2

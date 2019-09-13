@@ -8,3 +8,5 @@
 *.log
 /savefile*
 /*.exe
+
+/bin/tas/util.sh
