@@ -5,6 +5,12 @@ Originally, our [Ludum Dare 44 jam entry][ludumdare].
 - [Description](#description)
 - [Controls](#controls)
 - [Campaign Types](#campaign-types)
+- [Items](#items)
+- [Enemy Types](#enemy-types)
+  - [Normal Enemy](#normal-enemy)
+  - [Charger Enemy](#charger-enemy)
+  - [Flying Enemy](#flying-enemy)
+  - [Turret Enemy](#turret-enemy)
 - [Changing the window resolution](#changing-the-window-resolution)
 - [Post-Jam Version](#post-jam-version)
   - [Post-Jam Version Downloads](#post-jam-version-downloads)
@@ -59,7 +65,7 @@ So the `A` button would be the `X` button on a DualShock controller, etc.
 | Attack LEFT                       | `Left`, `H`                | `X`                                   |                                                                            |
 | Attack RIGHT                      | `Right`, `L`               | `B`                                   |                                                                            |
 | Buy item                          | `E`                        | `Y`                                   |                                                                            |
-| Dash                              | `Shift`, `J`, `Down`       | `ShoulderButtons` (_left_ or _right_) | Need to hold down movement keys + press dash key; diagonal dashes work; can only dash in-air; __TODO:__ on controller, dashing only works when using the `DPad`. |
+| Dash                              | `Shift`, `J`, `Down`       | `ShoulderButtons` (_left_ or _right_) | Need to hold down movement keys + press dash key; diagonal dashes work; can only dash in-air |
 | Toggle pause                      | `P`                        | `Start`                               |                                                                            |
 | Start game from main menu         | `Enter`, `Space`           | `A`                                   | Starts the _normal_ campaign, not _bonus_.                                 |
 | Continue game from pause menu     | `Enter`, `Space`           | `A`                                   |                                                                            |
@@ -180,6 +186,54 @@ img#items-spritesheet {
   When attacking an enemy, knockback throws the enemy backwards.  
   Each pickup adds additional knockback strength.
 
+## Enemy Types
+<style>
+.enemy-spritesheet {
+  display: block;
+  max-width: 600px;
+  margin-bottom: 8px;
+}
+</style>
+
+### Normal Enemy
+<img
+ class="enemy-spritesheet"
+ src="./resources/spritesheets/enemy_normal.png"
+ alt="Normal Enemy">
+</img>
+A normal, tank-like enemy.  
+Has the most amount of health out of all enemy types;  
+walks slowly and hits hard.
+
+### Charger Enemy
+<img
+ class="enemy-spritesheet"
+ src="./resources/spritesheets/enemy_charger.png"
+ alt="Charger Enemy">
+</img>
+A small enemy, which will start rolling at the player,  
+when they move into its trigger range.  
+Once rolling, this enemy will not stop moving until it hits a wall.
+
+### Flying Enemy
+<img
+ class="enemy-spritesheet"
+ src="./resources/spritesheets/enemy_flying.png"
+ alt="Charger Enemy">
+</img>
+This enemy is not affected by gravity.  
+It simply tries to follows the player when they are within trigger distance.
+
+### Turret Enemy
+<img
+ class="enemy-spritesheet"
+ src="./resources/spritesheets/enemy_turret.png"
+ alt="Charger Enemy">
+</img>
+This enemy cannot be damaged or killed.  
+It shoots bullets from its mouth in regular intervals.  
+Its bullets can be deflected if the player has picked up the _Bullet Deflect_ item.
+
 ## Changing the window resolution
 Included with the game's binary, is a file called `resolution.txt`.  
 You can specify a custom window resolution in this file.  
@@ -194,7 +248,7 @@ See the `resolution.txt` file itself for more information and some preset resolu
 ## Post-Jam Version
 After the jam ended at the end of April, we continued working on the game  
 with the goal to release a finished product (like always).  
-This time, we are proud to say, that we _actually finished this game_! (*__TODO:__ Not quite yet...*).
+This time, we are proud to say, that we _actually finished this game_!
 
 ### Post-Jam Version Downloads
 Post-jam-version binaries are also available on Google Drive.  
@@ -287,5 +341,3 @@ for controller support with [amethyst]'s `sdl_controller` feature.
 [undefined-medium-license]:  https://github.com/andirueckel/undefined-medium/blob/master/OFL.txt
 [OFL-license]:               https://scripts.sil.org/OFL
 [rujis-handwriting-website]: http://rujic.net/
-
-[items-spritesheet]:         ./resources/spritesheets/items.png
