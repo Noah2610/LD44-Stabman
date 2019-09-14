@@ -1,5 +1,5 @@
-# LD44
-Originally, our [Ludum Dare 44 jam entry][ludumdare].  
+# Stabman
+Post-jam version of our [Ludum Dare 44 game jam entry][ludumdare].  
 
 ## Table of Contents
 - [Description](#description)
@@ -34,8 +34,8 @@ _You pay with your health to buy items._
 The game is a _2D action-platformer_.  
 Your goal is simply to get to the end of each level.  
 
-Throughout the levels you will find _items_ which you can buy with your health as currency.  
-Some items may be necessary to progress, others may just be _nice-to-have_.  
+Throughout the levels you will find _items_ which you can buy using your health as currency.  
+See the [items section](#items) for a list of all available items.
 
 You regain health by defeating enemies.
 
@@ -213,7 +213,7 @@ walks slowly and hits hard.
 </img>
 A small enemy, which will start rolling at the player,  
 when they move into its trigger range.  
-Once rolling, this enemy will not stop moving until it hits a wall.
+Once rolling, this enemy will only stop moving upon hitting a wall.
 
 ### Flying Enemy
 <img
@@ -268,10 +268,10 @@ If you intend to check out our game, we recommend trying our post-jam version.
 ### Jam Version Downloads
 Jam-version binaries are available via Google Drive:
 
-| Platform | Download |
-|:--------:|:-------- |
+| Platform | Download                        |
+|:--------:|:------------------------------- |
 | Windows  | [Google Drive][bin-jam-windows] |
-| Linux    | [Google Drive][bin-jam-linux] |
+| Linux    | [Google Drive][bin-jam-linux]   |
 
 ---
 

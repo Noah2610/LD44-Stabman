@@ -9,5 +9,3 @@
 
 # A 50% larger resolution, useful for some levels
 # 1600 x 900
-
-# TODO: More presets
