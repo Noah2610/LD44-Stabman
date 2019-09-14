@@ -1,6 +1,30 @@
 # Stabman
 Post-jam version of our [Ludum Dare 44 game jam entry][ludumdare].  
 
+## Screenshots
+<img
+ width="300px"
+ src="./screenshots/overworld.png"
+ alt="Overworld Screenshot">
+</img>
+<img
+ width="300px"
+ src="./screenshots/graveyard.png"
+ alt="Graveyard Screenshot">
+</img>
+<img
+ width="300px"
+ src="./screenshots/graveyard_alt.png"
+ alt="Graveyard Inside Screenshot">
+</img>
+<img
+ width="300px"
+ src="./screenshots/bonus_a.png"
+ alt="Bonus A Screenshot">
+</img>
+
+[Level One Preview Video][level-one-preview-video]
+
 ## Table of Contents
 - [Description](#description)
 - [Controls](#controls)
@@ -88,6 +112,8 @@ There are three campaigns you can play:
 <style>
 img#items-spritesheet {
   width: 600px;
+  min-width: 600px;
+  max-width: 600px;
   /* https://stackoverflow.com/a/24869226/10927893 */
   image-rendering: optimizeSpeed;             /* PREFER SPEED OVER SMOOTHING    */
   image-rendering: -moz-crisp-edges;          /* Firefox                        */
@@ -341,3 +367,4 @@ for controller support with [amethyst]'s `sdl_controller` feature.
 [undefined-medium-license]:  https://github.com/andirueckel/undefined-medium/blob/master/OFL.txt
 [OFL-license]:               https://scripts.sil.org/OFL
 [rujis-handwriting-website]: http://rujic.net/
+[level-one-preview-video]:   https://youtu.be/zPIvTLLeIPY
