@@ -48,8 +48,6 @@ You can change bindings in this file however you want; the syntax _should_ be se
 But careful: if you make a syntax error, the game will crash. Start the game from a console to see the error messages.
 
 __Note:__  
-Controller support is not enabled by default.  
-(*__TODO:__ Provide builds with controller support*).  
 For the controller buttons we are using the Xbox naming scheme.  
 So the `A` button would be the `X` button on a DualShock controller, etc.
 
@@ -79,6 +77,108 @@ There are three campaigns you can play:
   These campaign types are primarily just meant for us to play; but if you're enjoying the game,  
   and are feeling confident enough, feel free to give these a try __>:)__  
   Each of the bonus campaigns includes __3 levels__.
+
+## Items
+<style>
+img#items-spritesheet {
+  width: 600px;
+  /* https://stackoverflow.com/a/24869226/10927893 */
+  image-rendering: optimizeSpeed;             /* PREFER SPEED OVER SMOOTHING    */
+  image-rendering: -moz-crisp-edges;          /* Firefox                        */
+  image-rendering: -o-crisp-edges;            /* Opera                          */
+  image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+  image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
+  -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
+}
+
+#items-box {
+  display: grid;
+  grid-template-columns: 60px 60px 60px 60px 60px 60px 60px 60px 60px 60px;
+}
+
+#items-box > .item-name {
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+}
+
+#items-box > .item-name.item-unused {
+  font-size: 10px;
+  font-weight: normal;
+  font-style: italic;
+}
+</style>
+
+<div id="items-container">
+  <img
+   id="items-spritesheet"
+   src="./resources/spritesheets/items.png"
+   alt="Item Icons">
+  </img>
+
+  <div id="items-box">
+    <div class="item-name">
+      Extra Jump
+    </div>
+    <div class="item-name">
+      Wall Jump
+    </div>
+    <div class="item-name item-unused">
+      (unused)
+    </div>
+    <div class="item-name">
+      Bullet Deflect
+    </div>
+    <div class="item-name">
+      Damage Up
+    </div>
+    <div class="item-name">
+      Speed Up
+    </div>
+    <div class="item-name">
+      Jump Height Up
+    </div>
+    <div class="item-name">
+      Bullet Shoot
+    </div>
+    <div class="item-name">
+      Dash
+    </div>
+    <div class="item-name">
+      Knockback Up
+    </div>
+  </div>
+</div>
+
+- __Extra Jump__ _Stackable_  
+  Each pickup grants an extra jump in mid-air.  
+  When in mid-air, the player can jump additional times.  
+  Extra jumps are recharged when standing or sliding on a solid wall.
+- __Wall Jump__ _Non-stackable_  
+  Grants the ability to jump off walls.  
+  When sliding on a wall, press the jump button to jump off of the wall.
+- __Bullet Deflect__ _Stackable_  
+  Grants the ability to deflect enemy bullets by attacking them.  
+  Deflected bullets deal one unit of damage.  
+  Each pickup increases the deflected bullet's damage by one unit.
+- __Damage Up__ _Stackable_  
+  Increases attacking damage by one unit.
+- __Speed Up__ _Stackable_  
+  Increases the player's speed.
+- __Jump Height Up__ _Stackable_  
+  Increases the maximum height of the player's jump.
+- __Bullet Shoot__ _Stackable_  
+  Grants the ability to shoot bullets when attacking.  
+  Bullets deal one unit of damage.  
+  Each pickup increases the bullet's damage by one unit.
+- __Dash__ _Stackable_  
+  Each pickup grants the player to use a dash in mid-air.  
+  Dashes can only be done in mid-air.  
+  Dashes are recharged when standing or sliding on a solid wall.  
+  See the [Controls](#controls)
+- __Knockback Up__ _Stackable_  
+  When attacking an enemy, knockback throws the enemy backwards.  
+  Each pickup adds additional knockback strength.
 
 ## Changing the window resolution
 Included with the game's binary, is a file called `resolution.txt`.  
@@ -187,3 +287,5 @@ for controller support with [amethyst]'s `sdl_controller` feature.
 [undefined-medium-license]:  https://github.com/andirueckel/undefined-medium/blob/master/OFL.txt
 [OFL-license]:               https://scripts.sil.org/OFL
 [rujis-handwriting-website]: http://rujic.net/
+
+[items-spritesheet]:         ./resources/spritesheets/items.png
