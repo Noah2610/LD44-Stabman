@@ -86,7 +86,7 @@ So the `A` button would be the `X` button on a DualShock controller, etc.
 | :-------------------------------- | :------------------------- | :------------------------------------ | :------------------------------------------------------------------------- |
 | Move LEFT                         | `A`                        | `DPadLeft`, `JoyStickLeft`            |                                                                            |
 | Move RIGHT                        | `D`                        | `DPadRight`, `JoyStickRight`          |                                                                            |
-| Jump                              | `Space`, `K`, `Up`         | `A`                                   | Hold down the jump button for a slower fall (lower gravity).               |
+| Jump                              | `Space`, `K`, `Up`, `W`    | `A`                                   | Hold down the jump button for a slower fall (lower gravity).               |
 | Attack LEFT                       | `Left`, `H`                | `X`                                   |                                                                            |
 | Attack RIGHT                      | `Right`, `L`               | `B`                                   |                                                                            |
 | Buy item                          | `E`                        | `Y`                                   |                                                                            |
