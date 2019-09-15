@@ -277,9 +277,7 @@ with the goal to release a finished product (like always).
 This time, we are proud to say, that we _actually finished this game_!
 
 ### Post-Jam Version Downloads
-Post-jam-version binaries are also available on Google Drive.  
-You can pick the latest version for your platform from this [Google Drive directory][bin-dir].  
-(*__TODO:__ List latest versions here...*)
+Post-jam version downloads are available on [itch.io][itch-io].
 
 ---
 
@@ -368,3 +366,4 @@ for controller support with [amethyst]'s `sdl_controller` feature.
 [OFL-license]:               https://scripts.sil.org/OFL
 [rujis-handwriting-website]: http://rujic.net/
 [level-one-preview-video]:   https://youtu.be/zPIvTLLeIPY
+[itch-io]:                   https://noahro.itch.io/stabman
