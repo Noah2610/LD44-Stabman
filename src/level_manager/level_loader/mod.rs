@@ -77,11 +77,6 @@ impl LevelLoader {
         }
     }
 
-    /// Returns `true` if everything has finished loading and building properly.
-    pub fn is_finished(&self) -> bool {
-        self.player_id.is_some() && self.camera_data.is_some()
-    }
-
     /// Start loading the level data from the given level filename.
     pub fn load_level<T>(&mut self, filepath: T)
     where
@@ -691,7 +686,7 @@ impl LevelLoader {
                 enemy_type,
                 enemy_settings,
                 enemy_ai,
-                (spritesheet_handle, sprite_render),
+                sprite_render,
                 animations_container,
                 flipped_opt,
             ) = enemy_components_from(&mut data.world, properties);
@@ -789,7 +784,7 @@ impl LevelLoader {
             graphic: _,
         } in &self.items_data
         {
-            let (item, spritesheet_handle, sprite_render) = {
+            let (item, sprite_render) = {
                 let item = Item::new(
                     properties["item_type"].as_str().expect(
                         "`item_type` property must be given for object of \
@@ -797,10 +792,9 @@ impl LevelLoader {
                     ),
                     &settings.items,
                 );
-                let (spritesheet_handle, sprite_render) = item
-                    .item_type
-                    .sprite_sheet_handle_and_sprite_render(&mut data.world);
-                (item, spritesheet_handle, sprite_render)
+                let sprite_render =
+                    item.item_type.sprite_render(&mut data.world);
+                (item, sprite_render)
             };
 
             let mut transform = Transform::default();

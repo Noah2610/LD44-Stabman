@@ -24,7 +24,7 @@ pub fn enemy_components_from(
     EnemyType,
     SettingsEnemy,
     EnemyAi,
-    (SpriteSheetHandle, SpriteRender),
+    SpriteRender,
     AnimationsContainer,
     Option<Flipped>,
 ) {
@@ -54,7 +54,7 @@ pub fn enemy_components_from(
                     EnemyType::Normal,
                     settings.enemies.normal.clone(),
                     EnemyAi::Tracer,
-                    (spritesheet_handle.clone(), sprite_render),
+                    sprite_render,
                     animations_container_from_file(
                         resource("animations/enemy_normal.ron"),
                         spritesheet_handle,
@@ -86,7 +86,7 @@ pub fn enemy_components_from(
                         ]),
                         ..Default::default()
                     }),
-                    (spritesheet_handle.clone(), sprite_render),
+                    sprite_render,
                     animations_container_from_file(
                         resource("animations/enemy_charger.ron"),
                         spritesheet_handle,
@@ -112,7 +112,7 @@ pub fn enemy_components_from(
                     EnemyType::Flying,
                     settings.enemies.flying.clone(),
                     EnemyAi::Tracer,
-                    (spritesheet_handle.clone(), sprite_render),
+                    sprite_render,
                     animations_container_from_file(
                         resource("animations/enemy_flying.ron"),
                         spritesheet_handle,
@@ -138,7 +138,7 @@ pub fn enemy_components_from(
                     EnemyType::Reaper,
                     settings.enemies.reaper.clone(),
                     EnemyAi::Tracer,
-                    (spritesheet_handle.clone(), sprite_render),
+                    sprite_render,
                     animations_container_from_file(
                         resource("animations/enemy_reaper.ron"),
                         spritesheet_handle,
@@ -202,7 +202,7 @@ pub fn enemy_components_from(
                             .unwrap(),
                         ..Default::default()
                     }),
-                    (spritesheet_handle.clone(), sprite_render),
+                    sprite_render,
                     animations_container_from_file(
                         resource("animations/enemy_turret.ron"),
                         spritesheet_handle,

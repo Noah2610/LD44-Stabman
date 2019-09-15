@@ -119,7 +119,7 @@ impl<'a> System<'a> for PlayerAttackSystem {
             }
 
             // Actual attacking logic
-            if let Some(attack_id) = attack_id_opt {
+            if attack_id_opt.is_some() {
                 let now = Instant::now();
 
                 for (player, _) in (&mut players, !&no_attacks).join() {
@@ -127,17 +127,10 @@ impl<'a> System<'a> for PlayerAttackSystem {
                         (&player_attacks, &collisions, &flippeds).join()
                     {
                         if attack.active {
-                            for (
-                                enemy_entity,
-                                enemy,
-                                enemy_velocity,
-                                enemy_animations_container,
-                                _,
-                            ) in (
+                            for (enemy_entity, enemy, enemy_velocity, _) in (
                                 &entities,
                                 &mut enemies,
                                 &mut velocities,
-                                &mut animations_containers,
                                 !&invincibles,
                             )
                                 .join()

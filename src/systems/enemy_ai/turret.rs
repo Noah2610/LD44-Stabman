@@ -1,10 +1,8 @@
-use std::time::{Duration, Instant};
-
 use super::super::system_prelude::*;
 use super::PlayerData;
 
 pub(super) fn run(
-    dt: f32,
+    _dt: f32,
     player_data: &PlayerData,
     enemy: &Enemy,
     ai_data: &mut EnemyAiTurretData,

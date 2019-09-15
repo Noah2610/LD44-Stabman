@@ -52,7 +52,7 @@ impl WinGameMenu {
     ) {
         let mut stats_texts = HashMap::<String, String>::new();
 
-        let mut level_manager = {
+        let level_manager = {
             let settings = data.world.settings();
             let level_manager_settings = match self.campaign {
                 CampaignType::Normal => settings.level_manager.normal,
@@ -138,7 +138,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent>
 
     fn update(
         &mut self,
-        mut data: StateData<CustomGameData<CustomData>>,
+        data: StateData<CustomGameData<CustomData>>,
     ) -> Trans<CustomGameData<'a, 'b, CustomData>, StateEvent> {
         data.data
             .update(&data.world, "continue_or_new_game_menu")

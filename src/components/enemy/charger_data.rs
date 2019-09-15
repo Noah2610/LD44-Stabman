@@ -1,4 +1,3 @@
-use super::Facing;
 use deathframe::geo::{Side, Vector};
 
 #[derive(Clone, PartialEq, Default)]

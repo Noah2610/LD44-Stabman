@@ -1,5 +1,5 @@
 use amethyst::ecs::World;
-use amethyst::renderer::{SpriteRender, SpriteSheetHandle};
+use amethyst::renderer::SpriteRender;
 use deathframe::handlers::SpriteSheetHandles;
 
 use crate::resource_helpers::*;
@@ -52,10 +52,7 @@ impl ItemType {
         }
     }
 
-    pub fn sprite_sheet_handle_and_sprite_render(
-        &self,
-        world: &mut World,
-    ) -> (SpriteSheetHandle, SpriteRender) {
+    pub fn sprite_render(&self, world: &mut World) -> SpriteRender {
         let mut spritesheet_handles =
             world.write_resource::<SpriteSheetHandles>();
 
@@ -63,10 +60,10 @@ impl ItemType {
             resource(format!("spritesheets/{}", SPRITESHEET_FILENAME)),
             world,
         );
-        (handle.clone(), SpriteRender {
+        SpriteRender {
             sprite_sheet:  handle,
             sprite_number: self.sprite_id(),
-        })
+        }
     }
 }
 

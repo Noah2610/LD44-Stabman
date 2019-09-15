@@ -8,18 +8,11 @@ impl<'a> System<'a> for SyncHeartsContainersWithHealthSystem {
         ReadStorage<'a, Player>,
         ReadStorage<'a, Enemy>,
         WriteStorage<'a, HeartsContainer>,
-        WriteStorage<'a, Heart>,
     );
 
     fn run(
         &mut self,
-        (
-            entities,
-            players,
-            enemies,
-            mut hearts_containers,
-            mut hearts,
-        ): Self::SystemData,
+        (entities, players, enemies, mut hearts_containers): Self::SystemData,
     ) {
         for (player, mut hearts_container) in
             (&players, &mut hearts_containers).join()

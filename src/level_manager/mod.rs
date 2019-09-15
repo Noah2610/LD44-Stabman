@@ -62,10 +62,9 @@ impl LevelManager {
 
         // First, remove all existing entities, which do not have `DontDeleteOnNextLevel`.
         data.world.exec(
-            |(entities, dont_deletes, players): (
+            |(entities, dont_deletes): (
                 Entities,
                 ReadStorage<DontDeleteOnNextLevel>,
-                ReadStorage<Player>,
             )| {
                 for (entity, _) in (&entities, !&dont_deletes).join() {
                     entities.delete(entity).unwrap();
@@ -199,15 +198,10 @@ impl LevelManager {
                         })
                         .unwrap_or(false);
 
-                let player_dead =
-                    (&players, &animations_containers, !&invincibles)
-                        .join()
-                        .find_map(|(player, animations_container, _)| {
-                            Some(
-                                player.is_dead(), // && animations_container.play_once.is_none(),
-                            )
-                        })
-                        .unwrap_or(false);
+                let player_dead = (&players, !&invincibles)
+                    .join()
+                    .find_map(|(player, _)| Some(player.is_dead()))
+                    .unwrap_or(false);
 
                 (player_in_goal, next_level, player_dead)
             },

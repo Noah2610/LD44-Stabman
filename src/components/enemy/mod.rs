@@ -80,10 +80,6 @@ impl Enemy {
         }
     }
 
-    pub fn is_alive(&self) -> bool {
-        self.health > 0
-    }
-
     pub fn is_dead(&self) -> bool {
         self.health <= 0
     }

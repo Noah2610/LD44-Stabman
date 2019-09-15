@@ -65,26 +65,6 @@ impl<'a> System<'a> for BulletSystem {
                                         Some((knockback.0, knockback.1))
                                     }
                                 },
-                                (Some(knockback), None) => {
-                                    None
-                                    // TODO: Cleanup, or add knockback?
-                                    // (
-                                    //     if player_pos.x > enemy_pos.x {
-                                    //         enemy.knockback.0
-                                    //     } else if player_pos.x < enemy_pos.x {
-                                    //         enemy.knockback.0 * -1.0
-                                    //     } else {
-                                    //         0.0
-                                    //     },
-                                    //     if player_pos.y > enemy_pos.y {
-                                    //         enemy.knockback.1
-                                    //     } else if player_pos.y < enemy_pos.y {
-                                    //         enemy.knockback.1 * -1.0
-                                    //     } else {
-                                    //         0.0
-                                    //     },
-                                    // );
-                                }
                                 _ => None,
                             };
                         if let Some(knockback) = knockback_opt {

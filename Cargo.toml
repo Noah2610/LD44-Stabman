@@ -1,5 +1,5 @@
 [package]
-name = "LD44"
+name = "ld44-stabman"
 version = "1.0.0"
 authors = ["Noah Rosenzweig <rosenzweig.noah@gmail.com>"]
 edition = "2018"

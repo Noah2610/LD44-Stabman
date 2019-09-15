@@ -1,5 +1,4 @@
 use crate::components::prelude::*;
-use deathframe::geo::Vector;
 
 pub mod prelude {
     pub use super::BulletComponents;
