@@ -168,6 +168,7 @@ function build_release {
 #   local spacing
 function build_release_for_linux {
   exclude_file "SDL2.dll"
+  include_file "${RELEASE_EXE_NAME_OUTPUT}.desktop"
 
   local features_arg=""
   [ -n "$RELEASE_FEATURES" ] && features_arg="--features ${RELEASE_FEATURES}"
@@ -208,6 +209,7 @@ function build_release_for_linux {
 #   local target
 #   local spacing
 function build_release_for_windows {
+  exclude_file "${RELEASE_EXE_NAME_OUTPUT}.desktop"
   [[ "$RELEASE_FEATURES" =~ "controller" ]] && include_file "SDL2.dll"
 
   local features_arg=""

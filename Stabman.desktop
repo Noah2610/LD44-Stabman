@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Start-Stabman
+Comment=Start stabbing with Stabman!
+TryExec=./Stabman
+Exec=./Stabman
+Terminal=false
+Categories=Game;ActionGame;
+StartupWMClass=Stabman
