@@ -110,79 +110,15 @@ There are three campaigns you can play:
   Each of the bonus campaigns includes __3 levels__.
 
 ## Items
-<style>
-img#items-spritesheet {
-  width: 600px;
-  min-width: 600px;
-  max-width: 600px;
-  /* https://stackoverflow.com/a/24869226/10927893 */
-  image-rendering: optimizeSpeed;             /* PREFER SPEED OVER SMOOTHING    */
-  image-rendering: -moz-crisp-edges;          /* Firefox                        */
-  image-rendering: -o-crisp-edges;            /* Opera                          */
-  image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
-  image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
-  -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
-}
-
-#items-box {
-  display: grid;
-  grid-template-columns: 60px 60px 60px 60px 60px 60px 60px 60px 60px 60px;
-}
-
-#items-box > .item-name {
-  font-size: 11px;
-  font-weight: bold;
-  text-align: center;
-}
-
-#items-box > .item-name.item-unused {
-  font-size: 10px;
-  font-weight: normal;
-  font-style: italic;
-}
-</style>
-
-<div id="items-container">
-  <img
-   id="items-spritesheet"
-   src="./resources/spritesheets/items.png"
-   alt="Item Icons">
-  </img>
-
-  <div id="items-box">
-    <div class="item-name">
-      Extra Jump
-    </div>
-    <div class="item-name">
-      Wall Jump
-    </div>
-    <div class="item-name item-unused">
-      (unused)
-    </div>
-    <div class="item-name">
-      Bullet Deflect
-    </div>
-    <div class="item-name">
-      Damage Up
-    </div>
-    <div class="item-name">
-      Speed Up
-    </div>
-    <div class="item-name">
-      Jump Height Up
-    </div>
-    <div class="item-name">
-      Bullet Shoot
-    </div>
-    <div class="item-name">
-      Dash
-    </div>
-    <div class="item-name">
-      Knockback Up
-    </div>
-  </div>
-</div>
-
+<img
+ width="600px"
+ min-width="600px"
+ max-width="600px"
+ id="items-spritesheet"
+ src="./resources/spritesheets/items.png"
+ alt="Item Icons">
+</img>  
+<em>Item descriptions from left-to-right:</em>  
 - __Extra Jump__ _Stackable_  
   Each pickup grants an extra jump in mid-air.  
   When in mid-air, the player can jump additional times.  
@@ -190,6 +126,7 @@ img#items-spritesheet {
 - __Wall Jump__ _Non-stackable_  
   Grants the ability to jump off walls.  
   When sliding on a wall, press the jump button to jump off of the wall.
+- _(unused)_
 - __Bullet Deflect__ _Stackable_  
   Grants the ability to deflect enemy bullets by attacking them.  
   Deflected bullets deal one unit of damage.  
@@ -203,60 +140,53 @@ img#items-spritesheet {
 - __Bullet Shoot__ _Stackable_  
   Grants the ability to shoot bullets when attacking.  
   Bullets deal one unit of damage.  
-  Each pickup increases the bullet's damage by one unit.
+  Each pickup increases the bullet's damage by one unit.  
+  <sup>Don't worry about the weird name, that's what my dumb brain came-up with during the jam, and we stuck with it :)</sup>
 - __Dash__ _Stackable_  
   Each pickup grants the player to use a dash in mid-air.  
   Dashes can only be done in mid-air.  
   Dashes are recharged when standing or sliding on a solid wall.  
-  See the [Controls](#controls)
+  See the [controls section](#controls) for the key to trigger the dash.
 - __Knockback Up__ _Stackable_  
-  When attacking an enemy, knockback throws the enemy backwards.  
+  When attacking an enemy, knockback punches the enemy backwards.  
   Each pickup adds additional knockback strength.
 
 ## Enemy Types
-<style>
-.enemy-spritesheet {
-  display: block;
-  max-width: 600px;
-  margin-bottom: 8px;
-}
-</style>
-
 ### Normal Enemy
 <img
- class="enemy-spritesheet"
+ height="120px"
  src="./resources/spritesheets/enemy_normal.png"
  alt="Normal Enemy">
-</img>
+</img>  
 A normal, tank-like enemy.  
 Has the most amount of health out of all enemy types;  
 walks slowly and hits hard.
 
 ### Charger Enemy
 <img
- class="enemy-spritesheet"
+ height="60px"
  src="./resources/spritesheets/enemy_charger.png"
  alt="Charger Enemy">
-</img>
+</img>  
 A small enemy, which will start rolling at the player,  
 when they move into its trigger range.  
 Once rolling, this enemy will only stop moving upon hitting a wall.
 
 ### Flying Enemy
 <img
- class="enemy-spritesheet"
+ height="120px"
  src="./resources/spritesheets/enemy_flying.png"
  alt="Charger Enemy">
-</img>
+</img>  
 This enemy is not affected by gravity.  
 It simply tries to follows the player when they are within trigger distance.
 
 ### Turret Enemy
 <img
- class="enemy-spritesheet"
+ height="120px"
  src="./resources/spritesheets/enemy_turret.png"
  alt="Charger Enemy">
-</img>
+</img>  
 This enemy cannot be damaged or killed.  
 It shoots bullets from its mouth in regular intervals.  
 Its bullets can be deflected if the player has picked up the _Bullet Deflect_ item.
