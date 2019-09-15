@@ -26,6 +26,7 @@ Post-jam version of our [Ludum Dare 44 game jam entry][ludumdare].
 [Level One Preview Video][level-one-preview-video]
 
 ## Table of Contents
+- [Screenshots](#screenshots)
 - [Description](#description)
 - [Controls](#controls)
 - [Campaign Types](#campaign-types)
