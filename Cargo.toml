@@ -22,10 +22,10 @@ deathframe = "0.1.4"
 climer     = { version = "0.4.0", features = ["serialize"] }
 
 [features]
-nightly          = ["amethyst/nightly"]
 controller       = ["amethyst/sdl_controller"]
 debug            = ["chrono", "backtrace"]
 encrypt_savefile = ["base64"]
+nightly          = ["amethyst/nightly"]
 
 [replace]
 "lewton:0.9.4" = { git = "https://github.com/Noah2610/lewton", branch = "custom-0.9.3" } # cross-compilation to windows doesn't work with lewton 0.9.4
