@@ -15,8 +15,11 @@
 #     DEFAULT: "releases/" directory next to the project root.
 #   $RELEASE_VERSION
 #     Version number which is used in the generated release directory and zip file names.
-#     DEFAULT: Dynamically figures out the highest version number in the releases directory
-#              and uses its increment as the version. 0 if no version numbers were found.
+#     Special values are:
+#       "auto":  Dynamically figures out the highest version number in the releases directory
+#                and uses its increment as the version. 0 if no version numbers were found.
+#       "cargo": Get the version number from the `Cargo.toml` file.
+#     DEFAULT: "cargo"
 #   $RELEASE_FILE_PREFIX
 #     Prefix string for the generated release directory and zip file.
 #     DEFAULT: "ld44-postjam-"
@@ -61,6 +64,7 @@ set -e
 
 WINDOWS_TARGET="x86_64-pc-windows-gnu"
 CONTROLLER_SUPPORT_SUFFIX="-with-controller"
+CARGO_MANIFEST="${ROOT}/Cargo.toml"
 INCLUDE_FILES=()
 
 function include_file {
@@ -105,6 +109,29 @@ function get_latest_version {
   echo "$new_vers"
 }
 
+function get_version_from_cargo {
+  check "grep"
+  check "pcregrep"
+  check "cut"
+  check "tr"
+
+  check_file "$CARGO_MANIFEST"
+
+  local version
+  if ! version="$(
+    pcregrep -Mx \
+      '^\s*\[package\]\s*$(.|\n.)*' "$CARGO_MANIFEST" \
+      | grep -Eo '^\s*version\s*=\s*.+$' - \
+      | cut -d'=' -f2 \
+      | tr -d ' "'
+  )"; then
+    echo "ERROR"
+    err "Error getting current crate version from file '${CARGO_MANIFEST}'"
+  fi
+
+  echo "$version"
+}
+
 function get_filename_for_target {
   local target="$1"
   [ -z "$target" ] && err "No target name given to function \`$0\`."
@@ -133,6 +160,15 @@ function build_release {
   local spacing
 
   msg_strong "Building release version $( colored "$COLOR_CODE" "$RELEASE_VERSION" )"
+
+  case "$RELEASE_VERSION" in
+    "auto")
+      RELEASE_VERSION="$( get_latest_version )"
+      ;;
+    "cargo")
+      RELEASE_VERSION="$( get_version_from_cargo )"
+      ;;
+  esac
 
   for target in "${RELEASE_TARGETS[@]}"; do
     echo  # Empty line
@@ -256,7 +292,7 @@ function should_build_with_controller {
 RELEASE_TARGETS=($RELEASE_TARGETS)
 [ -z "$RELEASE_DIR" ]             && RELEASE_DIR="${ROOT}/releases"
 [ -d "$RELEASE_DIR" ]             || mkdir -p "$RELEASE_DIR"
-[ -z "$RELEASE_VERSION" ]         && RELEASE_VERSION="$( get_latest_version )"
+[ -z "$RELEASE_VERSION" ]         && RELEASE_VERSION="cargo"
 [ -z "$RELEASE_FILE_PREFIX" ]     && RELEASE_FILE_PREFIX="ld44-postjam-"
 [ -z "$RELEASE_FILE_SUFFIX" ]     && RELEASE_FILE_SUFFIX=""
 [ -z "$RELEASE_EXE_NAME" ]        && RELEASE_EXE_NAME="ld44-stabman"
