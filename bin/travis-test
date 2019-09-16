@@ -20,7 +20,7 @@ function unpack_release {
   popd || exit 1
 }
 
-function test_game {
+function test_release {
   check_dir "$RELEASE_DIR"
   [ -z "$EXE_NAME" ] && err "Executable name is not set"
   pushd "$RELEASE_DIR" || exit 1
@@ -37,9 +37,6 @@ function cleanup {
     rm -rf "$TEST_DIR"
   fi
 }
-
-check "pushd"
-check "popd"
 
 unpack_release
 test_release

@@ -16,6 +16,16 @@ function get_release_path {
   cat "$file_with_path"
 }
 
+function pushd_wrapper {
+  \pushd "$@" &> /dev/null || exit 1
+}
+function popd_wrapper {
+  \popd "$@" &> /dev/null || exit 1
+}
+
+alias pushd="pushd_wrapper"
+alias popd="popd_wrapper"
+
 _logdir="${ROOT}/logs"
 [ -d "$_logdir" ] || mkdir -p "$_logdir"
 LOGFILE="${_logdir}/$( basename "$0" ).log"

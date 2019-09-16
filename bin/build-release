@@ -211,7 +211,13 @@ function run {
         ;;
 
       "windows")
-        local RUST_TARGET_DIR="${ROOT}/target/${WINDOWS_TARGET}/release"
+        if [ -n "$TRAVIS" ]; then
+          # Use default rust target path when run from travis (is windows OS on travis)
+          local RUST_TARGET_DIR="${ROOT}/target/release"
+        else
+          # Use non-default rust target path when cross-compiling
+          local RUST_TARGET_DIR="${ROOT}/target/${WINDOWS_TARGET}/release"
+        fi
         RELEASE_EXE_NAME="${RELEASE_EXE_NAME/.exe/}.exe"
         RELEASE_EXE_NAME_OUTPUT="${RELEASE_EXE_NAME_OUTPUT/.exe/}.exe"
         exclude_file "${RELEASE_EXE_NAME_OUTPUT}.desktop"

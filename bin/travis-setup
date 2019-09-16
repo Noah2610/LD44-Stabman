@@ -1,0 +1,23 @@
+#!/bin/bash
+# Script, which is run before travis build.
+# Installs some dependency, depending on on which OS travis is running.
+
+# shellcheck source=./travis-share.sh
+_dir="$( dirname "$0" )"
+source "${_dir}/travis-share.sh"
+unset _dir
+
+case "$TRAVIS_OS_NAME" in
+  "linux")
+    apt-get update
+    apt-get install libsdl2-dev
+    ;;
+  "osx")
+    check "brew"
+    brew update
+    brew install SDL2 gdrive
+    ;;
+  *)
+    err "Unrecognized OS $( colored "$COLOR_CODE" "$TRAVIS_OS_NAME" )"
+    ;;
+esac
