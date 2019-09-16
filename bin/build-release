@@ -208,19 +208,23 @@ function run {
         ;;
 
       "windows")
+        local RUST_TARGET_DIR=
+        local maybe_target=
         if [ -n "$TRAVIS" ]; then
           # Use default rust target path when run from travis (is windows OS on travis)
-          local RUST_TARGET_DIR="${ROOT}/target/release"
+          RUST_TARGET_DIR="${ROOT}/target/release"
+          maybe_target="--target $WINDOWS_TARGET"
         else
           # Use non-default rust target path when cross-compiling
-          local RUST_TARGET_DIR="${ROOT}/target/${WINDOWS_TARGET}/release"
+          RUST_TARGET_DIR="${ROOT}/target/${WINDOWS_TARGET}/release"
+          maybe_target=
         fi
         RELEASE_EXE_NAME="${RELEASE_EXE_NAME/.exe/}.exe"
         RELEASE_EXE_NAME_OUTPUT="${RELEASE_EXE_NAME_OUTPUT/.exe/}.exe"
         exclude_file "${RELEASE_EXE_NAME_OUTPUT}.desktop"
         [[ "$RELEASE_FEATURES" =~ "controller" ]] && include_file "SDL2.dll"
 
-        build_release "$@" --target "$WINDOWS_TARGET"
+        build_release "$@" $maybe_target
         ;;
 
       *)
