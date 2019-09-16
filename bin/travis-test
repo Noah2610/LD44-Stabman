@@ -1,0 +1,46 @@
+#!/bin/bash
+# Script, which should be called from travis to validate the
+# executable built by `bin/build-release`.
+
+# shellcheck source=./travis-share.sh
+_dir="$( dirname "$0" )"
+source "${_dir}/travis-share.sh"
+unset _dir
+
+TEST_DIR="${ROOT}/travis-test"
+RELEASE_ZIP="$( get_release_path )"
+RELEASE_DIR="${RELEASE_ZIP/.zip/}"
+
+function unpack_release {
+  check "unzip"
+  [ -d "$TEST_DIR" ] || mkdir -p "$TEST_DIR"
+  cp "$RELEASE_ZIP" "$TEST_DIR"
+  pushd "$TEST_DIR" || exit 1
+  unzip "$RELEASE_ZIP"
+  popd || exit 1
+}
+
+function test_game {
+  check_dir "$RELEASE_DIR"
+  [ -z "$EXE_NAME" ] && err "Executable name is not set"
+  pushd "$RELEASE_DIR" || exit 1
+  if STABMAN_EXIT="1" ./"${EXE_NAME}"; then
+    msg "Built binary executable can be started successfully!"
+  else
+    msg "$( colored "$COLOR_ERR" "Built binary executable could not be started!" )"
+  fi
+  popd || exit 1
+}
+
+function cleanup {
+  if [ -d "$TEST_DIR" ]; then
+    rm -rf "$TEST_DIR"
+  fi
+}
+
+check "pushd"
+check "popd"
+
+unpack_release
+test_release
+cleanup

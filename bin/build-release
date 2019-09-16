@@ -65,7 +65,11 @@
 
 # shellcheck source=./share.sh
 _dir="$( dirname "$0" )"
-source "${_dir}/share.sh"
+if [ -z "$TRAVIS" ]; then
+  source "${_dir}/share.sh"
+else
+  source "${_dir}/travis-share.sh"
+fi
 unset _dir
 
 set -e

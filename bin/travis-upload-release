@@ -3,22 +3,10 @@
 # Uploads the built release to Google Drive
 # using `gdrive` (https://github.com/gdrive-org/gdrive).
 
-# shellcheck source=./share.sh
+# shellcheck source=./travis-share.sh
 _dir="$( dirname "$0" )"
-source "${_dir}/share.sh"
+source "${_dir}/travis-share.sh"
 unset _dir
-
-# Only run if this script was started from Travis
-[ -z "$TRAVIS" ] && err "This script should only be run from Travis"
-
-TARGET="$RELEASE_TARGETS"
-
-function get_release_path {
-  check "cat"
-  local file_with_path="${ROOT}/.travis-release-path-${TARGET}"
-  check_file "$file_with_path"
-  cat "$file_with_path"
-}
 
 function upload_release {
   check "gdrive"
