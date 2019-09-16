@@ -23,9 +23,9 @@ case "$TRAVIS_OS_NAME" in
     ;;
 
   "windows")
-    choko install \
-    grep \
-    gdrive
+    choco install \
+      grep \
+      gdrive
     ;;
 
   "osx")
