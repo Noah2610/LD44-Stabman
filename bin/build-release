@@ -54,6 +54,10 @@
 #       "${RELEASE_EXE_NAME}${CONTROLLER_SUPPORT_SUFFIX}(.exe)"
 #     The ".exe" at the end is only appended for windows executables.
 #     DEFAULT: "0"
+#   $RELEASE_PRINT_CARGO_STDERR
+#     If this variable is set, then all cargo commands are also printed to stderr,
+#     not only to the `$LOGFILE`.
+#     DEFAULT: ""
 
 # shellcheck source=./share.sh
 _dir="$( dirname "$0" )"
@@ -207,7 +211,8 @@ function build_release_for_linux {
   local features_arg=""
   [ -n "$RELEASE_FEATURES" ] && features_arg="--features ${RELEASE_FEATURES}"
   msg "${spacing}Compiling..."
-  try_run "cargo +${RELEASE_RUST_VERSION} build --release ${features_arg} $*"
+  also_to_stderr="$RELEASE_PRINT_CARGO_STDERR" try_run \
+    "cargo +${RELEASE_RUST_VERSION} build --release ${features_arg} $*"
 
   local target_dir="${RELEASE_DIR}/${filename}"
   mkdir "$target_dir"
@@ -230,7 +235,8 @@ function build_release_for_linux {
     else
       features="controller"
     fi
-    try_run "cargo +${RELEASE_RUST_VERSION} build --release --features $features $*"
+    also_to_stderr="$RELEASE_PRINT_CARGO_STDERR" try_run \
+      "cargo +${RELEASE_RUST_VERSION} build --release --features $features $*"
     try_run "cp ${ROOT}/target/release/${RELEASE_EXE_NAME} ${exe_name}"
     try_run "zip -r ${zip_name}.zip ${exe_name}"
     try_run "rm -f ${exe_name}"
@@ -249,7 +255,8 @@ function build_release_for_windows {
   local features_arg=""
   [ -n "$RELEASE_FEATURES" ] && features_arg="--features ${RELEASE_FEATURES}"
   msg "${spacing}Compiling..."
-  try_run "cargo +${RELEASE_RUST_VERSION} build --release --target ${WINDOWS_TARGET} ${features_arg} $*"
+  also_to_stderr="$RELEASE_PRINT_CARGO_STDERR" try_run \
+    "cargo +${RELEASE_RUST_VERSION} build --release --target ${WINDOWS_TARGET} ${features_arg} $*"
 
   local target_dir="${RELEASE_DIR}/${filename}"
   mkdir "$target_dir"
@@ -273,7 +280,8 @@ function build_release_for_windows {
     else
       features="controller"
     fi
-    try_run "cargo +${RELEASE_RUST_VERSION} build --release --target ${WINDOWS_TARGET} --features $features $*"
+    also_to_stderr="$RELEASE_PRINT_CARGO_STDERR" try_run \
+      "cargo +${RELEASE_RUST_VERSION} build --release --target ${WINDOWS_TARGET} --features $features $*"
     try_run "cp ${ROOT}/target/${WINDOWS_TARGET}/release/${RELEASE_EXE_NAME}.exe ${exe_name}"
     try_run "cp ${ROOT}/${sdl2_file} ${sdl2_file}"
     try_run "zip -r ${zip_name}.zip ${exe_name} ${sdl2_file}"
@@ -288,16 +296,17 @@ function should_build_with_controller {
 # Set global settings variables.
 [ -z "$RELEASE_TARGETS" ] && RELEASE_TARGETS="linux windows"
 RELEASE_TARGETS=($RELEASE_TARGETS)
-[ -z "$RELEASE_DIR" ]             && RELEASE_DIR="${ROOT}/releases"
-[ -d "$RELEASE_DIR" ]             || mkdir -p "$RELEASE_DIR"
-[ -z "$RELEASE_VERSION" ]         && RELEASE_VERSION="cargo"
-[ -z "$RELEASE_FILE_PREFIX" ]     && RELEASE_FILE_PREFIX="ld44-postjam-"
-[ -z "$RELEASE_FILE_SUFFIX" ]     && RELEASE_FILE_SUFFIX=""
-[ -z "$RELEASE_EXE_NAME" ]        && RELEASE_EXE_NAME="ld44-stabman"
-[ -z "$RELEASE_EXE_NAME_OUTPUT" ] && RELEASE_EXE_NAME_OUTPUT="Stabman"
-[ -z "$RELEASE_RESOURCES_DIR" ]   && RELEASE_RESOURCES_DIR="${ROOT}/resources"
-[ -z "$RELEASE_RUST_VERSION" ]    && RELEASE_RUST_VERSION="1.34.2"
-[ -z "$RELEASE_FEATURES" ]        && RELEASE_FEATURES=""
-[ -z "$RELEASE_WITH_CONTROLLER" ] && RELEASE_WITH_CONTROLLER="0"
+[ -z "$RELEASE_DIR" ]                && RELEASE_DIR="${ROOT}/releases"
+[ -d "$RELEASE_DIR" ]                || mkdir -p "$RELEASE_DIR"
+[ -z "$RELEASE_VERSION" ]            && RELEASE_VERSION="cargo"
+[ -z "$RELEASE_FILE_PREFIX" ]        && RELEASE_FILE_PREFIX="ld44-postjam-"
+[ -z "$RELEASE_FILE_SUFFIX" ]        && RELEASE_FILE_SUFFIX=""
+[ -z "$RELEASE_EXE_NAME" ]           && RELEASE_EXE_NAME="ld44-stabman"
+[ -z "$RELEASE_EXE_NAME_OUTPUT" ]    && RELEASE_EXE_NAME_OUTPUT="Stabman"
+[ -z "$RELEASE_RESOURCES_DIR" ]      && RELEASE_RESOURCES_DIR="${ROOT}/resources"
+[ -z "$RELEASE_RUST_VERSION" ]       && RELEASE_RUST_VERSION="1.34.2"
+[ -z "$RELEASE_FEATURES" ]           && RELEASE_FEATURES=""
+[ -z "$RELEASE_WITH_CONTROLLER" ]    && RELEASE_WITH_CONTROLLER="0"
+[ -z "$RELEASE_PRINT_CARGO_STDERR" ] && RELEASE_PRINT_CARGO_STDERR=""
 
 build_release "$@"
