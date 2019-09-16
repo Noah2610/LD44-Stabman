@@ -24,7 +24,8 @@ function run {
   cargo_cmd "run" "$*"
 }
 
-[ -z "$RUN_DEV" ] && RUN_DEV="1"
-export DEV="$RUN_DEV"
+echo "$RUN_FEATURES"
+[ -z "$STABMAN_DEV" ]  && export STABMAN_DEV="1"
+[ -z "$RUN_FEATURES" ] && export RUN_FEATURES="nightly,controller,debug"
 
 run "$@"

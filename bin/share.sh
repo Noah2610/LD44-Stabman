@@ -33,5 +33,3 @@ _logdir="${ROOT}/logs"
 [ -d "$_logdir" ] || mkdir -p "$_logdir"
 LOGFILE="${_logdir}/$( basename "$0" ).log"
 unset _logdir
-
-[ -z "$RUN_FEATURES" ] && RUN_FEATURES="nightly,debug"

@@ -24,6 +24,7 @@ mod states;
 mod systems;
 mod world_helpers;
 
+use std::env;
 use std::time::Duration;
 
 use amethyst::audio::AudioBundle;
@@ -70,6 +71,8 @@ fn main() -> Result<(), String> {
 
     print_welcome_message();
 
+    maybe_exit();
+
     init_game().map_err(|e| e.to_string())
 }
 
@@ -80,6 +83,18 @@ fn print_welcome_message() {
         name_and_version,
         "-".repeat(name_and_version.len()),
     );
+}
+
+fn maybe_exit() {
+    // Exit game if environment variable `EXIT` is set.
+    // Used for validating a correct build, without a graphical environment.
+    const EXIT_VAR_NAME: &str = "STABMAN_EXIT";
+    if env::vars()
+        .any(|(key, val)| key == EXIT_VAR_NAME && !val.is_empty() && val != "0")
+    {
+        println!("Environment variable `{}` is set, exiting.", EXIT_VAR_NAME);
+        std::process::exit(0);
+    }
 }
 
 fn init_game() -> amethyst::Result<()> {
@@ -291,8 +306,7 @@ fn build_game_data<'a, 'b>(
 
 #[cfg(feature = "debug")]
 pub fn in_development_mode() -> bool {
-    use std::env;
-    const DEV_VAR_NAME: &str = "DEV";
+    const DEV_VAR_NAME: &str = "STABMAN_DEV";
     env::vars()
         .any(|(key, val)| key == DEV_VAR_NAME && !val.is_empty() && val != "0")
 }
