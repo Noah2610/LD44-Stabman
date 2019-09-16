@@ -15,6 +15,7 @@ case "$TRAVIS_OS_NAME" in
     curl \
     tee \
     pcregrep \
+    libasound2-dev \
     libsdl2-dev
 
     # Kind of ironic, that ubuntu is the only one of these OSes,
