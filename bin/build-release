@@ -8,7 +8,11 @@
 # Optional environment variables:
 #   $RELEASE_TARGETS
 #     A space-separated list of build target identifiers;
-#     valid identifiers are: "default" (host's target triple), "linux", "windows".
+#     valid identifiers are:
+#       "default" (host's target triple)
+#       "linux"   (host's target triple, this is stupid)
+#       "osx"     (host's target triple, this is stupid)
+#       "windows"
 #     DEFAULT: "linux windows"
 #   $RELEASE_DIR
 #     Directory path for the generated releases to be saved to.
@@ -182,7 +186,7 @@ function build_release {
     spacing="${spacing_strong}${spacing_strong}"
 
     case "$target" in
-      "linux" | "default")
+      "linux" | "osx" | "default")
         build_release_for_linux "$@"
         ;;
 
