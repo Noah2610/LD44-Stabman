@@ -228,6 +228,15 @@ function build_release_for_linux {
 
   mk_archive "$target_dir"
 
+  # If this script was run from travis,
+  # write the filepath of the generated zip to a file.
+  # (used by bin/travis-upload-atrifact script)
+  if [ -n "$TRAVIS" ]; then
+    local file_with_path="${ROOT}/.travis-release-path-${target}"
+    local zip_path="${target_dir}.zip"
+    echo -n "$zip_path" > "$file_with_path"
+  fi
+
   if should_build_with_controller; then
     msg "${spacing}Compiling with controller support..."
     cd "${RELEASE_DIR}"
@@ -271,6 +280,15 @@ function build_release_for_windows {
   try_run "cp ${INCLUDE_FILES[*]} $target_dir"
 
   mk_archive "$target_dir"
+
+  # If this script was run from travis,
+  # write the filepath of the generated zip to a file.
+  # (used by bin/travis-upload-atrifact script)
+  if [ -n "$TRAVIS" ]; then
+    local file_with_path="${ROOT}/.travis-release-path-${target}"
+    local zip_path="${target_dir}.zip"
+    echo -n "$zip_path" > "$file_with_path"
+  fi
 
   if should_build_with_controller; then
     msg "${spacing}Compiling with controller support..."

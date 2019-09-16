@@ -13,6 +13,6 @@ env:
     - RELEASE_WITH_CONTROLLER="0"
     - RELEASE_PRINT_CARGO_STDERR="1"
 before_install:
-  - brew install SDL2
+  - brew install SDL2 gdrive
 script:
   - bin/build-release
