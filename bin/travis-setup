@@ -13,13 +13,14 @@ case "$TRAVIS_OS_NAME" in
     sudo apt-get update
     sudo apt-get install -y \
     curl \
+    tee \
     pcregrep \
     libsdl2-dev
 
     # Kind of ironic, that ubuntu is the only one of these OSes,
     # that doesn't have `gdrive` available in their main repos.
     local GDRIVE_DOWNLOAD="https://github.com/gdrive-org/gdrive/releases/download/2.1.0/gdrive-linux-x64"
-    sudo curl -L "$GDRIVE_DOWNLOAD" > /bin/gdrive
+    curl -L "$GDRIVE_DOWNLOAD" | sudo tee /bin/gdrive 1> /dev/null
     ;;
 
   "windows")
