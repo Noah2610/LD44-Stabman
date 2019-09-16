@@ -123,7 +123,6 @@ function get_latest_version {
 
 function get_version_from_cargo {
   check "grep"
-  check "pcregrep"
   check "cut"
   check "tr"
 
@@ -131,9 +130,7 @@ function get_version_from_cargo {
 
   local version
   if ! version="$(
-    pcregrep -Mx \
-      '^\s*\[package\]\s*$(.|\n.)*' "$CARGO_MANIFEST" \
-      | grep -Eo '^\s*version\s*=\s*.+$' - \
+    grep -Eom1 '^\s*version\s*=\s*.+$' "$CARGO_MANIFEST" \
       | cut -d'=' -f2 \
       | tr -d ' "'
   )"; then

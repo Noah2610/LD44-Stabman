@@ -21,6 +21,7 @@ case "$TRAVIS_OS_NAME" in
     # that doesn't have `gdrive` available in their main repos.
     local GDRIVE_DOWNLOAD="https://github.com/gdrive-org/gdrive/releases/download/2.1.0/gdrive-linux-x64"
     curl -L "$GDRIVE_DOWNLOAD" | sudo tee /bin/gdrive 1> /dev/null
+    sudo chmod +x /bin/gdrive
     ;;
 
   "windows")
