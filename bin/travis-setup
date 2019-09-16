@@ -12,6 +12,8 @@ case "$TRAVIS_OS_NAME" in
     sudo apt-get update
     sudo apt-get install -y libsdl2-dev
     ;;
+  "windows")
+    ;;
   "osx")
     check "brew"
     brew update
