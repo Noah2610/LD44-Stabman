@@ -16,3 +16,5 @@ before_install:
   - brew install SDL2 gdrive
 script:
   - bin/build-release
+after_success:
+  - bin/travis-upload-release
