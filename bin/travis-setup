@@ -10,7 +10,9 @@ unset _dir
 case "$TRAVIS_OS_NAME" in
   "linux")
     sudo apt-get update
-    sudo apt-get install -y libsdl2-dev
+    sudo apt-get install -y \
+      pcregrep \
+      libsdl2-dev
     ;;
   "windows")
     ;;
