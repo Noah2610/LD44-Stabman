@@ -159,8 +159,6 @@ function build_release {
   local target
   local spacing
 
-  msg_strong "Building release version $( colored "$COLOR_CODE" "$RELEASE_VERSION" )"
-
   case "$RELEASE_VERSION" in
     "auto")
       RELEASE_VERSION="$( get_latest_version )"
@@ -170,9 +168,9 @@ function build_release {
       ;;
   esac
 
-  for target in "${RELEASE_TARGETS[@]}"; do
-    echo  # Empty line
+  msg_strong "Building release version $( colored "$COLOR_CODE" "$RELEASE_VERSION" )"
 
+  for target in "${RELEASE_TARGETS[@]}"; do
     spacing_strong="  "
     target_display="$( colored "$COLOR_CODE" "$target" )"
     msg_strong "${spacing_strong}Building release for $target_display"
