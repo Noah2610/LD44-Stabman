@@ -10,31 +10,32 @@ unset _dir
 function run_install {
 case "$TRAVIS_OS_NAME" in
   "linux")
-    sudo apt-get update
-    sudo apt-get install -y \
-    curl \
-    tee \
-    pcregrep \
-    libasound2-dev \
-    libsdl2-dev
+    try_run 'sudo apt-get update'
+    try_run 'sudo apt-get install -y
+      curl
+      build-essential
+      libasound2-dev
+      libpulse-dev
+      portaudio19-dev
+      libsdl2-dev'
 
     # Kind of ironic, that ubuntu is the only one of these OSes,
     # that doesn't have `gdrive` available in their main repos.
     local GDRIVE_DOWNLOAD="https://github.com/gdrive-org/gdrive/releases/download/2.1.0/gdrive-linux-x64"
-    curl -L "$GDRIVE_DOWNLOAD" | sudo tee /bin/gdrive 1> /dev/null
+    try_run 'curl -L '"$GDRIVE_DOWNLOAD"' | sudo tee /bin/gdrive 1> /dev/null'
     sudo chmod +x /bin/gdrive
     ;;
 
   "windows")
-    choco install \
-      grep \
-      gdrive
+    try_run 'choco install
+      grep
+      gdrive'
     ;;
 
   "osx")
     check "brew"
-    brew update
-    brew install SDL2 gdrive
+    try_run 'brew update'
+    try run 'brew install SDL2 gdrive'
     ;;
 
   *)
