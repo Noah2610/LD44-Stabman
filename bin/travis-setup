@@ -7,21 +7,37 @@ _dir="$( dirname "$0" )"
 source "${_dir}/travis-share.sh"
 unset _dir
 
+function run_install {
 case "$TRAVIS_OS_NAME" in
   "linux")
     sudo apt-get update
     sudo apt-get install -y \
-      pcregrep \
-      libsdl2-dev
+    curl \
+    pcregrep \
+    libsdl2-dev
+
+    # Kind of ironic, that ubuntu is the only one of these OSes,
+    # that doesn't have `gdrive` available in their main repos.
+    local GDRIVE_DOWNLOAD="https://github.com/gdrive-org/gdrive/releases/download/2.1.0/gdrive-linux-x64"
+    sudo curl -L "$GDRIVE_DOWNLOAD" > /bin/gdrive
     ;;
+
   "windows")
+    choko install \
+    grep \
+    gdrive
     ;;
+
   "osx")
     check "brew"
     brew update
     brew install SDL2 gdrive
     ;;
+
   *)
     err "Unrecognized OS $( colored "$COLOR_CODE" "$TRAVIS_OS_NAME" )"
     ;;
 esac
+}
+
+      run_install
