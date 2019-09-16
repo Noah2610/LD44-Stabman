@@ -4,6 +4,8 @@ _dir="$( dirname "$0" )"
 source "${_dir}/util.sh"
 unset _dir
 
+shopt -s expand_aliases
+
 # https://stackoverflow.com/a/17841619/10927893
 function join_by { local IFS="$1"; shift; echo "$*"; }
 
@@ -27,6 +29,16 @@ function cargo_cmd {
     $cmd
   fi
 }
+
+function pushd_wrapper {
+  \pushd "$@" &> /dev/null || exit 1
+}
+function popd_wrapper {
+  \popd "$@" &> /dev/null || exit 1
+}
+
+alias pushd="pushd_wrapper"
+alias popd="popd_wrapper"
 
 RUST_VERSION="nightly-2019-03-01"
 _logdir="${ROOT}/logs"

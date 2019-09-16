@@ -150,17 +150,27 @@ function mk_archive {
   local path="$1"
   local dir
   local filename
+  local zipname
   [ -z "$1" ] && err "No path given to function \`$0\`."
   check "zip" && check "dirname" && check "basename"
   dir="$( dirname "$path" )"
-  [ -n "$dir" ] && cd "$dir"
+  pushd "$dir"
   filename="$( basename "$path" )"
-  msg "${spacing}Zipping directory..."
-  try_run "zip -r ${filename}.zip $filename"
+  zipname="${filename}.zip"
+  prev_spacing="$spacing"
+  spacing="$spacing  "
+  msg "${prev_spacing}Zipping directory..."
+  if [ -f "$zipname" ]; then
+    msg "${spacing}zip archive already exists: $( colored "$COLOR_CODE" "$zipname" )"
+    msg "${spacing}Deleting existing zip archive and creating new zip"
+  fi
+  try_run "zip -r $zipname $filename"
   try_run "rm -rf $filename"
+  spacing="$prev_spacing"
+  popd
 }
 
-function build_release {
+function run {
   check "cargo"
   local target_display
   local filename
@@ -187,11 +197,23 @@ function build_release {
 
     case "$target" in
       "linux" | "osx" | "default")
-        build_release_for_linux "$@"
+        local RUST_TARGET_DIR="${ROOT}/target/release"
+        RELEASE_EXE_NAME="${RELEASE_EXE_NAME/.exe/}"
+        RELEASE_EXE_NAME_OUTPUT="${RELEASE_EXE_NAME_OUTPUT/.exe/}"
+        exclude_file "SDL2.dll"
+        include_file "${RELEASE_EXE_NAME_OUTPUT}.desktop"
+
+        build_release "$@"
         ;;
 
       "windows")
-        build_release_for_windows "$@"
+        local RUST_TARGET_DIR="${ROOT}/target/${WINDOWS_TARGET}/release"
+        RELEASE_EXE_NAME="${RELEASE_EXE_NAME/.exe/}.exe"
+        RELEASE_EXE_NAME_OUTPUT="${RELEASE_EXE_NAME_OUTPUT/.exe/}.exe"
+        exclude_file "${RELEASE_EXE_NAME_OUTPUT}.desktop"
+        [[ "$RELEASE_FEATURES" =~ "controller" ]] && include_file "SDL2.dll"
+
+        build_release "$@" --target "$WINDOWS_TARGET"
         ;;
 
       *)
@@ -208,31 +230,34 @@ function build_release {
 #   local filename
 #   local target
 #   local spacing
-function build_release_for_linux {
-  exclude_file "SDL2.dll"
-  include_file "${RELEASE_EXE_NAME_OUTPUT}.desktop"
-
+function build_release {
   local features_arg=""
   [ -n "$RELEASE_FEATURES" ] && features_arg="--features ${RELEASE_FEATURES}"
-  msg "${spacing}Compiling..."
+  local prev_spacing="$spacing"
+  spacing="$spacing  "
+  msg "${prev_spacing}Compiling..."
   also_to_stderr="$RELEASE_PRINT_CARGO_STDERR" try_run \
     "cargo +${RELEASE_RUST_VERSION} build --release ${features_arg} $*"
 
   local target_dir="${RELEASE_DIR}/${filename}"
   mkdir "$target_dir"
 
-  msg "${spacing}Copying executable and resources..."
-  try_run "cp ${ROOT}/target/release/${RELEASE_EXE_NAME} ${target_dir}/${RELEASE_EXE_NAME_OUTPUT}"
+  msg "${prev_spacing}Copying executable and resources..."
+  try_run "cp ${RUST_TARGET_DIR}/${RELEASE_EXE_NAME} ${target_dir}/${RELEASE_EXE_NAME_OUTPUT}"
   try_run "cp -r $RELEASE_RESOURCES_DIR $target_dir"
-  try_run "cp ${INCLUDE_FILES[*]} $target_dir"
+  try_run "cp ${INCLUDE_FILES[*]} $target_dir";
+  spacing="$prev_spacing"
 
   mk_archive "$target_dir"
 
   if should_build_with_controller; then
-    msg "${spacing}Compiling with controller support..."
+    local prev_spacing="$spacing"
+    spacing="$spacing  "
+    msg "${prev_spacing}Compiling with controller support..."
     cd "${RELEASE_DIR}"
     local exe_name="${RELEASE_EXE_NAME_OUTPUT}${CONTROLLER_SUPPORT_SUFFIX}"
-    local zip_name="${RELEASE_FILE_PREFIX}${target}${RELEASE_FILE_SUFFIX}-${RELEASE_VERSION}${CONTROLLER_SUPPORT_SUFFIX}"
+    exe_name="${exe_name/.exe${CONTROLLER_SUPPORT_SUFFIX}/${CONTROLLER_SUPPORT_SUFFIX}.exe}"
+    local zip_name="${RELEASE_FILE_PREFIX}${target}${RELEASE_FILE_SUFFIX}-${RELEASE_VERSION}${CONTROLLER_SUPPORT_SUFFIX}.zip"
     local features
     if [ -n "$RELEASE_FEATURES" ]; then
       features="${RELEASE_FEATURES},controller"
@@ -241,55 +266,16 @@ function build_release_for_linux {
     fi
     also_to_stderr="$RELEASE_PRINT_CARGO_STDERR" try_run \
       "cargo +${RELEASE_RUST_VERSION} build --release --features $features $*"
-    try_run "cp ${ROOT}/target/release/${RELEASE_EXE_NAME} ${exe_name}"
-    try_run "zip -r ${zip_name}.zip ${exe_name}"
-    try_run "rm -f ${exe_name}"
-  fi
-}
-
-# Pre-set local variables:
-#   local target_display
-#   local filename
-#   local target
-#   local spacing
-function build_release_for_windows {
-  exclude_file "${RELEASE_EXE_NAME_OUTPUT}.desktop"
-  [[ "$RELEASE_FEATURES" =~ "controller" ]] && include_file "SDL2.dll"
-
-  local features_arg=""
-  [ -n "$RELEASE_FEATURES" ] && features_arg="--features ${RELEASE_FEATURES}"
-  msg "${spacing}Compiling..."
-  also_to_stderr="$RELEASE_PRINT_CARGO_STDERR" try_run \
-    "cargo +${RELEASE_RUST_VERSION} build --release --target ${WINDOWS_TARGET} ${features_arg} $*"
-
-  local target_dir="${RELEASE_DIR}/${filename}"
-  mkdir "$target_dir"
-
-  msg "${spacing}Copying executable and resources..."
-  try_run "cp ${ROOT}/target/${WINDOWS_TARGET}/release/${RELEASE_EXE_NAME}.exe ${target_dir}/${RELEASE_EXE_NAME_OUTPUT}.exe"
-  try_run "cp -r $RELEASE_RESOURCES_DIR $target_dir"
-  try_run "cp ${INCLUDE_FILES[*]} $target_dir"
-
-  mk_archive "$target_dir"
-
-  if should_build_with_controller; then
-    msg "${spacing}Compiling with controller support..."
-    cd "${RELEASE_DIR}"
-    local sdl2_file="SDL2.dll"
-    local exe_name="${RELEASE_EXE_NAME_OUTPUT}${CONTROLLER_SUPPORT_SUFFIX}.exe"
-    local zip_name="${RELEASE_FILE_PREFIX}${target}${RELEASE_FILE_SUFFIX}-${RELEASE_VERSION}${CONTROLLER_SUPPORT_SUFFIX}"
-    local features
-    if [ -n "$RELEASE_FEATURES" ]; then
-      features="${RELEASE_FEATURES},controller"
+    try_run "cp ${RUST_TARGET_DIR}/${RELEASE_EXE_NAME} ${exe_name}"
+    if [ "$target" = "windows" ]; then
+      try_run "cp ${ROOT}/SDL2.dll ."
+      try_run "zip -r $zip_name $exe_name SDL2.dll"
+      try_run "rm -f ${exe_name} SDL2.dll"
     else
-      features="controller"
+      try_run "zip -r $zip_name $exe_name"
+      try_run "rm -f $exe_name"
     fi
-    also_to_stderr="$RELEASE_PRINT_CARGO_STDERR" try_run \
-      "cargo +${RELEASE_RUST_VERSION} build --release --target ${WINDOWS_TARGET} --features $features $*"
-    try_run "cp ${ROOT}/target/${WINDOWS_TARGET}/release/${RELEASE_EXE_NAME}.exe ${exe_name}"
-    try_run "cp ${ROOT}/${sdl2_file} ${sdl2_file}"
-    try_run "zip -r ${zip_name}.zip ${exe_name} ${sdl2_file}"
-    try_run "rm -f ${exe_name} ${sdl2_file}"
+    spacing="$prev_spacing"
   fi
 }
 
@@ -313,4 +299,4 @@ RELEASE_TARGETS=($RELEASE_TARGETS)
 [ -z "$RELEASE_WITH_CONTROLLER" ]    && RELEASE_WITH_CONTROLLER="0"
 [ -z "$RELEASE_PRINT_CARGO_STDERR" ] && RELEASE_PRINT_CARGO_STDERR=""
 
-build_release "$@"
+run "$@"
