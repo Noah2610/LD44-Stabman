@@ -9,8 +9,8 @@ unset _dir
 
 case "$TRAVIS_OS_NAME" in
   "linux")
-    apt-get update
-    apt-get install libsdl2-dev
+    sudo apt-get update
+    sudo apt-get install -y libsdl2-dev
     ;;
   "osx")
     check "brew"
