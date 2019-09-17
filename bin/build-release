@@ -272,7 +272,8 @@ function build_release {
   # (used by bin/travis-upload-atrifact script)
   if [ -n "$TRAVIS" ]; then
     local file_with_path="${ROOT}/.travis-release-path-${target}"
-    local zip_path="${target_dir}.zip"
+    local zip_path
+    zip_path="$( dirname "$target_dir" )/${RELEASE_ZIP_PREFIX}$( basename "$target_dir" )${RELEASE_ZIP_SUFFIX}.zip"
     echo -n "$zip_path" > "$file_with_path"
   fi
 
