@@ -34,7 +34,7 @@ case "$TRAVIS_OS_NAME" in
   "osx")
     check "brew"
     try_run 'brew update'
-    try run 'brew install SDL2 gdrive'
+    try_run 'brew install SDL2 gdrive'
     ;;
 
   *)

@@ -20,7 +20,7 @@ function unpack_release {
   [ -d "$TEST_DIR" ] || mkdir -p "$TEST_DIR"
   cp "$RELEASE_ZIP" "${TEST_DIR}/${release_zip_name}"
   pushd "$TEST_DIR" || exit 1
-  try_run "unzip \"$release_zip_name\""
+  try_run "unzip $release_zip_name"
   popd || exit 1
 }
 
