@@ -6,12 +6,12 @@ dist: xenial
 language: rust
 rust:
   - 1.34.2
-cache: cargo
+# cache: cargo
 env:
   global:
     - RELEASE_VERSION="cargo"
     - RELEASE_FILE_PREFIX="Stabman-"
-    - RELEASE_FILE_SUFFIX="-CI"
+    - RELEASE_ZIP_SUFFIX="-CI"
     - RELEASE_EXE_NAME_OUTPUT="Stabman"
     - RELEASE_RUST_VERSION="1.34.2"
     - RELEASE_FEATURES="debug,controller"
