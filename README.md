@@ -263,6 +263,7 @@ See the `resolution.txt` file itself for more information and some preset resolu
 ---
 
 ## Development
+[![Build Status](https://travis-ci.org/Noah2610/LD44.svg?branch=travis)](https://travis-ci.org/Noah2610/LD44)
 ### Compiling from Source
 #### With Stable Rust
 If you wish to compile the game directly from its source,  
