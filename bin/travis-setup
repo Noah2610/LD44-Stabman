@@ -22,7 +22,7 @@ case "$TRAVIS_OS_NAME" in
     # Kind of ironic, that ubuntu is the only one of these OSes,
     # that doesn't have `gdrive` available in their main repos.
     local GDRIVE_DOWNLOAD="https://github.com/gdrive-org/gdrive/releases/download/2.1.0/gdrive-linux-x64"
-    try_run "sudo sh -c 'curl -L '$GDRIVE_DOWNLOAD > /bin/gdrive'"
+    try_run "sudo sh -c 'curl -L $GDRIVE_DOWNLOAD > /bin/gdrive'"
     sudo chmod +x /bin/gdrive
     ;;
 
