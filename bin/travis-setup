@@ -28,6 +28,7 @@ case "$TRAVIS_OS_NAME" in
     ;;
 
   "windows")
+    try_run 'choco install zip'
     try_run 'choco install gdrive'
     ;;
 
