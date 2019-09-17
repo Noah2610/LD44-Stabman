@@ -8,24 +8,27 @@ source "${_dir}/travis-share.sh"
 unset _dir
 
 TEST_DIR="${ROOT}/travis-test"
-RELEASE_ZIP="$( basename "$( get_release_path )")"
-RELEASE_DIR="${RELEASE_ZIP/.zip/}"
+RELEASE_ZIP="$( get_release_path )"
+RELEASE_DIR_NAME="$( basename "${RELEASE_ZIP/.zip/}" )"
 
 function unpack_release {
+  local release_zip_name
   check "unzip"
   msg "Unpacking built release"
   [ -d "$TEST_DIR" ] || mkdir -p "$TEST_DIR"
-  cp "$RELEASE_ZIP" "$TEST_DIR"
+  cp "${RELEASE_ZIP}" "$TEST_DIR"
   pushd "$TEST_DIR" || exit 1
-  try_run "unzip '$RELEASE_ZIP'"
+  release_zip_name="$( basename "$RELEASE_ZIP" )"
+  try_run "unzip '$release_zip_name'"
   popd || exit 1
 }
 
 function test_release {
-  check_dir "$RELEASE_DIR"
+  local _dir="${TEST_DIR}/${RELEASE_DIR_NAME}"
+  check_dir "$_dir"
   msg "Trying to run built release"
   [ -z "$EXE_NAME" ] && err "Executable name is not set"
-  pushd "$RELEASE_DIR" || exit 1
+  pushd "$_dir" || exit 1
   if STABMAN_EXIT="1" ./"${EXE_NAME}"; then
     msg "Built binary executable can be started successfully!"
   else
