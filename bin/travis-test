@@ -14,13 +14,13 @@ RELEASE_DIR_NAME="$( basename "${RELEASE_ZIP/.zip/}" )"
 function unpack_release {
   check_file "$RELEASE_ZIP"
   local release_zip_name
+  release_zip_name="$( basename "$RELEASE_ZIP" )"
   check "unzip"
   msg "Unpacking built release"
   [ -d "$TEST_DIR" ] || mkdir -p "$TEST_DIR"
-  cp "$RELEASE_ZIP" "$TEST_DIR"
+  cp "$RELEASE_ZIP" "${TEST_DIR}/${release_zip_name}"
   pushd "$TEST_DIR" || exit 1
-  release_zip_name="$( basename "$RELEASE_ZIP" )"
-  try_run "unzip '$release_zip_name'"
+  try_run "unzip \"$release_zip_name\""
   popd || exit 1
 }
 

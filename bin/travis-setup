@@ -28,9 +28,7 @@ case "$TRAVIS_OS_NAME" in
     ;;
 
   "windows")
-    try_run 'choco install
-      grep
-      gdrive'
+    try_run 'choco install gdrive'
     ;;
 
   "osx")
@@ -45,4 +43,4 @@ case "$TRAVIS_OS_NAME" in
 esac
 }
 
-      run_install
+run_install
