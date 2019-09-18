@@ -8,40 +8,63 @@ source "${_dir}/travis-share.sh"
 unset _dir
 
 function run_install {
-case "$TRAVIS_OS_NAME" in
-  "linux")
-    try_run 'sudo apt-get update'
-    try_run 'sudo apt-get install -y
-      curl
-      build-essential
-      libasound2-dev
-      libpulse-dev
-      portaudio19-dev
-      libsdl2-dev'
+  case "$TRAVIS_OS_NAME" in
+    "linux")
+      try_run 'sudo apt-get update'
+      try_run 'sudo apt-get install -y
+        curl
+        build-essential
+        libasound2-dev
+        libpulse-dev
+        portaudio19-dev
+        libsdl2-dev'
 
-    # Kind of ironic, that ubuntu is the only one of these OSes,
-    # that doesn't have `gdrive` available in their main repos.
-    local GDRIVE_DOWNLOAD="https://github.com/gdrive-org/gdrive/releases/download/2.1.0/gdrive-linux-x64"
-    curl -L "$GDRIVE_DOWNLOAD" > ./gdrive
-    sudo mv ./gdrive /bin/gdrive
-    sudo chmod +x /bin/gdrive
-    ;;
+      # Kind of ironic, that ubuntu is the only one of these OSes,
+      # that doesn't have `gdrive` available in their main repos.
+      local GDRIVE_DOWNLOAD="https://github.com/gdrive-org/gdrive/releases/download/2.1.0/gdrive-linux-x64"
+      try_run "curl -L $GDRIVE_DOWNLOAD > ./tmp-gdrive"
+      sudo mv ./tmp-gdrive /bin/gdrive
+      sudo chmod +x /bin/gdrive
+      ;;
 
-  "windows")
-    try_run 'choco install zip'
-    try_run 'choco install gdrive'
-    ;;
+    "windows")
+      check "choco"
+      try_run 'choco install curl zip gdrive'
+      windows_install_sdl2_libs
+      ;;
 
-  "osx")
-    check "brew"
-    try_run 'brew update'
-    try_run 'brew install SDL2 gdrive'
-    ;;
+    "osx")
+      check "brew"
+      try_run 'brew update'
+      try_run 'brew install SDL2 gdrive'
+      ;;
 
-  *)
-    err "Unrecognized OS $( colored "$COLOR_CODE" "$TRAVIS_OS_NAME" )"
-    ;;
-esac
+    *)
+      err "Unrecognized OS $( colored "$COLOR_CODE" "$TRAVIS_OS_NAME" )"
+      ;;
+  esac
+}
+
+function windows_install_sdl2_libs {
+  msg "Trying to download and install SDL2 MSVC development libraries"
+
+  local TMP_DIR="tmp-libsdl2"
+  local TOOLCHAIN="1.34.2-x86_64-pc-windows-msvc"
+  local RUSTUP_LIB_DIR="~/.rustup/toolchains/${TOOLCHAIN}/lib/rustlib/${TOOLCHAIN}/lib"
+  local LIBSDL2_VERSION="2.0.10"
+  local LIBSDL2_URL="https://www.libsdl.org/release/SDL2-devel-${LIBSDL2_VERSION}-VC.zip"
+
+  check_dir "$RUSTUP_LIB_DIR"
+  mkdir "$TMP_DIR"
+
+  pushd "$TMP_DIR"
+  try_run "curl $LIBSDL2_URL > ./libsdl2.zip"
+  try_run "unzip libsdl2.zip"
+  try_run "mv ./SDL2-${LIBSDL2_VERSION}/lib/x64/*.lib ${RUSTUP_LIB_DIR}"
+  popd
+
+  msg "Cleaning up downloaded SDL2 libraries"
+  rm -rf "$TMP_DIR"
 }
 
 run_install
