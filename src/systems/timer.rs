@@ -3,7 +3,6 @@ use std::time::{Duration, Instant};
 use amethyst::ui::UiText;
 
 use super::system_prelude::*;
-use crate::states::helpers::Timers;
 
 const PRINT_DELAY_MS: u64 = 100;
 

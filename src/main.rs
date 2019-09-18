@@ -13,11 +13,12 @@ extern crate regex;
 extern crate serde;
 
 mod bullet_creator;
+mod campaign_manager;
 mod components;
-mod level_manager;
 mod misc;
 mod resolution_parser;
 mod resource_helpers;
+mod resources;
 mod settings;
 mod solid_tag;
 mod states;
@@ -170,6 +171,7 @@ fn build_game_data<'a, 'b>(
         .dispatcher("startup")?
         .dispatcher("main_menu")?
         .dispatcher("ingame")?
+        .dispatcher("load_level")?
         .dispatcher("paused")?
         .dispatcher("continue_or_new_game_menu")?
         .dispatcher("win_game_menu")?

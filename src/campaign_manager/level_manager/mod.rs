@@ -172,6 +172,13 @@ impl LevelManager {
         data.world.write_resource::<LoadingLevel>().0 = false;
     }
 
+    pub fn restart_level(
+        &mut self,
+        data: &mut StateData<CustomGameData<CustomData>>,
+    ) {
+        self.load_current_level(data);
+    }
+
     pub fn is_first_level(&self) -> bool {
         self.level_index == 0
     }
@@ -254,54 +261,13 @@ impl LevelManager {
         self.play_current_song(data);
     }
 
-    pub fn on_start(
-        &mut self,
-        mut data: &mut StateData<CustomGameData<CustomData>>,
-    ) {
-        // Initialize global timer
-        // NOTE: This needs to happen before the level loads
-        if self.is_first_level() {
-            let mut timers = data.world.write_resource::<Timers>();
-            let timer = climer::Timer::default();
-            timers.global = Some(timer);
-        }
-
-        self.load_current_level(&mut data);
-        // Force update `HealthDisplay`
-        data.world.write_resource::<UpdateHealthDisplay>().0 = true;
-
-        // Now start the global timer
-        data.world
-            .write_resource::<Timers>()
-            .global
-            .as_mut()
-            .map(|timer| timer.start().unwrap());
-    }
-
-    pub fn on_stop(
-        &self,
-        mut data: &mut StateData<CustomGameData<CustomData>>,
-    ) {
+    pub fn stop_level(&self, data: &mut StateData<CustomGameData<CustomData>>) {
         data.world.delete_all();
         self.stop_song(&mut data);
         // Stop timers
         let mut timers = data.world.write_resource::<Timers>();
         timers.global.as_mut().map(|timer| timer.stop().unwrap());
         timers.level.stop().unwrap();
-    }
-
-    pub fn on_pause(&self, data: &mut StateData<CustomGameData<CustomData>>) {
-        // Set _lower_ music volume
-        data.world
-            .write_resource::<AudioSink>()
-            .set_volume(data.world.settings().music_volume_paused);
-    }
-
-    pub fn on_resume(&self, data: &mut StateData<CustomGameData<CustomData>>) {
-        // Set _regular_ music volume
-        data.world
-            .write_resource::<AudioSink>()
-            .set_volume(data.world.settings().music_volume);
     }
 
     fn win_game(&mut self, data: &mut StateData<CustomGameData<CustomData>>) {
@@ -471,13 +437,6 @@ impl LevelManager {
 
     fn has_next_level(&self) -> bool {
         self.level_index + 1 < self.settings.level_names.len()
-    }
-
-    fn restart_level(
-        &mut self,
-        data: &mut StateData<CustomGameData<CustomData>>,
-    ) {
-        self.load_current_level(data);
     }
 
     fn has_completed_current_level(&self) -> bool {

@@ -1,6 +1,7 @@
 mod bonus_select_menu;
 mod continue_or_new_game_menu;
 mod ingame;
+mod load_level;
 mod main_menu;
 mod paused;
 mod startup;
@@ -10,6 +11,7 @@ pub mod prelude {
     pub use super::bonus_select_menu::BonusSelectMenu;
     pub use super::continue_or_new_game_menu::ContinueOrNewGameMenu;
     pub use super::ingame::Ingame;
+    pub use super::load_level::LoadLevel;
     pub use super::main_menu::MainMenu;
     pub use super::paused::Paused;
     pub use super::startup::Startup;
@@ -57,9 +59,10 @@ pub mod state_prelude {
     pub use super::helpers::*;
     pub use super::prelude::*;
     pub use crate::bullet_creator::prelude::*;
+    pub use crate::campaign_manager::prelude::*;
     pub use crate::components::prelude::*;
-    pub use crate::level_manager::prelude::*;
     pub use crate::resource_helpers::*;
+    pub use crate::resources::*;
     pub use crate::settings::prelude::*;
     pub use crate::world_helpers::*;
     pub use crate::CustomData;

@@ -2,7 +2,7 @@ use deathframe::geo::Vector;
 use deathframe::handlers::SpriteSheetHandles;
 
 use super::system_prelude::*;
-use crate::states::helpers::UpdateHealthDisplay;
+use crate::resources::UpdateHealthDisplay;
 
 // TODO: Put these values into settings.ron
 const FULL_HEART_SPRITE_ID: usize = 0;

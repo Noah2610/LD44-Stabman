@@ -1,10 +1,12 @@
+use amethyst::audio::AudioSink;
+
 use super::state_prelude::*;
 
 pub struct Ingame {
-    campaign:      CampaignType,
-    level_manager: Option<LevelManager>,
-    to_main_menu:  bool,
-    new_game:      bool,
+    campaign:          CampaignType,
+    to_main_menu:      bool,
+    new_game:          bool,
+    should_load_level: bool,
 }
 
 impl Ingame {
@@ -25,47 +27,49 @@ impl Ingame {
             None
         }
     }
-
-    fn level_manager(&self) -> &LevelManager {
-        self.level_manager.as_ref().expect("LevelManager is None")
-    }
-
-    fn level_manager_mut(&mut self) -> &mut LevelManager {
-        self.level_manager.as_mut().expect("LevelManager is None")
-    }
 }
 
 impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
     fn on_start(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
         // Initialize the LevelManager
-        let settings = data.world.settings();
-        let level_manager_settings = match self.campaign {
-            CampaignType::Normal => settings.level_manager.normal,
-            CampaignType::BonusA => settings.level_manager.bonus_a,
-            CampaignType::BonusB => settings.level_manager.bonus_b,
-        };
-        self.level_manager = Some(LevelManager::new(
+        let mut campaign_manager =
+            data.world.write_resource::<CampaignManager>();
+        campaign_manager.select_campaign(
+            self.campaign,
             &mut data,
-            level_manager_settings,
             self.new_game,
-        ));
-
-        self.level_manager_mut().on_start(&mut data);
+        );
+        self.should_load_level = true;
     }
 
     fn on_stop(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
-        self.level_manager().on_stop(&mut data);
+        data.world
+            .write_resource::<CampaignManager>()
+            .stop_level(&mut data);
     }
 
     fn on_pause(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
-        self.level_manager().on_pause(&mut data);
+        if !self.should_load_level {
+            // Set _lower_ music volume
+            data.world
+                .write_resource::<AudioSink>()
+                .set_volume(data.world.settings().music_volume_paused);
+        }
     }
 
     fn on_resume(&mut self, mut data: StateData<CustomGameData<CustomData>>) {
-        self.level_manager().on_resume(&mut data);
+        if self.should_load_level {
+            // Came from LoadLevel state
+            self.should_load_level = false;
+        } else {
+            // Set _regular_ music volume
+            data.world
+                .write_resource::<AudioSink>()
+                .set_volume(data.world.settings().music_volume);
 
-        // Return to main menu, if `Paused` state set the resource to do so
-        self.to_main_menu = data.world.read_resource::<ToMainMenu>().0;
+            // Return to main menu, if `Paused` state set the resource to do so
+            self.to_main_menu = data.world.read_resource::<ToMainMenu>().0;
+        }
     }
 
     fn handle_event(
@@ -94,18 +98,23 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
             return Trans::Pop;
         }
 
+        if self.should_load_level {
+            return Trans::Push(Box::new(LoadLevel::default()));
+        }
+
         data.data.update(&data.world, "ingame").unwrap();
 
-        if let Some(trans) = self.handle_keys(&data) {
+        if let Some(trans) = data
+            .world
+            .write_resource::<CampaignManager>()
+            .update_level(&mut data)
+            .unwrap()
+        {
             return trans;
         }
 
-        self.level_manager_mut().update(&mut data);
-        if self.level_manager().has_won_game {
-            // Switch to WinGameMenu
-            return Trans::Switch(Box::new(WinGameMenu::new(
-                self.campaign.clone(),
-            )));
+        if let Some(trans) = self.handle_keys(&data) {
+            return trans;
         }
 
         Trans::None
@@ -114,8 +123,9 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
 
 #[derive(Default)]
 pub struct IngameBuilder {
-    campaign: CampaignType,
-    new_game: bool,
+    campaign:          CampaignType,
+    new_game:          bool,
+    should_load_level: bool,
 }
 
 impl IngameBuilder {
@@ -131,10 +141,10 @@ impl IngameBuilder {
 
     pub fn build(self) -> Ingame {
         Ingame {
-            campaign:      self.campaign,
-            level_manager: None,
-            to_main_menu:  false,
-            new_game:      self.new_game,
+            campaign:          self.campaign,
+            to_main_menu:      false,
+            new_game:          self.new_game,
+            should_load_level: false,
         }
     }
 }

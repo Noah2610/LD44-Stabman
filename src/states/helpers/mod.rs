@@ -1,25 +1,10 @@
 mod menu;
-mod resources;
 mod stats;
 
 pub use menu::*;
-pub use resources::*;
 pub use stats::*;
 
 use amethyst::ui::{Anchor as AmethystAnchor, UiTransform};
-
-#[derive(Clone)]
-pub enum CampaignType {
-    Normal,
-    BonusA,
-    BonusB,
-}
-
-impl Default for CampaignType {
-    fn default() -> Self {
-        CampaignType::Normal
-    }
-}
 
 /// `UiTransform::new` wrapper
 pub fn new_ui_transform<T: ToString>(

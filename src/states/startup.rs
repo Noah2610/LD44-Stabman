@@ -87,6 +87,7 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Startup {
         data.world.add_resource(Stats::default());
         data.world.add_resource(CurrentLevelName::default());
         data.world.add_resource(LoadingLevel::default());
+        data.world.add_resource(CampaignManager::default());
 
         // TODO
         // data.world
