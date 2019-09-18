@@ -9,7 +9,8 @@ unset _dir
 
 TEST_DIR="${ROOT}/travis-test"
 RELEASE_ZIP="$( get_release_path )"
-RELEASE_DIR_NAME="$( basename "${RELEASE_ZIP/.zip/}" )"
+RELEASE_DIR_NAME="$( basename "${RELEASE_ZIP/${RELEASE_ZIP_SUFFIX}.zip/}" )"
+RELEASE_DIR_NAME="${RELEASE_DIR_NAME/${RELEASE_ZIP_PREFIX}/}"
 
 function unpack_release {
   check_file "$RELEASE_ZIP"

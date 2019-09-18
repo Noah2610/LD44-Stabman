@@ -22,7 +22,7 @@ function run_install {
       # Kind of ironic, that ubuntu is the only one of these OSes,
       # that doesn't have `gdrive` available in their main repos.
       local GDRIVE_DOWNLOAD="https://github.com/gdrive-org/gdrive/releases/download/2.1.0/gdrive-linux-x64"
-      try_run "curl -L $GDRIVE_DOWNLOAD > ./tmp-gdrive"
+      curl -L "$GDRIVE_DOWNLOAD" > ./tmp-gdrive
       sudo mv ./tmp-gdrive /bin/gdrive
       sudo chmod +x /bin/gdrive
       ;;
@@ -51,7 +51,8 @@ function windows_install_sdl2_libs {
   local TMP_DIR="tmp-libsdl2"
   local RUST_VERSION="1.34.2"
   local RUST_TOOLCHAIN="x86_64-pc-windows-msvc"
-  local RUSTUP_LIB_DIR="~/.rustup/toolchains/${RUST_VERSION}-${TOOLCHAIN}/lib/rustlib/${TOOLCHAIN}/lib"
+  echo "$RUST_TOOLCHAIN"
+  local RUSTUP_LIB_DIR="$TRAVIS_HOME/.rustup/toolchains/${RUST_VERSION}-${RUST_TOOLCHAIN}/lib/rustlib/${RUST_TOOLCHAIN}/lib"
   local LIBSDL2_VERSION="2.0.10"
   local LIBSDL2_URL="https://www.libsdl.org/release/SDL2-devel-${LIBSDL2_VERSION}-VC.zip"
 
@@ -59,7 +60,7 @@ function windows_install_sdl2_libs {
   mkdir "$TMP_DIR"
 
   pushd "$TMP_DIR"
-  try_run "curl $LIBSDL2_URL > ./libsdl2.zip"
+  curl "$LIBSDL2_URL" > ./libsdl2.zip
   try_run "unzip libsdl2.zip"
   try_run "mv ./SDL2-${LIBSDL2_VERSION}/lib/x64/*.lib ${RUSTUP_LIB_DIR}"
   popd
