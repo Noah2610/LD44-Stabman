@@ -49,8 +49,9 @@ function windows_install_sdl2_libs {
   msg "Trying to download and install SDL2 MSVC development libraries"
 
   local TMP_DIR="tmp-libsdl2"
-  local TOOLCHAIN="1.34.2-x86_64-pc-windows-msvc"
-  local RUSTUP_LIB_DIR="~/.rustup/toolchains/${TOOLCHAIN}/lib/rustlib/${TOOLCHAIN}/lib"
+  local RUST_VERSION="1.34.2"
+  local RUST_TOOLCHAIN="x86_64-pc-windows-msvc"
+  local RUSTUP_LIB_DIR="~/.rustup/toolchains/${RUST_VERSION}-${TOOLCHAIN}/lib/rustlib/${TOOLCHAIN}/lib"
   local LIBSDL2_VERSION="2.0.10"
   local LIBSDL2_URL="https://www.libsdl.org/release/SDL2-devel-${LIBSDL2_VERSION}-VC.zip"
 
