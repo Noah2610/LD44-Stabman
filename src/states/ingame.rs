@@ -96,16 +96,16 @@ impl<'a, 'b> State<CustomGameData<'a, 'b, CustomData>, StateEvent> for Ingame {
 
         data.data.update(&data.world, "ingame").unwrap();
 
-        if let Some(trans) = self.handle_keys(&data) {
-            return trans;
-        }
-
         self.level_manager_mut().update(&mut data);
         if self.level_manager().has_won_game {
             // Switch to WinGameMenu
             return Trans::Switch(Box::new(WinGameMenu::new(
                 self.campaign.clone(),
             )));
+        }
+
+        if let Some(trans) = self.handle_keys(&data) {
+            return trans;
         }
 
         Trans::None

@@ -1484,7 +1484,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "ld44-stabman"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "amethyst 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "backtrace 0.3.15 (registry+https://github.com/rust-lang/crates.io-index)",

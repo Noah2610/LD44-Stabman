@@ -23,7 +23,7 @@
     "noclip_toggle":          [ [Key(C)] ],
 
     // PLAYER
-    "player_jump":            [ [Key(Space)], [Key(K)], [Key(Up)], [Key(W)], [Controller(0, A)] ],
+    "player_jump":            [ [Key(Space)], [Key(K)], [Key(Up)], [Controller(0, A)] ],
     "player_attack":          [ ],
     "player_attack_left":     [ [Key(Left)], [Key(H)], [Controller(0, X)] ],
     "player_attack_right":    [ [Key(Right)], [Key(L)], [Controller(0, B)] ],
