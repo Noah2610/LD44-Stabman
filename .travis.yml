@@ -24,3 +24,6 @@ script:
 after_success:
   - bin/travis-upload-release
   - bin/travis-test
+branches:
+  only:
+    - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
