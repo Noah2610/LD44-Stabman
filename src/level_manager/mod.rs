@@ -170,6 +170,15 @@ impl LevelManager {
 
         // Set LoadingLevel resource to `false` again.
         data.world.write_resource::<LoadingLevel>().0 = false;
+
+        // I have _no_ idea why, but this fixes the issue, where
+        // the player would be moved into the ground, if the level
+        // takes too long to load.
+        // I really have no idea why updating the "ingame" dispatcher
+        // here again makes the player not move into the ground.
+        // The player shouldn't be able to move through the solid ground
+        // anyway. I really don't understand this.
+        data.data.update(&data.world, "ingame").unwrap();
     }
 
     pub fn is_first_level(&self) -> bool {
