@@ -48,10 +48,12 @@ impl Item {
             }
             ItemType::BulletShoot => {
                 player.items_data.bullet_shoot.can_shoot = true;
-                player.items_data.bullet_shoot.damage =
+                player.items_data.bullet_shoot.damage +=
                     settings.settings.bullet_shoot_damage;
-                player.items_data.bullet_shoot.velocity =
-                    settings.settings.bullet_shoot_velocity;
+                player.items_data.bullet_shoot.velocity.0 +=
+                    settings.settings.bullet_shoot_velocity.0;
+                player.items_data.bullet_shoot.velocity.1 +=
+                    settings.settings.bullet_shoot_velocity.1;
                 player.items_data.bullet_shoot.size =
                     settings.settings.bullet_shoot_size;
                 player.items_data.bullet_shoot.lifetime = Duration::from_millis(
