@@ -17,7 +17,8 @@
     ),
     (
       name: "attack",
-      delays_ms: Some([50, 50, 100, 75, 100]),
+      default_delay_ms: Some(25),
+      // delays_ms: Some([50, 50, 100, 75, 100]),
       sprite_ids: [15, 13, 17, 13, 15],
     ),
     (

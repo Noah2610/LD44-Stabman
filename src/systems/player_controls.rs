@@ -392,12 +392,12 @@ fn handle_attack<'a>(
     bullet_creator: &mut BulletCreator,
 ) {
     let is_attacking = if !player.is_attacking {
-        if input_manager.is_down("player_attack") {
+        if input_manager.is_pressed("player_attack") {
             true
-        } else if input_manager.is_down("player_attack_left") {
+        } else if input_manager.is_pressed("player_attack_left") {
             *flipped = Flipped::Horizontal;
             true
-        } else if input_manager.is_down("player_attack_right") {
+        } else if input_manager.is_pressed("player_attack_right") {
             *flipped = Flipped::None;
             true
         } else {

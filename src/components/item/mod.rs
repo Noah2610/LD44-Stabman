@@ -54,8 +54,10 @@ impl Item {
                     settings.settings.bullet_shoot_velocity.0;
                 player.items_data.bullet_shoot.velocity.1 +=
                     settings.settings.bullet_shoot_velocity.1;
-                player.items_data.bullet_shoot.size =
-                    settings.settings.bullet_shoot_size;
+                player.items_data.bullet_shoot.size.0 +=
+                    settings.settings.bullet_shoot_size.0;
+                player.items_data.bullet_shoot.size.1 +=
+                    settings.settings.bullet_shoot_size.1;
                 player.items_data.bullet_shoot.lifetime = Duration::from_millis(
                     settings.settings.bullet_shoot_lifetime_ms,
                 );
