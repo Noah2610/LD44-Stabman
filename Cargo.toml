@@ -1,6 +1,6 @@
 [package]
 name = "ld44-stabman"
-version = "1.0.2"
+version = "1.0.3"
 authors = ["Noah Rosenzweig <rosenzweig.noah@gmail.com>"]
 edition = "2018"
 description = "Our Ludum Dare 44 Game Jam Entry"
